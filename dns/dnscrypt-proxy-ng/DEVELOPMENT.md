@@ -170,6 +170,24 @@ There is one script for importing lists (allowed/blocked/cloaking), another for 
 
 The setup.sh script has been replaced with a `+POST_INSTALL.post` action. References to this script in the configd conf have been removed, as they're unnecessary.
 
+Each of the service scripts now includes attributes: message, and description
+
+##### message
+
+The `message` attribute is used by configd, and this appears in logs whenever the script is executed through configd. All of these messages are written in the present tense, i.e. executing, restarting, stopping, importing, etc. This keeps the information clear as to what's happen at that moment, making the logging more natural when the messages appear. Example:
+
+```
+OPNsense configd.py[33623]: [738b515d-004f-421a-ac8a-8acecdb708b9] dnscrypt-proxy: performing config check
+```
+
+##### description
+
+The `description` attribute is used in at least one location that I found, on the System/Settings/cron page. When adding or editing a job, the Command dropdown includes all of the scripts from configd, and it uses the description attribute to populate the list. When these scripts appear in this list, it's best if they make sense, so the user understands what the "Commands" actually are. Thus, as they appear on this page, these are written in a future tense, which describes what will happen when the command is executed.
+
+```
+Get relays from configured sources files, and return json list of relays
+```
+
 #### Logging
 
 With the migration to Phalcon4, it appears to now be "camelizing" arguments for at least `/api/diagnostics/log/` endpoint. If a dash is used in an argument, the dash is getting eaten and the following letter become capitalized. This results in calls like `/api/diagnostics/log/dnscrypt-proxy/main` looking at `/var/log/dnscryptProxy/main.log` instead. Since we can't fix that API from this plugin, we can only work around this issue, with options like using a different directory, or creating a symlink to the log directory. @mimugmail addressed this issue via the symlink approach in PR [#2467](https://github.com/opnsense/plugins/pull/2467). It doesn't really matter where the directory is that the logs are located or what its named, however, moving the directory does have an impact. For example, it results in changes necessary in configuration files, install scripts, menu XMLs, and API calls. Additionally if the directory is moved, the installation/upgrade scripts must deal with moving the files from the old log directory to the new one.
