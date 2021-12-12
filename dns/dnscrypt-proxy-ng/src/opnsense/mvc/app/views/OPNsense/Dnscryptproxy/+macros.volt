@@ -201,9 +201,11 @@
 {{          build_bootgrid_dialogs(this_form['tabs']) }}
 {%      elseif this_form['boxes'] is defined %}
 {%          for box in this_form['boxes']|default([]) %}
-<div class="content-box">
+<section class="col-xs-12">
+  <div class="content-box">
 {{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_part':box]) }}
-</div>
+  </div>
+</section>
 {%          endfor %}
 {%      elseif this_form['field'] is defined %}
 {#          We need to put our fields into an array to enable the base_form
@@ -211,9 +213,11 @@
 {%          set fake_box = [ 'default_box_id', 'default_box_description', this_form ] %}
 {#          Since we have only fields, call the partial directly,
             we can only build one box, and put all of the fields in it. #}
-<div class="content-box">
+<section class="col-xs-12">
+  <div class="content-box">
 {{          partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_part':fake_box]) }}
-</div>
+  </div>
+</section>
 {%      endif %}
 {%  endmacro %}
 
