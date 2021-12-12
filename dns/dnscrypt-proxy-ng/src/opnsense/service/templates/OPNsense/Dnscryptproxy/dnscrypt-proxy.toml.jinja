@@ -59,6 +59,10 @@ dnscrypt_servers = {{ 'true' if (cfg['dnscrypt_servers'] == '1') else 'false' }}
 doh_servers = {{ 'true' if (cfg['doh_servers'] == '1') else 'false' }}
 {%  endif -%}
 
+{%  if cfg['odoh_servers'] is defined %}
+odoh_servers = {{ 'true' if (cfg['odoh_servers'] == '1') else 'false' }}
+{%  endif -%}
+
 {%  if cfg['server_selection_method'] == '0' %}
 
 ################################################################################
