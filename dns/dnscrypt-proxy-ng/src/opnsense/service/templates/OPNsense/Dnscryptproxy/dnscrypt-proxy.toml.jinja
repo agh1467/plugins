@@ -113,11 +113,11 @@ force_tcp = {{ 'true' if (cfg['force_tcp'] == '1') else 'false' }}
 {%  endif -%}
 
 {%  if cfg['proxy'] is defined %}
-proxy = 'socks5://{{ cfg['proxy'] }}'
+proxy = '{{ cfg['proxy'] }}'
 {%  endif -%}
 
 {%  if cfg['http_proxy'] is defined %}
-http_proxy = 'http://{{ cfg['http_proxy'] }}'
+http_proxy = '{{ cfg['http_proxy'] }}'
 {%  endif -%}
 
 {%  if cfg['timeout'] is defined %}
