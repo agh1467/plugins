@@ -86,6 +86,14 @@ class ControllerBase extends ControllerRoot
                     $result[] = $subtab;
 
                     break;
+                case 'box':
+                    $box = array();
+                    $box[] = $node->attributes()->id;
+                    $box[] = gettext((string) $node->attributes()->description);
+                    $box[] = $this->parseFormNode($node);
+                    $result['boxes'][] = $box;
+
+                    break;
                 case 'help':
                 case 'hint':
                 case 'label':

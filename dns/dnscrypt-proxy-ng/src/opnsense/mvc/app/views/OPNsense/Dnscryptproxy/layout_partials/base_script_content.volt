@@ -43,7 +43,7 @@
 
 {#/*
     Call the attachments macro to build all of our attachments using the form data */#}
-{{  build_attachments(this_form['tabs'], lang, plugin_name) }}
+{{  build_attachments(this_form, lang, plugin_name) }}
 
 {#/*
     # Toggle function is for enabling or disabling field(s)

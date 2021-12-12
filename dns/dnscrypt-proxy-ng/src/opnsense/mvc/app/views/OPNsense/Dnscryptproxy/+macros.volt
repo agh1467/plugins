@@ -199,9 +199,12 @@
 {{          build_tabs(this_form['tabs'], this_form['activetab']) }}
 </div>
 {{          build_bootgrid_dialogs(this_form['tabs']) }}
-{# {%      elseif this_form['boxes'] is defined %} #}
-{# {{          build_boxes(this_form) }} #}
-{#      Won't use this right now, but there for future ideas. #}
+{%      elseif this_form['boxes'] is defined %}
+{%          for box in this_form['boxes']|default([]) %}
+<div class="content-box">
+{{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_part':box]) }}
+</div>
+{%          endfor %}
 {%      elseif this_form['field'] is defined %}
 {#          We need to put our fields into an array to enable the base_form
             partial to process them. #}
@@ -216,11 +219,12 @@
 
 
 {##
- # This is a super macro to be used in a <script> element to defined all of the
+ # This is a super macro to be used in a <script> element to define all of the
  # attachments necessary for opteration.
  #
- # Takes tabs as input, lang for some text fields, and plugin_name for some API
- # call definitions. Iterates trhough all of the fields utilizing a series of
+ # Takes form, lang for some text fields, and plugin_name for some API
+ # call definitions as input. Recurses through tabs/subtabs, and boxes.
+ # Iterates through all of the fields utilizing a series of
  # if/elseif's to create attachments for those specific fields.
  #
  # Provides attachements for field types:
@@ -231,19 +235,34 @@
  # radio
  # managefile
  #}
-{%  macro build_attachments(tabs, lang, plugin_name) %} {# Have to pass lang into the macro scope #}
-{%      for tab in tabs|default([]) %}
-{%          if tab['subtabs']|default(false) %}
-{{              build_attachments(tab['subtabs'],lang, plugin_name) }}
+{%  macro build_attachments(this_form = null, lang, plugin_name) %} {# Have to pass lang into the macro scope #}
+{#      This whole structure is designed to arbitrate between input
+        being the form data with all the tabs/subtabs/boxes, and just
+        tabs/subtabs/boxes. It's a very roundabout approach. #}
+{%      if this_form['tabs'] is defined %}
+{%          set nodes = this_form['tabs'] %}
+{%      elseif this_form['subtabs'] is defined %}
+{%          set nodes = this_form['subtabs'] %}
+{%      elseif this_form['boxes'] is defined %}
+{%          set nodes = this_form['boxes'] %}
+{%      else %}
+{%          set nodes = this_form %}
+{%      endif %}
+{%      for node in nodes|default([]) %}
+{%          if node['subtabs']|default(false) %}
+{{              build_attachments(node['subtabs'],lang, plugin_name) }}
 {%              continue %}
-{%          elseif tab['tabs']|default(false) %}
-{{              build_attachments(tab['tabs'],lang, plugin_name) }}
+{%          elseif node['tabs']|default(false) %}
+{{              build_attachments(node['tabs'],lang, plugin_name) }}
+{%              continue %}
+{%          elseif node['boxes']|default(false) %}
+{{              build_attachments(node['boxes'],lang, plugin_name) }}
 {%              continue %}
 {%          endif %}
-{%          if tab[2]['model']|default('') != '' %}
-                data_get_map['frm_tab_{{ tab[0] }}'] = '/api/{{ plugin_name }}/{{ tab[2]['model'] }}/get';
+{%          if node[2]['model']|default('') != '' %}
+                data_get_map['frm_tab_{{ node[0] }}'] = '/api/{{ plugin_name }}/{{ node[2]['model'] }}/get';
 {%          endif %}
-{%              for field in get_fields(tab[2]) %}
+{%              for field in get_fields(node[2]) %}
 {%                  if field is iterable %}
 {# =============================================================================
  # bootgrid: import button
