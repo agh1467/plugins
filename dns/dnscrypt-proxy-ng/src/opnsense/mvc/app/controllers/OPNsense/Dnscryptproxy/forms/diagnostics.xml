@@ -80,19 +80,4 @@
             <text>Configuration will apper here.</text>
         </field>
     </box>
-    <box id="version" description="Version">
-        <field>
-            <id>version</id>
-            <label>Display the dnscrypt-proxy version.</label>
-            <type>command</type>
-            <api>/api/dnscryptproxy/diagnostics/command/version</api>
-            <output>version_output</output>
-            <button_label>Run</button_label>
-        </field>
-        <field>
-            <id>version_output</id>
-            <type>commandoutput</type>
-            <text>Command output will apper here.</text>
-        </field>
-    </box>
 </form>
