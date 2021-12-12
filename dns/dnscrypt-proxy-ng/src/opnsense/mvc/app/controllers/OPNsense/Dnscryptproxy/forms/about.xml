@@ -3,21 +3,11 @@
         <label>dnscrypt-proxy version</label>
         <type>variable</type>
         <variable>dnscrypt_proxy_version</variable>
-        <help><![CDATA[
-            This is the current version of dnscrypt-proxy running on the
-            system.
-            ]]>
-        </help>
     </field>
     <field>
         <label>dnscrypt-proxy plugin version</label>
         <type>variable</type>
         <variable>plugin_version</variable>
-        <help><![CDATA[
-            This is the current version of the dnscrypt-proxy plugin (this
-            plugin).
-            ]]>
-        </help>
     </field>
     <field>
         <label>Resolve Hostname</label>
@@ -58,10 +48,5 @@
             </div>
         ]]>
         </content>
-        <help><![CDATA[
-            Use dnscrypt-proxy's -resolve parameter to resolve a hostname.
-            This will perform forward lookups only.
-            ]]>
-        </help>
     </field>
 </form>
