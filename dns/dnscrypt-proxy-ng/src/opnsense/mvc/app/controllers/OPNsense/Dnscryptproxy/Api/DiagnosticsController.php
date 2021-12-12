@@ -127,6 +127,8 @@ class DiagnosticsController extends ApiControllerBase
                 $configd_command = $settings->configd_name . ' config-view ' . $filename;
 
                 break;
+            // Might remove since it was only used by diagnostic, which was replaced
+            // by showing the version on the About page.
             case 'version':
                 $configd_command = $settings->configd_name . ' version';
 
