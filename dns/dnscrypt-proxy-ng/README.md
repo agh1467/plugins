@@ -10,10 +10,10 @@ This plugin is designed to function with v2.1.0+.
 
 Here are some useful resources for `dnscrypt-proxy`:
 
-* [DNSCrypt Proxy project source](https://github.com/DNSCrypt/dnscrypt-proxy)
 * **[dnscrypt-proxy documentation](https://dnscrypt.info/doc) ← Start here**
-* [DNSCrypt project home page](https://dnscrypt.info/)
+* [DNSCrypt Proxy project source](https://github.com/DNSCrypt/dnscrypt-proxy)
 * [Discussions](https://github.com/DNSCrypt/dnscrypt-proxy/discussions)
+* [DNSCrypt project home page](https://dnscrypt.info/)
 * [DNS-over-HTTPS and DNSCrypt resolvers](https://dnscrypt.info/public-servers)
 * [Server and client implementations](https://dnscrypt.info/implementations)
 * [DNS stamps](https://dnscrypt.info/stamps)
@@ -208,6 +208,15 @@ This is the Allowed Names log and shows queries which are allowed by Allowed Nam
 #### Allowed IPs Log
 
 This is the Allowed IPs log and shows queries which are allowed by Allowed IPs. The setting for enabling/disabling this log can be found on the Allowed IPs tab in Settings.
+
+### About
+
+This page has an overview of this plugin, and includes various information resources about `dnscrypt-proxy`, and the plugin itself.
+
+It displays some of the following things:
+* dnscrypt-proxy plugin version
+* dnscrypt-proxy version
+* links to various community resources for dnscrypt-proxy
 
 ### License
 

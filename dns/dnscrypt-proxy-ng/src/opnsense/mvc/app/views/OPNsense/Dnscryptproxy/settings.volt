@@ -46,7 +46,7 @@
     tab headers,
     tabs content (include fields and bootgrids),
     and all bootgrid dialogs #}
-{{ build_page(this_form['tabs'],this_form['activetab']) }}
+{{ build_page(this_form) }}
 
 <script>
 

@@ -25,23 +25,28 @@
  #}
 
 {##
- # This partial is for building a tab, including all fields on the tab.
+ # This partial is for building a form, including all fields. It's called
+ # by other volt scipts and to build tabs, and boxes. The array 'this_part'
+ # should be the tab, or box (or possibly other structure) being drawn.
  #
- # Expects to receive an array containing the elements from a tab.
+ # The 'this_part' array is built by ControllerBase, and is derived from
+ # the form XML being drawn.
  #
- # The following keys are used in this partial:
+ # The array named "this_part" should contain:
  #
- # this_tab[0]          : form id, used as unique id for this form.
- # this_tab[1]          : data-title to set on form (tab description)
- # this_tab[2]          : array of elements on this tab
- # this_tab[2]['field'] : array of fields on this tab
+ # this_part[0]          : 'id' attribute on 'tab' element in form XML,
+ #                        intended to be unique on the page
+ # this_part[1]          : 'description' attribute on 'tab' element in form XML
+ #                        used as 'data-title' to set on form HTML element
+ # this_part[2]          : array of elements on this tab
+ # this_part[2]['field'] : array of fields on this tab
  #}
 
 {# Find if there are help supported or advanced field on this page #}
-{%  set base_form_id = this_tab[0] %}
+{%  set base_form_id = this_part[0]|default('') %}
 {%  set help = false %}
 {%  set advanced = false %}
-{%  set fields = get_fields(this_tab[2]|default({})) %}
+{%  set fields = get_fields(this_part[2]|default({})) %}
 {%  for field in fields %}
 {%      if field is iterable %}
 {%          for name,element in field %}
@@ -57,7 +62,7 @@
 {%          endif %}
 {%      endif %}
 {%  endfor %}
-<form id="frm_tab_{{ base_form_id }}" class="form-inline" data-title="{{ this_tab[1]|default('') }}" data-model="{{ this_tab[2]['model']|default('') }}">
+<form id="frm_tab_{{ base_form_id }}" class="form-inline" data-title="{{ this_part[1]|default('') }}" data-model="{{ this_part[2]['model']|default('') }}">
   <div class="table-responsive">
     <table class="table table-striped table-condensed">
         <colgroup>
@@ -177,13 +182,19 @@
                             </td>
                         </tr>
 {%                  endif %}
+{%              elseif field['type'] == 'span_content' %}
+                        <tr>
+                            <td colspan="3">
+                                {{ field['content']|default('') }}
+                            </td>
+                        </tr>
 {%              else %}
 {{                  partial("OPNsense/Dnscryptproxy/layout_partials/form_input_tr",['this_field':field]) }}
 {%              endif %}
 {%          endif %}
 {%      endif %}
 {%  endfor %}
-{%  if this_tab[2]['apply']|default(false) == "true" %}
+{%  if this_part[2]['apply']|default(false) == "true" %}
         <tr>
             <td colspan="3">
                 <button class="btn btn-primary" id="save_frm_{{ base_form_id }}" type="button"><b>{{ lang._('Apply') }} </b><i id="frm_tab_{{ base_form_id }}_progress" class=""></i></button>
