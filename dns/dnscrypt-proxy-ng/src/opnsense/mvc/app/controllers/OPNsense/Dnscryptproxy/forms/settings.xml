@@ -418,8 +418,7 @@
             <field>
                 <id>settings.lb_estimator</id>
                 <label>Load Balance Estimator</label>
-                <type>text</type>
-                <hint>1</hint>
+                <type>checkbox</type>
                 <help><![CDATA[
                     <b>lb_estimator</b><br>
                     Continuously estimate the latency of all the resolvers and
