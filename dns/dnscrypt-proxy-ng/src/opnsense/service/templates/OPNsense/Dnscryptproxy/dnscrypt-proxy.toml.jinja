@@ -133,11 +133,11 @@ edns_client_subnet = [{{ "'" + ("','".join(cfg['edns_client_subnet'].split(','))
 {%  endif -%}
 
 {%  if cfg['lb_strategy'] is defined %}
-lb_strategy = {{ cfg['lb_strategy'] }}
+lb_strategy = '{{ cfg['lb_strategy'] }}'
 {%  endif -%}
 
 {%  if cfg['lb_estimator'] is defined %}
-lb_estimator = {{ cfg['lb_estimator'] }}
+lb_estimator = {{ 'true' if (cfg['lb_estimator'] == '1') else 'false' }}
 {%  endif %}
 
 ################################################################################
