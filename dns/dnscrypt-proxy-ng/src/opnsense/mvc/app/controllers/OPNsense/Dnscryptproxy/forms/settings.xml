@@ -28,6 +28,7 @@
                 </help>
                 <style>tokenize</style>
                 <allownew>true</allownew>
+                <type>select_multiple</type>
             </field>
             <field>
                 <id>settings.allowprivileged</id>
