@@ -132,6 +132,10 @@ keepalive = {{ cfg['keepalive'] }}
 edns_client_subnet = [{{ "'" + ("','".join(cfg['edns_client_subnet'].split(','))) + "'" }}]
 {%  endif -%}
 
+{%  if cfg['blocked_query_response'] is defined %}
+blocked_query_response = '{{ cfg['blocked_query_response'] }}'
+{%  endif -%}
+
 {%  if cfg['lb_strategy'] is defined %}
 lb_strategy = '{{ cfg['lb_strategy'] }}'
 {%  endif -%}
