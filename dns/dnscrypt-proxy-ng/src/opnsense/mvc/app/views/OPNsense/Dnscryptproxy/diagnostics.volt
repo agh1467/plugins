@@ -41,7 +41,7 @@
     tab headers,
     tabs content (include fields and bootgrids),
     and all bootgrid dialogs #}
-{{ build_page(this_form['tabs'],this_form['activetab']) }}
+{{ build_page(this_form) }}
 
 
 <script>
@@ -50,7 +50,7 @@ $( document ).ready(function() {
 {#/* Define this object now so we can push tabs to it later. */ #}
     var data_get_map = {};
 
-{# /* Define this object now so we can push tabs to it later. */ #}
+{# /* Add in our script content based on form data.. */ #}
 {{  partial("OPNsense/Dnscryptproxy/layout_partials/base_script_content") }}
 
     mapDataToFormUI(data_get_map).done(function(){

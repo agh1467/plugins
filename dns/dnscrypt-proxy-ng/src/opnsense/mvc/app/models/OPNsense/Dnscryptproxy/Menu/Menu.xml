@@ -4,7 +4,8 @@
         <DNSCrypt-Proxy VisibleName="DNSCrypt Proxy" cssClass="fa fa-lock fa-fw">
             <Settings url="/ui/dnscryptproxy/settings" order="10"/>
             <Diagnostics url="/ui/dnscryptproxy/diagnostics" order="15" />
-            <Logs url="/ui/dnscryptproxy/logs" order="19" />
+            <Logs url="/ui/dnscryptproxy/logs" order="20" />
+            <About url="/ui/dnscryptproxy/about" order="25" />
         </DNSCrypt-Proxy>
     </Services>
 </menu>

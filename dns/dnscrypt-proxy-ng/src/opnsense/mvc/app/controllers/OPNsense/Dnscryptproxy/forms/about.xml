@@ -1,0 +1,67 @@
+<form>
+    <field>
+        <label>dnscrypt-proxy version</label>
+        <type>variable</type>
+        <variable>dnscrypt_proxy_version</variable>
+        <help><![CDATA[
+            This is the current version of dnscrypt-proxy running on the
+            system.
+            ]]>
+        </help>
+    </field>
+    <field>
+        <label>dnscrypt-proxy plugin version</label>
+        <type>variable</type>
+        <variable>plugin_version</variable>
+        <help><![CDATA[
+            This is the current version of the dnscrypt-proxy plugin (this
+            plugin).
+            ]]>
+        </help>
+    </field>
+    <field>
+        <label>Resolve Hostname</label>
+        <type>span_content</type>
+        <content><![CDATA[
+            <div class="col-md-12">
+                <p>This is the plugin for DNSCrypt Proxy!</p>
+                <p>This plugin provides a front-end UI here in OPNsense for
+                    managing the <b>dnscrypt-proxy</b> application.</p>
+                <p>Some of the feature included in this plugin are:<p>
+                    <ul dir="auto">
+                        <li>All settings represented in the UI</li>
+                        <li>Enable/disable complex/advanced features</li>
+                        <li>Upload/Download of allowed/blocked lists</li>
+                        <li>External allowed/blocked names support</li>
+                        <li>Importing/Exporting of allowed/blocked lists and some others</li>
+                        <li>Diagnostic tools</li>
+                        <li>All logs supported</li>
+                        <li>Resolver list, displays all currently available resolvers</li>
+                        <li>Anonymized DNS configuration and relay list</li>
+                    </ul>
+                <p>Here are some useful resources for this plugin:</p>
+                    <ul dir="auto">
+                        <li><a href="https://github.com/agh1467/plugins/">agh1467 fork of OPNsense Plugins Repo</a></li>
+                        <li><a href="https://github.com/agh1467/plugins/blob/dnscrypt-proxy-ng/dns/dnscrypt-proxy-ng/README.md">README for this Plugin<a></li>
+                        <li><a href="https://github.com/agh1467/plugins/issues">agh1467 Plugins Issues Tracker</a></li>
+                        <li>**** Link to IRC channel ****</li>
+                    </ul>
+                <p>Here are some useful resources for <b>dnscrypt-proxy</b>
+                <ul dir="auto">
+                    <li><strong><a href="https://dnscrypt.info/doc">dnscrypt-proxy documentation</a> ← Start here</strong></li>
+                    <li><a href="https://dnscrypt.info/">DNSCrypt project home page</a></li>
+                    <li><a href="https://dnscrypt.info/faq">DNSCrypt Proxy FAQ</a></li>
+                    <li><a href="https://github.com/DNSCrypt/dnscrypt-proxy">DNSCrypt Proxy project source</a></li>
+                    <li><a href="https://github.com/DNSCrypt/dnscrypt-proxy/discussions">Discussions</a></li>
+                </ul>
+                <p>License Info??
+            </div>
+        ]]>
+        </content>
+        <help><![CDATA[
+            Use dnscrypt-proxy's -resolve parameter to resolve a hostname.
+            This will perform forward lookups only.
+            ]]>
+        </help>
+    </field>
+</form>

@@ -423,6 +423,12 @@
                 </tr>
             </table>
 {%          endif %}
+{%      elseif this_field['type'] == "variable" %}
+{#      This type allows to reference string variables within the environment. #}
+            <span
+                class="{{ this_field['style']|default('') }}">
+                <code><?php echo ${$this_field['variable']}; ?></code>
+            </span>
 {%      endif %}
 {%  endif %}
 {%  if this_field['help']|default(false) %}

@@ -156,13 +156,13 @@
 {%  endmacro %}
 
 {##
- # This is a resursive matro to build the tab forms utilizing a partial.
+ # This is a resursive macro to build the tab forms utilizing a partial.
  #
- # The recurstion happens for tabs and subtabs, and tab is build using the
- # base_form partial.
+ # The recursion happens for tabs and subtabs, and tab is built using the
+ # base_tab partial.
  #
  # A compromise was made in that the indention depth is the same for both
- # tab types, where is normally subtabs are one level further. The templates
+ # tab types, where normally subtabs are one level further. The templates
  # mess up the indentation for everything though, it functions the same.
  #}
 {%  macro build_tabs(tabs, active_tab = null, tab_type = null) %}
@@ -176,7 +176,7 @@
 {%          endif %}
         <div id="{{ tab_type|default('tab') }}_{{ tab[0] }}"
             class="tab-pane fade{% if active_tab|default('') == tab[0] %} in active {% endif %}">
-{{          partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_tab':tab]) }}
+{{          partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_part':tab]) }}
         </div>
 {%      endfor %}
 {%  endmacro %}
@@ -184,18 +184,34 @@
 {##
  # This macro builds the entire page from the tabs provided as input.
  #
- # This is a super macro that builds the tab headers, tab contents, and the
- # bootgrid_dialogs all at once.
+ # This is a super macro that builds pages with or without tabs, the tab
+ # headers, tab contents, and the bootgrid_dialogs all at once.
  #
- # This is to save on having to put three commands in the main volt, and to put
- # the div definition in the right place on the page.
+ # This is to save on having to put all of these commands in the main volt, and
+ # to put the div definition in the right place on the page.
  #}
-{%  macro build_page(tabs,active_tab = null) %}
-{{      build_tabs_headers(tabs, active_tab) }}
+
+{%  macro build_page(this_form = null) %}
+{%      if this_form['tabs'] is defined
+            and this_form['activetab'] is defined %}
+{{          build_tabs_headers(this_form['tabs'], this_form['activetab']) }}
 <div class="tab-content content-box tab-content">
-{{      build_tabs(tabs, active_tab) }}
+{{          build_tabs(this_form['tabs'], this_form['activetab']) }}
 </div>
-{{      build_bootgrid_dialogs(tabs) }}
+{{          build_bootgrid_dialogs(this_form['tabs']) }}
+{# {%      elseif this_form['boxes'] is defined %} #}
+{# {{          build_boxes(this_form) }} #}
+{#      Won't use this right now, but there for future ideas. #}
+{%      elseif this_form['field'] is defined %}
+{#          We need to put our fields into an array to enable the base_form
+            partial to process them. #}
+{%          set fake_box = [ 'default_box_id', 'default_box_description', this_form ] %}
+{#          Since we have only fields, call the partial directly,
+            we can only build one box, and put all of the fields in it. #}
+<div class="content-box">
+{{          partial("OPNsense/Dnscryptproxy/layout_partials/base_form",['this_part':fake_box]) }}
+</div>
+{%      endif %}
 {%  endmacro %}
 
 
