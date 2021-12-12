@@ -1,4 +1,4 @@
-{#
+{##
  #
  # OPNsense® is Copyright © 2014 – 2018 by Deciso B.V.
  # This file is Copyright © 2018 by Michael Muenz <m.muenz@gmail.com>
@@ -24,44 +24,20 @@
  # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  # POSSIBILITY OF SUCH DAMAGE.
- #}
+#}
 
 {##
- # This is the template for the logs page.
+ # This is the template for the about page.
  #
  # Variables sent in by the controller:
- # plugin_name  string  name of this plugin, used for API calls
- # this_form    array   the form XML in an array
+ # plugin_name            string  name of this plugin, used for API calls
+ # plugin_version         string  version of this plugin
+ # dnscrypt_proxy_version string  version of dnscrypt-proxy
+ # this_form              array   the form XML in an array
  #}
 
 {# Pull in our macro definitions #}
 {{ partial("OPNsense/Dnscryptproxy/+macros") }}
 
-{# Build the entire page including:
-    tab headers,
-    tabs content (include fields and bootgrids),
-    and all bootgrid dialogs #}
+{# Build the entire page based on the form data. #}
 {{ build_page(this_form) }}
-
-{# Build the entire page including:
-    tab headers,
-    tabs content (include fields and bootgrids),
-    and all bootgrid dialogs #}
-
-<script>
-$( document ).ready(function() {
-{# /* Define this object now so we can push tabs to it later. */ #}
-    var data_get_map = {};
-
-{# /* Define this object now so we can push tabs to it later. */ #}
-{{  partial("OPNsense/Dnscryptproxy/layout_partials/base_script_content") }}
-
-    mapDataToFormUI(data_get_map).done(function(){
-{#/*    # Update the fields using the tokenizer style. */#}
-        formatTokenizersUI();
-{#/*    # Refresh the data for the select picker fields. */#}
-        $('.selectpicker').selectpicker('refresh');
-    });
-
-});
-</script>
