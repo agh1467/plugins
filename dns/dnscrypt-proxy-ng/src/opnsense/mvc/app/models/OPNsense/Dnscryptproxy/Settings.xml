@@ -52,6 +52,10 @@
             <default>1</default>
             <required>Y</required>
         </doh_servers>
+        <odoh_servers type="BooleanField">
+            <required>N</required>
+            <default>0</default>
+        </odoh_servers>
         <require_dnssec type="BooleanField">
             <default>0</default>
             <required>Y</required>
