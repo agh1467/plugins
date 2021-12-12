@@ -97,8 +97,19 @@
                 <type>checkbox</type>
                 <help><![CDATA[
                     <b>doh_servers</b><br>
-                    Let DNSCrypt-Proxy use servers with DNS-over-HTTPS protocol
-                    enabled.
+                    Let DNSCrypt-Proxy use servers with DNS-over-HTTPS (DoH)
+                    protocol enabled.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.odoh_servers</id>
+                <label>Use Oblivious DNS-over-HTTPS (DoH) Servers</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>odoh_servers</b><br>
+                    Let DNSCrypt-Proxy use servers with Oblivious
+                    DNS-over-HTTPS (DoH) protocol enabled.
                     ]]>
                 </help>
             </field>
