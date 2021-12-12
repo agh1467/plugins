@@ -42,13 +42,12 @@ args = sys.argv
 def main():
     """ Main function for building the relay list.
     """
+    mode = ""
     if len(args) == 2:
         if args[1] == "route":
             mode = "route"
         elif args[1] == "names":
             mode = "names"
-    else:
-        mode = ""
 
     # Use a different data structure depending on expected output.
     if mode in ("names", "route"):
