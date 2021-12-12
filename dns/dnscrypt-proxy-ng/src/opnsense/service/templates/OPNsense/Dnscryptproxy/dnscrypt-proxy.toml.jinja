@@ -238,16 +238,15 @@ forwarding_rules = 'forwarding-rules.txt'
 #      Cloaking Rules                                                          #
 ################################################################################
 
-{%      if cfg['cloaking_type'] == 'external' and
-                cfg['cloaking_file_external'] is defined %}
-cloaking_rules = '{{ cfg['cloaking_file_external'] }}'
-{%      elif cfg['cloaking_type'] == 'manual' and
+{%      if cfg['cloaking_type'] == 'manual' and
                 cfg['cloaking_file_manual'] is defined %}
 cloaking_rules = 'cloaking-manual.txt'
 {%      elif cfg['cloaking_type'] == 'internal' %}
 cloaking_rules = 'cloaking-internal.txt'
 {%      endif %}
-
+{%      if cfg['cloak_ttl'] is defined %}
+cloak_ttl = {{ cfg['cloak_ttl'] }}
+{%      endif %}
 {%  endif %}
 
 ################################################################################
