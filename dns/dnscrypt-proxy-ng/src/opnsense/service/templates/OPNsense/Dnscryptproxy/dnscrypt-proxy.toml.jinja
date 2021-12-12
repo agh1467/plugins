@@ -6,7 +6,7 @@
 {%  set cfg_path = 'OPNsense.'~plugin_name %}
 ################################################################################
 #                                                                              #
-#              dnscrypt-proxy configuration file for v2.1.0                    #
+#       dnscrypt-proxy configuration file for v2.1.0                           #
 #                                                                              #
 ################################################################################
 
@@ -14,24 +14,9 @@
 
 ################################################################################
 #                                                                              #
-#  Basic settings                                                              #
+#       Basic settings                                                         #
 #                                                                              #
 ################################################################################
-
-{%  if cfg['server_selection_method'] == '1' %}
-{%      set server_list = [] %}
-{#      # server_names is comma delimited string of names, split() to iterate through. #}
-{%      if helpers.exists(cfg_path~'.server_names') %}
-{%          for for_server in cfg['server_names'].split(',') %}
-{#              # Add the server name to the list. #}
-{%              do server_list.append(for_server) %}
-{%          endfor %}
-{#          # Print the server list, joining and surrounding each server with single quotes. #}
-{%      endif %}
-{%      if server_list != [] %} {# Don't put this setting unless we have servers names to put. #}
-server_names = [{{ "'" + server_list|join("','") + "'" }}]
-{%      endif %}
-{%  endif -%}
 
 {%  if cfg['listen_addresses'] is defined %}
 listen_addresses = [{{ "'" + ("','".join(cfg['listen_addresses'].split(','))) + "'" }}]
@@ -41,7 +26,11 @@ listen_addresses = []
 
 {%  if cfg['max_clients'] is defined %}
 max_clients = {{ cfg['max_clients'] }}
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Server Settings                                                        #
+################################################################################
 
 {%  if cfg['ipv4_servers'] is defined %}
 ipv4_servers = {{ 'true' if (cfg['ipv4_servers'] == '1') else 'false' }}
@@ -66,7 +55,7 @@ odoh_servers = {{ 'true' if (cfg['odoh_servers'] == '1') else 'false' }}
 {%  if cfg['server_selection_method'] == '0' %}
 
 ################################################################################
-#         Automatic Server Selection                                           #
+#       Automatic Server Selection                                             #
 ################################################################################
 
 {%      if cfg['require_dnssec'] is defined %}
@@ -100,11 +89,29 @@ require_nofilter = {{ 'true' if (cfg['require_nolog'] == '1') else 'false' }}
 {%          endif %}
 {%      endif %}
 disabled_server_names = [{{ "'" + disabled_server_list|unique|join("','") + "'" }}]
+{%  elif cfg['server_selection_method'] == '1' %}
+
+################################################################################
+#       Manual Server Selection                                                #
+################################################################################
+
+{%      set server_list = [] %}
+{#      # server_names is comma delimited string of names, split() to iterate through. #}
+{%      if helpers.exists(cfg_path~'.server_names') %}
+{%          for for_server in cfg['server_names'].split(',') %}
+{#              # Add the server name to the list. #}
+{%              do server_list.append(for_server) %}
+{%          endfor %}
+{#          # Print the server list, joining and surrounding each server with single quotes. #}
+{%      endif %}
+{%      if server_list != [] %} {# Don't put this setting unless we have servers names to put. #}
+server_names = [{{ "'" + server_list|join("','") + "'" }}]
+{%      endif %}
 {%  endif %}
 
 ################################################################################
 #                                                                              #
-#         Advanced Settings                                                    #
+#       Advanced Settings                                                      #
 #                                                                              #
 ################################################################################
 
@@ -145,7 +152,7 @@ lb_estimator = {{ 'true' if (cfg['lb_estimator'] == '1') else 'false' }}
 {%  endif %}
 
 ################################################################################
-#         Logging Settings                                                     #
+#       Logging Settings                                                       #
 ################################################################################
 
 {%  if cfg['log_level'] is defined %}
@@ -162,7 +169,11 @@ log_files_max_age = {{ cfg['log_files_max_age'] }}
 
 {%  if cfg['log_files_max_backups'] is defined %}
 log_files_max_backups = {{ cfg['log_files_max_backups'] }}
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Certificate and Key Settings                                           #
+################################################################################
 
 {%  if cfg['cert_refresh_delay'] is defined %}
 cert_refresh_delay = {{ cfg['cert_refresh_delay'] }}
@@ -170,7 +181,11 @@ cert_refresh_delay = {{ cfg['cert_refresh_delay'] }}
 
 {%  if cfg['dnscrypt_ephemeral_keys'] is defined %}
 dnscrypt_ephemeral_keys = {{ 'true' if (cfg['dnscrypt_ephemeral_keys'] == '1') else 'false' }}
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       TLS Settings                                                           #
+################################################################################
 
 {%  if cfg['tls_disable_session_tickets'] is defined %}
 tls_disable_session_tickets = {{ 'true' if (cfg['tls_disable_session_tickets'] == '1') else 'false' }}
@@ -178,7 +193,11 @@ tls_disable_session_tickets = {{ 'true' if (cfg['tls_disable_session_tickets'] =
 
 {%  if cfg['tls_cipher_suite'] is defined %}
 tls_cipher_suite = [{{ cfg['tls_cipher_suite'] }}]
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Bootstrap Settings                                                     #
+################################################################################
 
 {%  if cfg['bootstrap_resolvers'] is defined %}
 fallback_resolvers = [{{ "'" + ("','".join(cfg['bootstrap_resolvers'].split(','))) + "'" }}]
@@ -186,7 +205,11 @@ fallback_resolvers = [{{ "'" + ("','".join(cfg['bootstrap_resolvers'].split(',')
 
 {%  if cfg['ignore_system_dns'] is defined %}
 ignore_system_dns = {{ 'true' if (cfg['ignore_system_dns'] == '1') else 'false' }}
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Net Probe Settings                                                     #
+################################################################################
 
 {%  if cfg['netprobe_address'] is defined %}
 netprobe_address = '{{ cfg['netprobe_address'] }}'
@@ -194,7 +217,11 @@ netprobe_address = '{{ cfg['netprobe_address'] }}'
 
 {%  if cfg['netprobe_timeout'] is defined %}
 netprobe_timeout = {{ cfg['netprobe_timeout'] }}
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Other Advanced Settings                                                #
+################################################################################
 
 {%  if cfg['offline_mode'] is defined %}
 offline_mode = {{ 'true' if (cfg['offline_mode'] == '1') else 'false' }}
@@ -202,13 +229,17 @@ offline_mode = {{ 'true' if (cfg['offline_mode'] == '1') else 'false' }}
 
 {%  if cfg['query_meta'] is defined %}
 # query_meta = [{{ "'" + ("','".join(cfg['query_meta'].split(','))) + "'" }}]
-{%  endif -%}
+{%  endif %}
+
+################################################################################
+#       Log File Rotation Settings                                             #
+################################################################################
 
 log_file = '{{ log_dir }}/main.log'
 use_syslog = false
 
 ################################################################################
-#         Filter Settings                                                      #
+#       Filter Settings                                                        #
 ################################################################################
 
 {%  if cfg['block_ipv6'] is defined %}
@@ -230,7 +261,7 @@ reject_ttl = {{ cfg['reject_ttl'] }}
 {%     if cfg['forwarding_enabled'] == '1' %}
 
 ################################################################################
-#      Forwarding Rules                                                        #
+#       Forwarding Rules                                                       #
 ################################################################################
 
 forwarding_rules = 'forwarding-rules.txt'
@@ -239,7 +270,7 @@ forwarding_rules = 'forwarding-rules.txt'
 {%  if cfg['cloaking_enabled'] == '1' %}
 
 ################################################################################
-#      Cloaking Rules                                                          #
+#       Cloaking Rules                                                         #
 ################################################################################
 
 {%      if cfg['cloaking_type'] == 'manual' and
@@ -254,7 +285,7 @@ cloak_ttl = {{ cfg['cloak_ttl'] }}
 {%  endif %}
 
 ################################################################################
-#        DNS cache                                                             #
+#       DNS cache                                                              #
 ################################################################################
 
 {%  if cfg['cache'] == '1' %}
@@ -287,7 +318,7 @@ cache = false
 {%  if cfg['captive_portals']['enabled'] == '1' %}
 
 ################################################################################
-#        Captive portal handling                                               #
+#       Captive Portal                                                         #
 ################################################################################
 
 [captive_portals]
@@ -298,7 +329,7 @@ cache = false
 {%  if cfg['local_doh']['enabled'] == '1' %}
 
 ################################################################################
-#        Local DoH server                                                      #
+#       Local DoH server                                                       #
 ################################################################################
 
 [local_doh]
@@ -323,7 +354,7 @@ cache = false
 {%  if cfg['query_log']['enabled'] == '1' %}
 
 ################################################################################
-#        Query logging                                                         #
+#       Query logging                                                          #
 ################################################################################
 
 [query_log]
@@ -332,7 +363,6 @@ cache = false
     dns/dnscrypt-proxy/src/opnsense/mvc/app/controllers/OPNsense/Dnscryptproxy/forms/page_logs.xml #}
   file = '{{ log_dir }}/query.log'
   format = 'tsv'
-
 {%      if cfg['query_log']['ignored_qtypes'] is defined %}
   ignored_qtypes = [{{ "'" + ("','".join(cfg['query_log']['ignored_qtypes'].split(','))) + "'" }}]
 {%      endif %}
@@ -341,7 +371,7 @@ cache = false
 {%  if cfg['nx_logging'] == '1' %}
 
 ################################################################################
-#        Suspicious queries logging                                            #
+#       Suspicious queries logging                                             #
 ################################################################################
 
 [nx_log]
@@ -354,7 +384,7 @@ cache = false
 {%  if cfg['blocked_names_enabled'] == '1' %}
 
 ################################################################################
-#        Pattern-based blocking (blocklists)                                   #
+#       Pattern-based blocking (blocklists)                                    #
 ################################################################################
 
 [blocked_names]
@@ -376,7 +406,7 @@ cache = false
 {%  if cfg['blocked_ips_enabled'] == '1' %}
 
 ################################################################################
-#        Pattern-based IP blocking (IP blocklists)                             #
+#       Pattern-based IP blocking (IP blocklists)                              #
 ################################################################################
 
 [blocked_ips]
@@ -398,7 +428,7 @@ cache = false
 {%  if cfg['allowed_names_enabled'] == '1' %}
 
 ################################################################################
-#   Pattern-based allow lists (blocklists bypass)                             #
+#       Pattern-based allow lists (blocklists bypass)                          #
 ################################################################################
 
 [allowed_names]
@@ -420,7 +450,7 @@ cache = false
 {%  if cfg['allowed_ips_enabled'] == '1' %}
 
 ################################################################################
-#   Pattern-based allowed IPs lists (blocklists bypass)                        #
+#       Pattern-based allowed IPs lists (blocklists bypass)                    #
 ################################################################################
 
 [allowed_ips]
@@ -492,7 +522,7 @@ cache = false
 {%          if schedules_list|length > 0 %}
 
 ################################################################################
-#        Time access restrictions  (aka Schedules)                             #
+#       Time access restrictions  (aka Schedules)                              #
 ################################################################################
 
 [schedules]
@@ -521,7 +551,7 @@ cache = false
 {%          if sources_list|length > 0 %}
 
 ################################################################################
-#        Sources                                                               #
+#       Sources                                                                #
 ################################################################################
 
 [sources]
@@ -533,7 +563,7 @@ cache = false
 {%  if cfg['broken_implementations']['fragments_blocked'] is defined %}
 
 ################################################################################
-#        Servers with known bugs                                               #
+#       Servers with known bugs                                                #
 ################################################################################
 
 [broken_implementations]
@@ -566,7 +596,7 @@ cache = false
 {%          if creds_list|length > 0 %} {# Only populate this option if we have at least 1 item to list #}
 
 ################################################################################
-#        Certificate-based client authentication for DoH                       #
+#       Certificate-based client authentication for DoH                        #
 ################################################################################
 
 [doh_client_x509_auth]
@@ -607,7 +637,7 @@ cache = false
 {%          if route_list|length > 0 %} {# Only include this if there is at least 1 route to show. #}
 
 ################################################################################
-#        Anonymized DNS                                                        #
+#       Anonymized DNS                                                         #
 ################################################################################
 
 [anonymized_dns]
@@ -631,7 +661,7 @@ routes = [
 {%  if cfg['dns64']['enabled'] == '1' %}
 
 ################################################################################
-#            DNS64                                                             #
+#       DNS64                                                                  #
 ################################################################################
 
 [dns64]
@@ -666,7 +696,7 @@ routes = [
 {%          if static_list|length > 1 %} {# Only display this section if we have at least one server (2 lines). #}
 
 ################################################################################
-#            Static entries                                                    #
+#       Static entries                                                         #
 ################################################################################
 
 [static]
