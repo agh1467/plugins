@@ -19,13 +19,13 @@
             <field>
                 <id>settings.listen_addresses</id>
                 <label>Listen Addresses</label>
+                <hint>127.0.0.1:5353, [::1]:5353</hint>
                 <help><![CDATA[
                     <b>listen_addresses</b> (comma delimited list)</br>
                     Set the IP address and port combinations this service should
                     listen on, e.g 127.0.0.1:5353 and/or [::1]:5353
                     ]]>
                 </help>
-                <type>select_multiple</type>
                 <style>tokenize</style>
                 <allownew>true</allownew>
             </field>
@@ -40,6 +40,7 @@
             </field>
             <field>
                 <id>settings.max_clients</id>
+                <hint>250</hint>
                 <help><![CDATA[
                     <b>max_clients</b><br>
                     Set the maximum number of simultaneous client connections to
@@ -93,7 +94,7 @@
             </field>
             <field>
                 <id>settings.doh_servers</id>
-                <label>Use DNS-over-HTTPS Servers</label>
+                <label>Use DNS-over-HTTPS (DoH) Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
                     <b>doh_servers</b><br>
@@ -204,9 +205,6 @@
                 </help>
             </field>
             <field>
-                <type>separator</type>
-            </field>
-            <field>
                 <id>settings.disabled_server_names</id>
                 <label>Disabled Server Names</label>
                 <type>select_multiple</type>
@@ -235,6 +233,308 @@
                     entries.</b><br>
                     Example valid input:<br>
                     cloudflare-family,cloudflare-ipv6,plan9-ns1,plan9-ns2
+                    ]]>
+                </help>
+            </field>
+            <apply>true</apply>
+        </subtab>
+        <subtab id="advanced_settings" description="Advanced Settings">
+            <model>settings</model>
+            <field>
+                <id>settings.force_tcp</id>
+                <label>Force TCP</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>force_tcp</b><br>
+                    Always use TCP to connect to upstream servers. This can be
+                    can be useful if you need to route everything through Tor,
+                    otherwise keep it disabled.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.proxy</id>
+                <label>Proxy</label>
+                <type>text</type>
+                <hint>socks5://127.0.0.1:9050</hint>
+                <help><![CDATA[
+                    <b>proxy</b><br>
+                    Use this to route all TCP connections to a local Tor node,
+                    format has to be like: socks5://127.0.0.1:9050
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.http_proxy</id>
+                <label>HTTP Proxy</label>
+                <type>text</type>
+                <hint>http://127.0.0.1:8888</hint>
+                <help><![CDATA[
+                    <b>http_proxy</b><br>
+                    HTTP/HTTPS proxy for DoH servers,
+                    format has to be like: http://127.0.0.1:8888
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.timeout</id>
+                <label>Timeout</label>
+                <type>text</type>
+                <hint>5000</hint>
+                <help><![CDATA[
+                    <b>timeout</b><br>
+                    How long a DNS query will wait for a response in
+                    milliseconds. If you have a network with *a lot* of
+                    latency, you may need to increase this. Startup may be
+                    slower if you do so. Don't increase it too much. 10000 is
+                    the highest reasonable value.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.keepalive</id>
+                <label>Keepalive</label>
+                <type>text</type>
+                <hint>30</hint>
+                <help><![CDATA[
+                    <b>keepalive</b><br>
+                    Keepalive for HTTP (HTTPS, HTTP/2) queries in seconds.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.edns_client_subnet</id>
+                <label>EDNS Client Subnet</label>
+                <help><![CDATA[
+                    <b>edns_client_subnet</b><br>
+                    Add EDNS-client-subnet information to outgoing queries<br>
+                    <br>
+                    Multiple networks can be listed; they will be randomly
+                    chosen.<br>
+                    These networks don't have to match your actual networks.
+                    ]]>
+                </help>
+                <type>select_multiple</type>
+                <style>tokenize</style>
+                <hint>0.0.0.0/0, 2001:db8::/32</hint>
+                <allownew>true</allownew>
+            </field>
+            <field>
+                <id>settings.blocked_query_response</id>
+                <label>Blocked Query Response</label>
+                <type>text</type>
+                <hint>hinfo</hint>
+                <help><![CDATA[
+                    <b>blocked_query_response</b><br>
+                    Response from dnscrypt-proxy for blocked queries. Options
+                    are 'refused', 'hinfo' (default) or an IP response.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.lb_strategy</id>
+                <label>Load Balancing Strategy</label>
+                <type>text</type>
+                <hint>p2</hint>
+                <help><![CDATA[
+                    <b>lb_strategy</b><br>
+                    Load-balancing strategy: 'p2' (default), 'ph', 'first' or
+                    'random.'
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.lb_estimator</id>
+                <label>Load Balance Estimator</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>lb_estimator</b><br>
+                    Continuously estimate the latency of all the resolvers and
+                    adjust the load-balancing parameters accordingly.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <label>Logging</label>
+                <type>header</type>
+                <help><![CDATA[
+                    These options control aspects of the logging functionality.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.log_level</id>
+                <label>Log Level</label>
+                <type>dropdown</type>
+                <help><![CDATA[
+                    <b>log_level</b><br>
+                    Set the level of logging in the main log file, from more
+                    verbose to least verbose.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.log_file_latest</id>
+                <label>Only keep latest logs</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>log_file_latest</b><br>
+                    When using a log file, only keep logs from the most recent
+                    launch.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.log_files_max_size</id>
+                <label>Log File Maximum Size</label>
+                <type>text</type>
+                <hint>10</hint>
+                <help><![CDATA[
+                    <b>log_files_max_size</b><br>
+                    Maximum log files size in MB - Set to 0 for unlimited.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.log_files_max_age</id>
+                <label>Log File Maximum Age</label>
+                <type>text</type>
+                <hint>7</hint>
+                <help><![CDATA[
+                    <b>log_files_max_age</b><br>
+                    How long to keep backup files, in days. Set to 0 for
+                    forever.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.log_files_max_backups</id>
+                <label>Log File Maximum Backups</label>
+                <type>text</type>
+                <hint>1</hint>
+                <help><![CDATA[
+                    <b>log_files_max_backups</b><br>
+                    Maximum log files backups to keep (or 0 to keep all
+                    backups).
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.query_log.enabled</id>
+                <label>Enable Query Logging</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>[query_log].file</b><br>
+                    Enable logging of queries.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.query_log.ignored_qtypes</id>
+                <label>Ignored Query Types</label>
+                <type>select_multiple</type>
+                <style>tokenize</style>
+                <allownew>true</allownew>
+                <hint>DNSKEY, NS</hint>
+                <help><![CDATA[
+                    <b>[query_log].ignored_qtypes</b><br>
+                    Do not log these query types, to reduce verbosity. Keep
+                    empty to log everything.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.nx_log.enabled</id>
+                <label>Enable NX (Non-Existant) Query Logging</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>[nx_log].file</b><br>
+                    Enable logging of NX queries.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <label>Certificate and Key Settings</label>
+                <type>header</type>
+                <help><![CDATA[
+                    These settings pertain to certificate, and key handling.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.cert_refresh_delay</id>
+                <label>Cert Refresh Delay</label>
+                <type>text</type>
+                <hint>240</hint>
+                <help><![CDATA[
+                    <b>cert_refresh_delay</b><br>
+                    Delay in minutes after which certificates are reloaded.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.dnscrypt_ephemeral_keys</id>
+                <label>Ephemeral Keys</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>dnscrypt_ephemeral_keys</b><br>
+                    Create a new, unique key for every single DNS query. This
+                    may improve privacy but can also have a significant impact
+                    on CPU usage.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <label>TLS Settings</label>
+                <type>header</type>
+                <help><![CDATA[
+                    These settings pertain to TLS.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.tls_disable_session_tickets</id>
+                <label>TLS Disable Session Tickets</label>
+                <type>checkbox</type>
+                <help><![CDATA[
+                    <b>tls_disable_session_tickets</b><br>
+                    Disable TLS session tickets - increases privacy but also
+                    latency.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <id>settings.tls_cipher_suite</id>
+                <label>DoH TLS Cipher Suite</label>
+                <type>select_multiple</type>
+                <style>selectpicker</style>
+                <allownew>false</allownew>
+                <help><![CDATA[
+                    <b>tls_cipher_suite</b><br>
+                    Use a specific cipher suite instead of the server
+                    preference.<br>
+                    <br>
+                    On non-Intel CPUs such as MIPS routers and ARM systems
+                    (Android, Raspberry Pi...), these suites may improve
+                    performance:<pre>
+
+                    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305<br>
+                    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256<br></pre>
+
+                    This may also help on Intel CPUs running 32-bit operating
+                    systems.<br>
+                    <br>
+                    Keep <b>tls_cipher_suite</b> empty if you have issues
+                    fetching sources or<br>connecting to some DoH servers.
+                    Google and Cloudflare are fine with it.
+                    ]]>
+                </help>
+            </field>
+            <field>
+                <label>Bootstrap Resolver</label>
+                <type>header</type>
+                <help><![CDATA[
+                    These are settings related to the bootstrap resolvers.
                     ]]>
                 </help>
             </field>
@@ -294,9 +594,18 @@
                 </help>
             </field>
             <field>
+                <label>Net Probe Settings</label>
+                <type>header</type>
+                <help><![CDATA[
+                    These are settings related to net probe configuration.
+                    ]]>
+                </help>
+            </field>
+            <field>
                 <id>settings.netprobe_timeout</id>
                 <label>Net Probe Timeout</label>
                 <type>text</type>
+                <hint>60</hint>
                 <help><![CDATA[
                     <b>netprobe_timeout</b><br>
                     ]]>
@@ -306,186 +615,16 @@
                 <id>settings.netprobe_address</id>
                 <label>Net Probe Address</label>
                 <type>text</type>
+                <hint>9.9.9.9:53</hint>
                 <help><![CDATA[
                     <b>netprobe_address</b><br>
                     ]]>
                 </help>
             </field>
-            <apply>true</apply>
-        </subtab>
-        <subtab id="advanced_settings" description="Advanced Settings">
-            <model>settings</model>
             <field>
-                <id>settings.force_tcp</id>
-                <label>Force TCP</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>force_tcp</b><br>
-                    Always use TCP to connect to upstream servers. This can be
-                    can be useful if you need to route everything through Tor,
-                    otherwise keep it disabled.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.proxy</id>
-                <label>Proxy</label>
-                <type>text</type>
-                <hint>socks5://127.0.0.1:9050</hint>
-                <help><![CDATA[
-                    <b>proxy</b><br>
-                    Use this to route all TCP connections to a local Tor node,
-                    format has to be like: socks5://127.0.0.1:9050
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.http_proxy</id>
-                <label>HTTP Proxy</label>
-                <type>text</type>
-                <hint>http://127.0.0.1:8888</hint>
-                <help><![CDATA[
-                    <b>http_proxy</b><br>
-                    HTTP/HTTPS proxy for DoH servers,
-                    format has to be like: http://127.0.0.1:8888
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.timeout</id>
-                <label>Timeout</label>
-                <type>text</type>
-                <hint>2500</hint>
-                <help><![CDATA[
-                    <b>timeout</b><br>
-                    How long a DNS query will wait for a response in
-                    milliseconds.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.keepalive</id>
-                <label>Keepalive</label>
-                <type>text</type>
-                <hint>30</hint>
-                <help><![CDATA[
-                    <b>keepalive</b><br>
-                    Keepalive for HTTP (HTTPS, HTTP/2) queries in seconds.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.edns_client_subnet</id>
-                <label>EDNS Client Subnet</label>
-                <help><![CDATA[
-                    <b>edns_client_subnet</b><br>
-                    Add EDNS-client-subnet information to outgoing queries<br>
-                    <br>
-                    Multiple networks can be listed; they will be randomly
-                    chosen.<br>
-                    These networks don't have to match your actual networks.
-                    ]]>
-                </help>
-                <type>select_multiple</type>
-                <style>tokenize</style>
-                <hint>0.0.0.0/0, 2001:db8::/32</hint>
-                <allownew>true</allownew>
-            </field>
-            <field>
-                <id>settings.blocked_query_response</id>
-                <label>Blocked Query Response</label>
-                <type>text</type>
-                <hint>refused</hint>
-                <help><![CDATA[
-                    <b>blocked_query_response</b><br>
-                    Response from dnscrypt-proxy for blocked queries. Options
-                    are 'refused', 'hinfo' (default) or an IP response.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.lb_strategy</id>
-                <label>Load Balancing Strategy</label>
-                <type>text</type>
-                <hint>p2</hint>
-                <help><![CDATA[
-                    <b>lb_strategy</b><br>
-                    Load-balancing strategy: 'p2' (default), 'ph', 'first' or
-                    'random.'
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.lb_estimator</id>
-                <label>Load Balance Estimator</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>lb_estimator</b><br>
-                    Continuously estimate the latency of all the resolvers and
-                    adjust the load-balancing parameters accordingly.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.cert_refresh_delay</id>
-                <label>Cert Refresh Delay</label>
-                <type>text</type>
-                <hint>240</hint>
-                <help><![CDATA[
-                    <b>cert_refresh_delay</b><br>
-                    Delay in minutes after which certificates are reloaded.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.dnscrypt_ephemeral_keys</id>
-                <label>Ephemeral Keys</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>dnscrypt_ephemeral_keys</b><br>
-                    Create a new, unique key for every single DNS query. This
-                    may improve privacy but can also have a significant impact
-                    on CPU usage.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.tls_disable_session_tickets</id>
-                <label>TLS Disable Session Tickets</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>tls_disable_session_tickets</b><br>
-                    Disable TLS session tickets - increases privacy but also
-                    latency.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.tls_cipher_suite</id>
-                <label>DoH TLS Cipher Suite</label>
-                <type>select_multiple</type>
-                <style>selectpicker</style>
-                <allownew>false</allownew>
-                <help><![CDATA[
-                    <b>tls_cipher_suite</b><br>
-                    Use a specific cipher suite instead of the server
-                    preference.<br>
-                    <br>
-                    On non-Intel CPUs such as MIPS routers and ARM systems
-                    (Android, Raspberry Pi...), these suites may improve
-                    performance:<pre>
-
-                    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305<br>
-                    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256<br></pre>
-
-                    This may also help on Intel CPUs running 32-bit operating
-                    systems.<br>
-                    <br>
-                    Keep <b>tls_cipher_suite</b> empty if you have issues
-                    fetching sources or<br>connecting to some DoH servers.
-                    Google and Cloudflare are fine with it.
-                    ]]>
-                </help>
+                <label>Other Advanced Settings</label>
+                <type>header</type>
+                <help>These settings didn't fit into any other groups.</help>
             </field>
             <field>
                 <id>settings.offline_mode</id>
@@ -516,104 +655,6 @@
                     access control in the [access_control] section<br>
                     <br>
                     Syntax: "key1:value1", "key2:value2", "token:MySecretToken"
-                    ]]>
-                </help>
-            </field>
-
-            <field>
-                <label>Logging</label>
-                <type>header</type>
-                <help><![CDATA[
-                    These options control aspects of the logging functionality.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.log_level</id>
-                <label>Log Level</label>
-                <type>dropdown</type>
-                <help><![CDATA[
-                    <b>log_level</b><br>
-                    Log level (0-6, default: 2 - 0 is very verbose, 6 only
-                    contains fatal errors)
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.log_file_latest</id>
-                <label>Only keep latest logs</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>log_file_latest</b><br>
-                    When using a log file, only keep logs from the most recent
-                    launch.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.log_files_max_size</id>
-                <label>Log File Maximum Size</label>
-                <type>text</type>
-                <hint>10</hint>
-                <help><![CDATA[
-                    <b>log_files_max_size</b><br>
-                    Maximum log files size in MB - Set to 0 for unlimited.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.log_files_max_age</id>
-                <label>Log File Maximum Age</label>
-                <type>text</type>
-                <hint>7</hint>
-                <help><![CDATA[
-                    <b>log_files_max_age</b><br>
-                    How long to keep backup files, in days.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.log_files_max_backups</id>
-                <label>Log File Maximum Backups</label>
-                <type>text</type>
-                <hint>1</hint>
-                <help><![CDATA[
-                    <b>log_files_max_backups</b><br>
-                    Maximum log files backups to keep (or 0 to keep all backups).
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.query_log.enabled</id>
-                <label>Enable Query Logging</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>[query_log].file</b><br>
-                    Enable logging of queries.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.query_log.ignored_qtypes</id>
-                <label>Ignored Query Types</label>
-                <type>select_multiple</type>
-                <style>tokenize</style>
-                <allownew>true</allownew>
-                <hint>DNSKEY, NS</hint>
-                <help><![CDATA[
-                    <b>[query_log].ignored_qtypes</b><br>
-                    Do not log these query types, to reduce verbosity. Keep
-                    empty to log everything.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <id>settings.nx_log.enabled</id>
-                <label>Enable NX (Non-Existant) Query Logging</label>
-                <type>checkbox</type>
-                <help><![CDATA[
-                    <b>[nx_log].file</b><br>
-                    Enable logging of NX queries.
                     ]]>
                 </help>
             </field>
@@ -669,6 +710,7 @@
                 <id>settings.reject_ttl</id>
                 <label>Reject TTL</label>
                 <type>text</type>
+                <hint>10</hint>
                 <help><![CDATA[
                     <b>reject_ttl</b><br>
                     TTL for synthetic responses sent when a request has been
@@ -698,6 +740,7 @@
                 <id>settings.cache_size</id>
                 <label>Cache Size</label>
                 <type>text</type>
+                <hint>4096</hint>
                 <help><![CDATA[
                     <b>cache_size</b><br>
                     Set the cache size.
@@ -708,6 +751,7 @@
                 <id>settings.cache_min_ttl</id>
                 <label>Cache Min TTL</label>
                 <type>text</type>
+                <hint>2400</hint>
                 <help><![CDATA[
                     <b>cache_min_ttl</b><br>
                     Minimum TTL for cached entries.
@@ -718,6 +762,7 @@
                 <id>settings.cache_max_ttl</id>
                 <label>Cache Max TTL</label>
                 <type>text</type>
+                <hint>86400</hint>
                 <help><![CDATA[
                     <b>cache_max_ttl</b><br>
                     Maximum TTL for cached entries.
@@ -728,6 +773,7 @@
                 <id>settings.cache_neg_min_ttl</id>
                 <label>Cache Negative Min TTL</label>
                 <type>text</type>
+                <hint>60</hint>
                 <help><![CDATA[
                     <b>cache_neg_min_ttl</b><br>
                     Minimum TTL for negatively cached entries.
@@ -738,6 +784,7 @@
                 <id>settings.cache_neg_max_ttl</id>
                 <label>Cache Negative Max TTL</label>
                 <type>text</type>
+                <hint>600</hint>
                 <help><![CDATA[
                     <b>cache_neg_max_ttl</b><br>
                     Maximum TTL for negatively cached entries.
@@ -1440,6 +1487,7 @@
             <apply>true</apply>
         </subtab>
         <subtab id="schedules" description="Schedules">
+            <model>settings</model>
             <field>
                 <target>schedules.schedule</target>
                 <label>Schedules</label>
@@ -1657,10 +1705,8 @@
                 <field_control>
                     <field checked="manual" state="enabled">settings.cloaking_file_manual</field>
                     <field checked="internal" state="enabled">cloaking_internal_cloak</field>
-                    <field checked="manual" state="disabled">settings.cloaking_file_external</field>
                     <field checked="manual" state="disabled">cloaking_internal_cloak</field>
                     <field checked="internal" state="disabled">settings.cloaking_file_manual</field>
-                    <field checked="internal" state="disabled">settings.cloaking_file_external</field>
                 </field_control>
             </field>
             <field>
@@ -1682,6 +1728,7 @@
                 <id>settings.cloak_ttl</id>
                 <label>Cloak TTL</label>
                 <type>text</type>
+                <hint>600</hint>
                 <help><![CDATA[
                     <b>cloak_ttl</b><br>
                     TTL (time to live) used when serving entries out to clients.
