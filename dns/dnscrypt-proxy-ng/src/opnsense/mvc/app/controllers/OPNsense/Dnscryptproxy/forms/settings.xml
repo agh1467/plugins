@@ -331,11 +331,11 @@
                 <id>settings.proxy</id>
                 <label>Proxy</label>
                 <type>text</type>
-                <hint>127.0.0.1:9050</hint>
+                <hint>socks5://127.0.0.1:9050</hint>
                 <help><![CDATA[
                     <b>proxy</b><br>
                     Use this to route all TCP connections to a local Tor node,
-                    format has to be like 127.0.0.1:9050
+                    format has to be like: socks5://127.0.0.1:9050
                     ]]>
                 </help>
             </field>
@@ -346,7 +346,8 @@
                 <hint>http://127.0.0.1:8888</hint>
                 <help><![CDATA[
                     <b>http_proxy</b><br>
-                    Only for DoH servers
+                    HTTP/HTTPS proxy for DoH servers,
+                    format has to be like: http://127.0.0.1:8888
                     ]]>
                 </help>
             </field>
