@@ -3,14 +3,16 @@
     <version>2.0.45.1</version>
     <items>
         <first_time_setup type="BooleanField">
+            <required>Y</required>
+            <default>0</default>
         </first_time_setup>
         <enabled type="BooleanField">
-            <default>0</default>
             <required>Y</required>
+            <default>0</default>
         </enabled>
         <server_selection_method type="BooleanField">
-            <default>0</default> <!-- 0 = Automatic, 1 = Manual -->
             <required>Y</required>
+            <default>0</default> <!-- 0 = Automatic, 1 = Manual -->
             <ValidationMessage>A server selection method must be selected.</ValidationMessage>
         </server_selection_method>
         <server_names type="JsonKeyValueStoreField">
@@ -21,54 +23,55 @@
             <Multiple>Y</Multiple>
         </server_names>
         <listen_addresses type="CSVListField">
-            <default>127.0.0.1:5353,[::1]:5353</default>
             <required>Y</required>
+            <default>127.0.0.1:5353,[::1]:5353</default>
             <Multiple>Y</Multiple>
         </listen_addresses>
         <allowprivileged type="BooleanField">
-            <default>0</default>
             <required>Y</required>
+            <default>0</default>
         </allowprivileged>
         <max_clients type="IntegerField">
-            <default>250</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <required>N</required>
+            <!-- <default>250</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </max_clients>
         <ipv4_servers type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </ipv4_servers>
         <ipv6_servers type="BooleanField">
+            <required>N</required>
             <default>0</default>
-            <required>Y</required>
         </ipv6_servers>
         <dnscrypt_servers type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </dnscrypt_servers>
         <doh_servers type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </doh_servers>
         <odoh_servers type="BooleanField">
             <required>N</required>
             <default>0</default>
         </odoh_servers>
         <require_dnssec type="BooleanField">
+            <required>N</required>
             <default>0</default>
-            <required>Y</required>
         </require_dnssec>
         <require_nolog type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </require_nolog>
         <require_nofilter type="BooleanField">
-            <default>0</default>
-            <required>Y</required>
+            <required>N</required>
+            <default>1</default>
         </require_nofilter>
         <disabled_server_names type="JsonKeyValueStoreField">
+            <required>N</required>
             <ConfigdPopulateAct>dnscryptproxy get-resolvers names</ConfigdPopulateAct>
             <SourceFile>/tmp/dnscrypt-proxy_resolvers_names.json</SourceFile>
             <ConfigdPopulateTTL>0</ConfigdPopulateTTL>
@@ -76,86 +79,97 @@
             <Multiple>Y</Multiple>
         </disabled_server_names>
         <disabled_server_names_extra type="CSVListField">
-            <Required>n</Required>
-            <Multiple>Y</Multiple>
+            <required>N</required>
+            <multiple>Y</multiple>
         </disabled_server_names_extra>
         <force_tcp type="BooleanField">
+            <required>N</required>
             <default>0</default>
-            <required>Y</required>
         </force_tcp>
         <proxy type="TextField">
+            <required>N</required>
         </proxy>
         <http_proxy type="TextField">
+            <required>N</required>
         </http_proxy>
         <timeout type="IntegerField">
+            <required>N</required>
             <default>5000</default>
-            <required>Y</required>
-            <MinimumValue>100</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a value between 100 and 10000.</ValidationMessage>
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a value between 0 and 2147483647.</ValidationMessage>
         </timeout>
         <keepalive type="IntegerField">
+            <required>N</required>
             <default>30</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>600</MaximumValue>
-            <ValidationMessage>Choose a value between 1 and 600.</ValidationMessage>
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a value between 0 and 2147483647.</ValidationMessage>
         </keepalive>
-        <dns_client_subnet type="CSVListField">
-        </dns_client_subnet>
+        <edns_client_subnet type="CSVListField">
+            <required>N</required>
+        </edns_client_subnet>
         <blocked_query_response type="TextField">
+            <required>N</required>
         </blocked_query_response>
         <lb_strategy type="TextField">
+            <required>N</required>
         </lb_strategy>
         <lb_estimator type="BooleanField">
+            <required>N</required>
+            <default>1</default>
         </lb_estimator>
         <log_level type="OptionField">
-            <default>2</default>
             <required>Y</required>
+            <default>2</default>
             <Multiple>N</Multiple>
-            <MinimumValue>0</MinimumValue>
-            <MaximumValue>6</MaximumValue>
             <OptionValues>
-                <option value="0">Debug (Very verbose)</option>
-                <option value="1">Info</option>
+                <option value="1">Info (More verbose)</option>
                 <option value="2">Notice (Default)</option>
                 <option value="3">Warning</option>
                 <option value="4">Error</option>
                 <option value="5">Critcal</option>
-                <option value="6">Fatal (Least verbose)</option>
+                <option value="6">Fatal (Least verbose, only contains fatal errors)</option>
             </OptionValues>
-            <ValidationMessage>Only integers 0 to 6 are valid.</ValidationMessage>
+            <ValidationMessage>Only integers 1 to 6 are valid.</ValidationMessage>
+            <!-- <BlankDesc>Nothing selected</BlankDesc> -->
         </log_level>
         <log_file_latest type="BooleanField">
+            <required>N</required>
             <default>1</default>
         </log_file_latest>
         <query_log>
             <enabled type="BooleanField">
+                <required>N</required>
                 <default>0</default>
             </enabled>
             <ignored_qtypes type="CSVListField">
+                <required>N</required>
             </ignored_qtypes>
         </query_log>
         <nx_log>
             <enabled type="BooleanField">
+                <required>N</required>
                 <default>0</default>
             </enabled>
         </nx_log>
         <cert_refresh_delay type="IntegerField">
-            <default>240</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>3600</MaximumValue>
-            <ValidationMessage>Only integers 1 to 3600 are valid.</ValidationMessage>
+            <required>N</required>
+            <!-- <default>240</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Only integers 0 to 2147483647 are valid.</ValidationMessage>
         </cert_refresh_delay>
         <dnscrypt_ephemeral_keys type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </dnscrypt_ephemeral_keys>
         <tls_disable_session_tickets type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </tls_disable_session_tickets>
         <tls_cipher_suite type="OptionField">
-            <default></default>
+            <required>N</required>
             <OptionValues>
                 <option value="49199">TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</option>
                 <option value="49195">TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</option>
@@ -167,140 +181,154 @@
             <Multiple>Y</Multiple><!-- Multiple must be included here or  "none" will appear as a selectable option even when "select_multiple" is configured in the controller xml. -->
         </tls_cipher_suite>
         <bootstrap_resolvers type="CSVListField">
-            <default>9.9.9.9:53,8.8.8.8:53</default>
-            <required>Y</required>
+            <required>N</required>
+            <!-- <default>9.9.9.9:53,8.8.8.8:53</default> -->
             <Multiple>Y</Multiple>
         </bootstrap_resolvers>
         <ignore_system_dns type="BooleanField">
+            <required>N</required>
             <default>1</default>
         </ignore_system_dns>
         <netprobe_timeout type="IntegerField">
-            <default>60</default>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <required>N</required>
+            <!-- <default>60</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 2147483647.</ValidationMessage>
         </netprobe_timeout>
         <netprobe_address type="TextField">
-            <default>9.9.9.9:53</default>
-            <required>Y</required>
+            <required>N</required>
+            <!-- <default>9.9.9.9:53</default> -->
         </netprobe_address>
         <offline_mode type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </offline_mode>
         <query_meta type="CSVListField">
+            <required>N</required>
             <Multiple>Y</Multiple>
         </query_meta>
         <log_files_max_size type="IntegerField">
-            <default>10</default>
+            <required>N</required>
+            <!-- <default>10</default> -->
             <MinimumValue>0</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 2147483647.</ValidationMessage>
         </log_files_max_size>
         <log_files_max_age type="IntegerField">
-            <default>7</default>
+            <required>N</required>
+            <!-- <default>7</default> -->
             <MinimumValue>0</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 2147483647.</ValidationMessage>
         </log_files_max_age>
         <log_files_max_backups type="IntegerField">
-            <default>1</default>
+            <required>N</required>
+            <!-- <default>1</default> -->
             <MinimumValue>0</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 2147483647.</ValidationMessage>
         </log_files_max_backups>
         <block_ipv6 type="BooleanField">
+            <required>N</required>
             <default>0</default>
-            <required>Y</required>
         </block_ipv6>
         <block_unqualified type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </block_unqualified>
         <block_undelegated type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </block_undelegated>
         <reject_ttl type="IntegerField">
-            <default>600</default>
+            <required>N</required>
+            <default>10</default>
             <MinimumValue>0</MinimumValue>
-            <MaximumValue>10000</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </reject_ttl>
         <cache type="BooleanField">
+            <required>N</required>
             <default>1</default>
-            <required>Y</required>
         </cache>
         <cache_size type="IntegerField">
-            <default>512</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>20480</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 20480.</ValidationMessage>
+            <required>N</required>
+            <default>4096</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>2147483647</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 2147483647.</ValidationMessage>
         </cache_size>
         <cache_min_ttl type="IntegerField">
-            <default>600</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>3600</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 3600.</ValidationMessage>
+            <required>N</required>
+            <default>2400</default>
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </cache_min_ttl>
         <cache_max_ttl type="IntegerField">
-            <default>86400</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>86400</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 86400.</ValidationMessage>
+            <required>N</required>
+            <!-- <default>86400</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </cache_max_ttl>
         <cache_neg_min_ttl type="IntegerField">
-            <default>60</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>3600</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 3600.</ValidationMessage>
+            <required>N</required>
+            <!-- <default>60</default> -->
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </cache_neg_min_ttl>
         <cache_neg_max_ttl type="IntegerField">
-            <default>600</default>
-            <required>Y</required>
-            <MinimumValue>1</MinimumValue>
-            <MaximumValue>86400</MaximumValue>
-            <ValidationMessage>Choose a number between 1 and 86400.</ValidationMessage>
+            <!-- <default>600</default> -->
+            <required>N</required>
+            <MinimumValue>0</MinimumValue>
+            <MaximumValue>4294967295</MaximumValue>
+            <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </cache_neg_max_ttl>
         <captive_portals>
             <enabled type="BooleanField">
+                <required>Y</required>
                 <default>0</default>
             </enabled>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
+                    <required>Y</required>
                     <default>1</default>
-                    <required>y</required>
                 </enabled>
                 <domain_name type="HostnameField">
-                    <required>y</required>
+                    <required>Y</required>
                 </domain_name>
                 <ips type="CSVListField">
-                    <required>y</required>
+                    <required>Y</required>
                 </ips>
             </entries>
         </captive_portals>
         <local_doh>
             <enabled type="BooleanField">
+                <required>Y</required>
                 <default>0</default>
             </enabled>
             <listen_addresses type="CSVListField">
+                <required>N</required>
                 <Multiple>Y</Multiple>
             </listen_addresses>
             <path type="TextField">
+                <required>N</required>
             </path>
             <cert type="TextField">
+                <required>N</required>
             </cert>
             <cert_key type="TextField">
+                <required>N</required>
             </cert_key>
         </local_doh>
         <sources>
             <source type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <name type="TextField">
                     <required>Y</required>
@@ -315,16 +343,18 @@
                     <required>Y</required>
                 </minisign_key>
                 <refresh_delay type="IntegerField">
+                    <required>N</required>
                 </refresh_delay>
                 <prefix type="TextField">
+                    <required>N</required>
                 </prefix>
             </source>
         </sources>
         <resolvers>
             <resolver type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <name type="TextField">
                     <required>Y</required>
@@ -338,30 +368,35 @@
             </resolver>
         </resolvers>
         <blocked_names_enabled type="BooleanField">
+            <required>Y</required>
             <default>0</default>
         </blocked_names_enabled>
         <blocked_names_type type="TextField">
-            <default>internal</default>
             <required>Y</required>
+            <default>internal</default>
         </blocked_names_type>
         <blocked_names_file_external type="TextField">
+            <required>N</required>
         </blocked_names_file_external>
         <blocked_names_file_manual type="TextField">
+            <required>N</required>
             <default></default>
         </blocked_names_file_manual>
         <blocked_names_logging type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </blocked_names_logging>
         <blocked_names_internal>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
                 </expression>
                 <schedule type="ModelRelationField">
+                    <required>N</required>
                     <Model>
                         <container> <!-- this element name is arbitrary, name is not important -->
                             <!-- ============================================================
@@ -381,60 +416,70 @@
                     <ValidationMessage>Please select a schedule.</ValidationMessage>
                 </schedule>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </entries>
         </blocked_names_internal>
         <blocked_ips_enabled type="BooleanField">
+            <required>Y</required>
             <default>0</default>
         </blocked_ips_enabled>
         <blocked_ips_type type="TextField">
-            <default>internal</default>
             <required>Y</required>
+            <default>internal</default>
         </blocked_ips_type>
         <blocked_ips_file_external type="TextField">
+            <required>N</required>
         </blocked_ips_file_external>
         <blocked_ips_file_manual type="TextField">
+            <required>N</required>
             <default></default>
         </blocked_ips_file_manual>
         <blocked_ips_logging type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </blocked_ips_logging>
         <blocked_ips_internal>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
                 </expression>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </entries>
         </blocked_ips_internal>
         <allowed_names_enabled type="BooleanField">
+            <required>Y</required>
             <default>0</default>
         </allowed_names_enabled>
         <allowed_names_type type="TextField">
-            <default>internal</default>
             <required>Y</required>
+            <default>internal</default>
         </allowed_names_type>
         <allowed_names_file_manual type="TextField">
+            <required>N</required>
             <default></default>
         </allowed_names_file_manual>
         <allowed_names_logging type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </allowed_names_logging>
         <allowed_names_internal>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
                 </expression>
                 <schedule type="ModelRelationField">
+                    <required>N</required>
                     <model>
                         <container> <!-- this element name is arbitrary, name is not important -->
                             <!-- ============================================================
@@ -455,57 +500,64 @@
                     <ValidationMessage>Please select a schedule.</ValidationMessage>
                 </schedule>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </entries>
         </allowed_names_internal>
         <allowed_ips_enabled type="BooleanField">
+            <required>Y</required>
             <default>0</default>
         </allowed_ips_enabled>
         <allowed_ips_type type="TextField">
-            <default>internal</default>
             <required>Y</required>
+            <default>internal</default>
         </allowed_ips_type>
         <allowed_ips_file_manual type="TextField">
+            <required>N</required>
             <default></default>
         </allowed_ips_file_manual>
         <allowed_ips_logging type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </allowed_ips_logging>
         <allowed_ips_internal>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
                 </expression>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </entries>
         </allowed_ips_internal>
         <cloaking_enabled type="BooleanField">
+            <required>Y</required>
             <default>0</default>
         </cloaking_enabled>
         <cloaking_type type="TextField">
-            <default>internal</default>
             <required>Y</required>
+            <default>internal</default>
         </cloaking_type>
         <cloaking_file_manual type="TextField">
+            <required>N</required>
             <default></default>
         </cloaking_file_manual>
         <cloak_ttl type="IntegerField">
-           <default>600</default>
-           <required>N</required>
+            <required>N</required>
+           <!-- <default>600</default> -->
            <MinimumValue>0</MinimumValue>
-           <MaximumValue>10000</MaximumValue>
-           <ValidationMessage>Choose a number between 1 and 10000.</ValidationMessage>
+           <MaximumValue>4294967295</MaximumValue>
+           <ValidationMessage>Choose a number between 0 and 4294967295.</ValidationMessage>
         </cloak_ttl>
         <cloaking_internal>
             <cloak type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <pattern type="TextField">
                     <required>Y</required>
@@ -514,17 +566,19 @@
                     <required>Y</required>
                 </destination>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </cloak>
         </cloaking_internal>
         <forwarding_enabled type="BooleanField">
+            <required>N</required>
             <default>0</default>
         </forwarding_enabled>
         <forwards>
             <forward type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <domain type="HostnameField">
                     <required>Y</required>
@@ -533,14 +587,15 @@
                     <required>Y</required>
                 </dns_server>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </forward>
         </forwards>
         <static>
             <entries type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <name type="TextField">
                     <required>Y</required>
@@ -549,17 +604,19 @@
                     <required>Y</required>
                 </stamp>
                 <comment type="TextField">
+                    <required>N</required>
                 </comment>
             </entries>
         </static>
         <dns64>
             <enabled type="BooleanField">
+                <required>Y</required>
                 <default>0</default>
             </enabled>
             <prefixes type="ArrayField">
                     <enabled type="BooleanField">
-                        <default>1</default>
                         <required>Y</required>
+                        <default>1</default>
                     </enabled>
                     <prefix type="TextField">
                         <required>Y</required>
@@ -567,8 +624,8 @@
             </prefixes>
             <resolvers type="ArrayField">
                     <enabled type="BooleanField">
-                        <default>1</default>
                         <required>Y</required>
+                        <default>1</default>
                     </enabled>
                     <resolver type="TextField">
                         <required>Y</required>
@@ -578,16 +635,16 @@
         <schedules>
             <schedule type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <name type="TextField">
                     <required>Y</required>
                 </name>
                 <!-- Monday -->
                 <mon_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -617,8 +674,8 @@
                     <BlankDesc>--</BlankDesc>
                 </mon_start_hour>
                 <mon_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -629,8 +686,8 @@
                     <BlankDesc>--</BlankDesc>
                 </mon_start_min>
                 <mon_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -660,8 +717,8 @@
                     <BlankDesc>--</BlankDesc>
                 </mon_stop_hour>
                 <mon_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -673,8 +730,8 @@
                 </mon_stop_min>
                 <!-- Tuesday -->
                 <tue_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -704,8 +761,8 @@
                     <BlankDesc>--</BlankDesc>
                 </tue_start_hour>
                 <tue_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -716,8 +773,8 @@
                     <BlankDesc>--</BlankDesc>
                 </tue_start_min>
                 <tue_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -747,8 +804,8 @@
                     <BlankDesc>--</BlankDesc>
                 </tue_stop_hour>
                 <tue_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -760,8 +817,8 @@
                 </tue_stop_min>
                 <!-- Wednesday -->
                 <wed_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -791,8 +848,8 @@
                     <BlankDesc>--</BlankDesc>
                 </wed_start_hour>
                 <wed_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -803,8 +860,8 @@
                     <BlankDesc>--</BlankDesc>
                 </wed_start_min>
                 <wed_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -834,8 +891,8 @@
                     <BlankDesc>--</BlankDesc>
                 </wed_stop_hour>
                 <wed_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -847,8 +904,8 @@
                 </wed_stop_min>
                 <!-- Thursday -->
                 <thu_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -878,8 +935,8 @@
                     <BlankDesc>--</BlankDesc>
                 </thu_start_hour>
                 <thu_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -890,8 +947,8 @@
                     <BlankDesc>--</BlankDesc>
                 </thu_start_min>
                 <thu_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -921,8 +978,8 @@
                     <BlankDesc>--</BlankDesc>
                 </thu_stop_hour>
                 <thu_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -934,8 +991,8 @@
                 </thu_stop_min>
                 <!-- Friday -->
                 <fri_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -965,8 +1022,8 @@
                     <BlankDesc>--</BlankDesc>
                 </fri_start_hour>
                 <fri_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -977,8 +1034,8 @@
                     <BlankDesc>--</BlankDesc>
                 </fri_start_min>
                 <fri_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -1008,8 +1065,8 @@
                     <BlankDesc>--</BlankDesc>
                 </fri_stop_hour>
                 <fri_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -1021,8 +1078,8 @@
                 </fri_stop_min>
                 <!-- Saturday -->
                 <sat_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -1052,8 +1109,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sat_start_hour>
                 <sat_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -1064,8 +1121,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sat_start_min>
                 <sat_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -1095,8 +1152,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sat_stop_hour>
                 <sat_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -1108,8 +1165,8 @@
                 </sat_stop_min>
                 <!-- Sunday -->
                 <sun_start_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -1139,8 +1196,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sun_start_hour>
                 <sun_start_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -1151,8 +1208,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sun_start_min>
                 <sun_stop_hour type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>23</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 23.</ValidationMessage>
                     <OptionValues>
                         <option value="000">0</option>
                         <option value="001">1</option>
@@ -1182,8 +1239,8 @@
                     <BlankDesc>--</BlankDesc>
                 </sun_stop_hour>
                 <sun_stop_min type="OptionField">
-                    <MinimumValue>0</MinimumValue>
-                    <MaximumValue>59</MaximumValue>
+                    <required>N</required>
+                    <ValidationMessage>Choose a number between 0 and 59.</ValidationMessage>
                     <OptionValues>
                         <option value="000">00</option>
                         <option value="015">15</option>
@@ -1197,6 +1254,7 @@
         </schedules>
         <broken_implementations>
             <fragments_blocked type="JsonKeyValueStoreField">
+                <required>N</required>
                 <ConfigdPopulateAct>dnscryptproxy get-resolvers names</ConfigdPopulateAct>
                 <SourceFile>/tmp/dnscrypt-proxy_resolvers_names.json</SourceFile>
                 <ConfigdPopulateTTL>0</ConfigdPopulateTTL>
@@ -1207,14 +1265,14 @@
         <doh_client_x509_auth>
             <creds type="ArrayField">
                 <enabled type="BooleanField">
-                    <default>1</default>
                     <required>Y</required>
+                    <default>1</default>
                 </enabled>
                 <server_name type="JsonKeyValueStoreField">
+                    <required>Y</required>
                     <ConfigdPopulateAct>dnscryptproxy get-resolvers names</ConfigdPopulateAct>
                     <SourceFile>/tmp/dnscrypt-proxy_resolvers_names.json</SourceFile>
                     <SortByValue>N</SortByValue>
-                    <required>Y</required>
                     <Multiple>N</Multiple>
                 </server_name>
                 <client_cert  type="TextField">
@@ -1224,34 +1282,37 @@
                     <required>Y</required>
                 </client_cert_key>
                 <root_ca type="TextField">
+                    <required>N</required>
                 </root_ca>
             </creds>
         </doh_client_x509_auth>
         <anonymized_dns>
             <skip_incompatible type="BooleanField">
+                <required>N</required>
                 <default>0</default>
             </skip_incompatible>
             <direct_cert_fallback type="BooleanField">
+                <required>N</required>
                 <default>0</default>
             </direct_cert_fallback>
             <routes type="ArrayField">
                     <enabled type="BooleanField">
-                        <default>1</default>
                         <required>Y</required>
+                        <default>1</default>
                     </enabled>
                     <server_name type="JsonKeyValueStoreField">
+                        <required>Y</required>
                         <ConfigdPopulateAct>dnscryptproxy get-resolvers route</ConfigdPopulateAct>
                         <SourceFile>/tmp/dnscrypt-proxy_resolvers_route.json</SourceFile>
                         <SortByValue>N</SortByValue>
-                        <required>Y</required>
                         <Multiple>N</Multiple>
                     </server_name>
                     <via type="JsonKeyValueStoreField">
+                        <required>Y</required>
                         <ConfigdPopulateAct>dnscryptproxy get-relays names</ConfigdPopulateAct>
                         <ConfigdPopulateTTL>30</ConfigdPopulateTTL>
                         <SourceFile>/tmp/dnscrypt-proxy_relays_names.json</SourceFile>
                         <SortByValue>N</SortByValue>
-                        <required>Y</required>
                         <Multiple>Y</Multiple>
                     </via>
             </routes>
