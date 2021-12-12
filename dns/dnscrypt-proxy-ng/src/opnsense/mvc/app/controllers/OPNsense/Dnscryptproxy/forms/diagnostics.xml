@@ -1,15 +1,5 @@
 <form>
-    <tab id="resolve_hostname" description="Resolve Hostname">
-        <field>
-            <id>diag_resolve_hostname</id>
-            <label>Resolve Hostname</label>
-            <type>header</type>
-            <help><![CDATA[
-                Use dnscrypt-proxy's -resolve parameter to resolve a hostname.
-                This will perform forward lookups only.
-                ]]>
-            </help>
-        </field>
+    <box id="diagnostics" description="Diagnostics">
         <field>
             <id>hostname</id>
             <label>Hostname</label>
@@ -18,28 +8,14 @@
             <api>/api/dnscryptproxy/diagnostics/command/resolve</api>
             <button_label>Run</button_label>
             <output>resolve_command</output>
-            <help><![CDATA[
-                Enter a DNS hostname, and click Run button to perform a look
-                up.
-                ]]>
-            </help>
         </field>
         <field>
             <id>resolve_command</id>
             <type>commandoutput</type>
             <text>Command output will appear here.</text>
         </field>
-    </tab>
-    <tab id="show_doh_certs" description="Show DOH Certificates">
-        <field>
-            <id>show_doh_certs</id>
-            <label>Show DoH Certificates</label>
-            <type>header</type>
-            <help><![CDATA[
-                Print DoH certificate chain hashes
-                ]]>
-            </help>
-        </field>
+    </box>
+    <box id="show_doh_certs" description="Show DOH Certificates">
         <field>
             <id>diag_show_certs</id>
             <label>Show DoH Certificates</label>
@@ -47,28 +23,14 @@
             <api>/api/dnscryptproxy/diagnostics/command/show-certs</api>
             <output>show_certs_command</output>
             <button_label>Run</button_label>
-            <help><![CDATA[
-                Press the run button to display DoH certificate chain hashes
-                below.
-                ]]>
-            </help>
         </field>
         <field>
             <id>show_certs_command</id>
             <type>commandoutput</type>
             <text>Command output will apper here. Execution may take more than a minute to complete.</text>
         </field>
-    </tab>
-    <tab id="config_check" description="Configuration Check">
-        <field>
-            <label>Configuration Check</label>
-            <type>header</type>
-            <help><![CDATA[
-                Perform a check on the configuration file using
-                dnscrypt-proxy's -check parameter.
-                ]]>
-            </help>
-        </field>
+    </box>
+    <box id="config_check" description="Configuration Check">
         <field>
             <id>config_check</id>
             <label>Check dnscrypt-proxy Configuration</label>
@@ -76,30 +38,14 @@
             <api>/api/dnscryptproxy/diagnostics/command/config-check</api>
             <output>config_check_output</output>
             <button_label>Run</button_label>
-            <help><![CDATA[
-                Press the run button to perform a check on the config.<br>
-                <br>
-                Configuration errors will appear in the command output below.
-                If there is no output returned, then there is no error with
-                the configuraiton.
-                ]]>
-            </help>
         </field>
         <field>
             <id>config_check_output</id>
             <type>commandoutput</type>
             <text>Command output will apper here.</text>
         </field>
-    </tab>
-    <tab id="config_view" description="View Configuration">
-        <field>
-            <label>View Configuration</label>
-            <type>header</type>
-            <help><![CDATA[
-                View configuration files for dnscrypt-proxy.
-                ]]>
-            </help>
-        </field>
+    </box>
+    <box id="config_view" description="View Configuration">
         <field>
             <id>config_view</id>
             <label>View dnscrypt-proxy Configuration</label>
@@ -127,22 +73,14 @@
             </options>
             <output>config_view_output</output>
             <button_label>View</button_label>
-            <help><![CDATA[
-                Select a configuration file to view its contents.<br>
-                ]]></help>
         </field>
         <field>
             <id>config_view_output</id>
             <type>commandoutput</type>
             <text>Configuration will apper here.</text>
         </field>
-    </tab>
-    <tab id="version" description="Version">
-        <field>
-            <label>DNSCrypt Proxy version</label>
-            <type>header</type>
-            <help><![CDATA[Display the version of dnscrypt-proxy.]]></help>
-        </field>
+    </box>
+    <box id="version" description="Version">
         <field>
             <id>version</id>
             <label>Display the dnscrypt-proxy version.</label>
@@ -150,13 +88,11 @@
             <api>/api/dnscryptproxy/diagnostics/command/version</api>
             <output>version_output</output>
             <button_label>Run</button_label>
-            <help><![CDATA[Press the run button to display the version of dnscrypt-proxy.<br><br>This utilizes the -version parameter of dnscrypt-proxy.]]></help>
         </field>
         <field>
             <id>version_output</id>
             <type>commandoutput</type>
             <text>Command output will apper here.</text>
         </field>
-    </tab>
-    <activetab>resolve_hostname</activetab>
+    </box>
 </form>
