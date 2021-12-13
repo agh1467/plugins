@@ -92,18 +92,22 @@ def main():
             # of that node, and append to our list.
             # cache_files.append(childnode.find("cache_file").text)
 
+    mode = ""
+    if len(args) > 1:
+        if args[1] == "names":
+            mode = "names"
+        elif args[1] != "":
+            error_out(
+                "Invalid mode specified: '" + format(args[1]) + "'"
+            )
+
+    # Use a different data structure depending on expected output.
     # Set the type of object we need depending on
     # the type of output we would like.
     # dict is used for dropdowns
     # list is used for bootgrid
-    if len(args) == 2:
-        if args[1] == "names":
-            relays = {}
-        else:
-            error_out(
-                "Invalid mode specified: {}"
-                + format(args[1])
-            )
+    if mode == "names":
+        relays = {}
     else:
         relays = []
 
@@ -167,12 +171,11 @@ def main():
                     if protocol == 129:
                         # If we found a relay add it to the appropriate
                         # object.
-                        if len(args) == 2:
-                            if args[1] == "names":
-                                relays.update({
-                                    resolver_name: resolver_name
-                                    }
-                                )
+                        if mode == "names":
+                            relays.update({
+                                resolver_name: resolver_name
+                                }
+                            )
                         else:
                             relays.append({
                                 "name": resolver_name,
