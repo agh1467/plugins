@@ -350,23 +350,6 @@
                 </prefix>
             </source>
         </sources>
-        <resolvers>
-            <resolver type="ArrayField">
-                <enabled type="BooleanField">
-                    <required>Y</required>
-                    <default>1</default>
-                </enabled>
-                <name type="TextField">
-                    <required>Y</required>
-                </name>
-                <type type="TextField">
-                    <required>Y</required>
-                </type>
-                <stamp type="TextField">
-                    <required>Y</required>
-                </stamp>
-            </resolver>
-        </resolvers>
         <blocked_names_enabled type="BooleanField">
             <required>Y</required>
             <default>0</default>
