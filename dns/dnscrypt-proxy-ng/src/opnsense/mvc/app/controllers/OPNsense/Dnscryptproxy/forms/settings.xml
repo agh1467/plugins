@@ -517,10 +517,9 @@
                     <br>
                     On non-Intel CPUs such as MIPS routers and ARM systems
                     (Android, Raspberry Pi...), these suites may improve
-                    performance:<pre>
-
-                    TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305<br>
-                    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256<br></pre>
+                    performance:<br>
+                    <pre style="display: inline">TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305</pre><br>
+                    <pre style="display: inline">TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</pre><br>
 
                     This may also help on Intel CPUs running 32-bit operating
                     systems.<br>
@@ -803,15 +802,15 @@
                 <type>header</type>
                 <help><![CDATA[
                     The pattern-based blocklist specifies patterns which will
-                    block queries.<br>Example of valid patterns:<pre>
-
-                    ads.*         | matches anything with an "ads." prefix<br>
-                    *.example.com | matches example.com and all names within that zone such as www.example.com<br>
-                    example.com   | identical to the above<br>
-                    =example.com  | block example.com but not *.example.com<br>
-                    *sex*         | matches any name containing that substring<br>
-                    ads[0-9]*     | matches "ads" followed by one or more digits<br>
-                    ads*.example* | *, ? and [] can be used anywhere, but prefixes/suffixes are faster</pre>
+                    block queries.<br>
+                    Examples of valid patterns:<br>
+                    <pre style="display: inline">ads.*         | matches anything with an "ads." prefix</pre><br>
+                    <pre style="display: inline">*.example.com | matches example.com and all names within that zone such as www.example.com</pre><br>
+                    <pre style="display: inline">example.com   | identical to the above</pre><br>
+                    <pre style="display: inline">=example.com  | block example.com but not *.example.com</pre><br>
+                    <pre style="display: inline">*sex*         | matches any name containing that substring</pre><br>
+                    <pre style="display: inline">ads[0-9]*     | matches "ads" followed by one or more digits</pre><br>
+                    <pre style="display: inline">ads*.example* | *, ? and [] can be used anywhere, but prefixes/suffixes are faster</pre><br>
 
                     Specifying a schedule is also supported to make some
                     websites only accessible at specific times of the day.
@@ -982,10 +981,10 @@
                 <help><![CDATA[
                     The Blocked IPs List specifies IP address patterns which
                     will block be blocked.<br>
-                    Example of valid patterns:<pre>
-
-                    163.5.1.4<br>94.46.118.*<br>
-                    fe80:53:*</pre>
+                    Examples of valid patterns:<br>
+                    <pre style="display: inline">163.5.1.4</pre><br>
+                    <pre style="display: inline">94.46.118.*</pre><br>
+                    <pre style="display: inline">fe80:53:*</pre><br>
 
                     Sample feeds of suspect IP addresses:<br>
                     <a
@@ -1170,16 +1169,20 @@
                 <help><![CDATA[
                     The Allowed Names List specifies patterns which bypass the
                     block list.<br>
-                    Examples of valid patterns:<pre>
+                    Examples of valid patterns:<br>
+                    <pre style="display: inline">ads.*         | matches anything with an "ads." prefix</pre><br>
+                    <pre style="display: inline">*.example.com | matches example.com and all names within that zone such as www.example.com</pre><br>
+                    <pre style="display: inline">example.com   | identical to the above</pre><br>
+                    <pre style="display: inline">=example.com  | allow lists example.com but not *.example.com</pre><br>
+                    <pre style="display: inline">*sex*         | matches any name containing that substring</pre><br>
+                    <pre style="display: inline">ads[0-9]*     | matches "ads" followed by one or more digits</pre><br>
+                    <pre style="display: inline">ads*.example* | *, ? and [] can be used anywhere, but prefixes/suffixes are faster</pre><br>
 
-                    ads.*         | matches anything with an "ads." prefix<br>
-                    *.example.com | matches example.com and all names within that zone such as www.example.com<br>
-                    example.com   | identical to the above<br>
-                    =example.com  | allow lists example.com but not *.example.com<br>
-                    *sex*         | matches any name containing that substring<br>
-                    ads[0-9]*     | matches "ads" followed by one or more digits<br>
-                    ads*.example* | *, ? and [] can be used anywhere, but prefixes/suffixes are faster</pre>
 
+                    Some names which are blocked due to a block rule can be
+                    allowed explicitely here:<br>
+                    <pre style="display: inline">tracker.debian.org</pre><br>
+                    <pre style="display: inline">googleadservices.com</pre><br>
                     If a name matches an allow list entry, the corresponding
                     session will bypass names and IP filters.<br>
                     Specifying a schedule is also supported to make some
@@ -1337,18 +1340,14 @@
                 <label>Allowed IPs List</label>
                 <type>header</type>
                 <help><![CDATA[
-                    The Allowed IPs List specifies patterns which bypass the
+                    The Allowed IPs list specifies patterns which bypass the
                     block list.<br>
-                    Examples of valid patterns:<pre>
-                    ads.*         | matches anything with an "ads." prefix<br>
-                    *.example.com | matches example.com and all names within that zone such as www.example.com<br>
-                    example.com   | identical to the above<br>
-                    =example.com  | allow lists example.com but not *.example.com<br>
-                    *sex*         | matches any name containing that substring<br>
-                    ads[0-9]*     | matches "ads" followed by one or more digits<br>
-                    ads*.example* | *, ? and [] can be used anywhere, but prefixes/suffixes are faster</pre>
-                    If a name matches an allow list entry, the corresponding
-                    session will bypass names and IP filters.<br>
+                    Examples of valid patterns:<br>
+                    <pre style="display: inline">192.168.0.*</pre><br>
+                    <pre style="display: inline">fe80:53:*</pre><br>
+                    <pre style="display: inline">81.169.145.105</pre><br>
+                    If an IP response matches an allow ip entry, the
+                    corresponding session will bypass IP filters.<br>
                     Specifying a schedule is also supported to make some
                     websites only accessible at specific times of the day.
                     ]]>
@@ -1639,34 +1638,30 @@
                     In addition to acting as a HOSTS file, it can also return
                     the IP address of a different name. It will also do CNAME
                     flattening.<br>
-                    Examples of usage:<pre>
-
-                    www.google.*             forcesafesearch.google.com<br>
-                    www.bing.com             strict.bing.com<br>
-                    yandex.ru                familysearch.yandex.ru<br>
-                    =duckduckgo.com          safe.duckduckgo.com<br>
+                    Examples of usage:<br>
+                    <pre style="display: inline">www.google.*             forcesafesearch.google.com</pre><br>
+                    <pre style="display: inline">www.bing.com             strict.bing.com</pre><br>
+                    <pre style="display: inline">yandex.ru                familysearch.yandex.ru</pre><br>
+                    <pre style="display: inline">=duckduckgo.com          safe.duckduckgo.com</pre><br>
                     <br>
-                    www.youtube.com          restrictmoderate.youtube.com<br>
-                    m.youtube.com            restrictmoderate.youtube.com<br>
-                    youtubei.googleapis.com  restrictmoderate.youtube.com<br>
-                    youtube.googleapis.com   restrictmoderate.youtube.com<br>
-                    www.youtube-nocookie.com restrictmoderate.youtube.com</pre>
+                    <pre style="display: inline">www.youtube.com          restrictmoderate.youtube.com</pre><br>
+                    <pre style="display: inline">m.youtube.com            restrictmoderate.youtube.com</pre><br>
+                    <pre style="display: inline">youtubei.googleapis.com  restrictmoderate.youtube.com</pre><br>
+                    <pre style="display: inline">youtube.googleapis.com   restrictmoderate.youtube.com</pre><br>
+                    <pre style="display: inline">www.youtube-nocookie.com restrictmoderate.youtube.com</pre><br>
 
                     Multiple IP entries for the same name are supported.<br>
                     In the following example, the same name maps both to IPv4
-                    and IPv6 addresses:<pre>
-
-                    localhost                127.0.0.1<br>
-                    localhost                ::1</pre>
+                    and IPv6 addresses:<br>
+                    <pre style="display: inline">localhost                127.0.0.1</pre><br>
+                    <pre style="display: inline">localhost                ::1</pre><br>
 
                     For load-balancing, multiple IP addresses of the same
                     class can also be provided using the same format, one
-                    <pattern> <ip> pair per line.<pre>
-
-                    ads.*                 192.168.100.1<br>
-                    ads.*                 192.168.100.2<br>
-                    ads.*                 ::1</pre>
-
+                    <pattern> <ip> pair per line.<br>
+                    <pre style="display: inline">ads.*                 192.168.100.1</pre><br>
+                    <pre style="display: inline">ads.*                 192.168.100.2</pre><br>
+                    <pre style="display: inline">ads.*                 ::1</pre><br>
                     ]]>
                 </help>
             </field>
@@ -1815,9 +1810,8 @@
                 <help><![CDATA[
                     Fordwarding rules are used to route specific domain names
                     to specific servers.<br>
-                    The general format is:<pre>
-
-                    <domain> <server address>[:port] [, <server address>[:port]...]</pre>
+                    The general format is:<br>
+                    <pre style="display: inline"><domain> <server address>[:port] [, <server address>[:port]...]</pre><br>
 
                     IPv6 addresses can be specified by enclosing the address in
                     square brackets.<br>
@@ -1826,18 +1820,15 @@
                     If this happens, uncheck <b>block_ipv6</b> in the Global
                     settings tab.<br>
                     Forward *.lan, *.local, *.home, *.internal and *.localdomain
-                    to 192.168.1.1<pre>
+                    to 192.168.1.1.<br>
+                    <pre style="display: inline">lan             192.168.1.1</pre><br>
+                    <pre style="display: inline">local           192.168.1.1</pre><br>
+                    <pre style="display: inline">home            192.168.1.1</pre><br>
+                    <pre style="display: inline">internal        192.168.1.1</pre><br>
+                    <pre style="display: inline">localdomain     192.168.1.1</pre><br>
 
-                    lan             192.168.1.1<br>
-                    local           192.168.1.1<br>
-                    home            192.168.1.1<br>
-                    internal        192.168.1.1<br>
-                    localdomain     192.168.1.1</pre>
-
-                    Forward queries for example.com and *.example.com to 9.9.9.9 and 8.8.8.8<pre>
-
-                    example.com     9.9.9.9,8.8.8.8</pre>
-
+                    Forward queries for example.com and *.example.com to 9.9.9.9 and 8.8.8.8.<br>
+                    <pre style="display: inline">example.com     9.9.9.9,8.8.8.8</pre>
                     ]]>
                 </help>
             </field>
@@ -2478,8 +2469,8 @@
                 network change, in order to check if connectivity beyond the
                 router is possible without going through a captive portal.<br>
                 This is a list of hard-coded IP addresses that will be returned
-                when queries for these names are received, even before the
-                operating system an interface as usable for reaching the
+                when queries for these names are received, before the operating
+                system will consider the interface up and usable for the
                 Internet.
                 ]]>
             </help>
@@ -2793,11 +2784,8 @@
                 Prefix 64:ff9b::/96).<br>
                 IMPORTANT: Default resolvers listed below support Well-Known
                 Prefix 64:ff9b::/96 only.<br>
-                <pre>
-
-                [2606:4700:4700::64]:53<br>
-                [2001:4860:4860::64]:53</pre>
-
+                <pre style="display: inline">[2606:4700:4700::64]:53</pre><br>
+                <pre style="display: inline">[2001:4860:4860::64]:53</pre><br>
                 ]]>
             </help>
             <type>bootgrid</type>
