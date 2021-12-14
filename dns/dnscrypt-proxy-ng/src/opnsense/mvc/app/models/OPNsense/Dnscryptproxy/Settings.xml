@@ -377,6 +377,12 @@
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
+                    <constraints>
+                        <check>
+                            <ValidationMessage>Entry with that expression already exists.</ValidationMessage>
+                            <type>UniqueConstraint</type>
+                        </check>
+                    </constraints>
                 </expression>
                 <schedule type="ModelRelationField">
                     <required>N</required>
@@ -430,6 +436,12 @@
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
+                    <constraints>
+                        <check>
+                            <ValidationMessage>Entry with that expression already exists.</ValidationMessage>
+                            <type>UniqueConstraint</type>
+                        </check>
+                    </constraints>
                 </expression>
                 <comment type="TextField">
                     <required>N</required>
@@ -460,6 +472,12 @@
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
+                    <constraints>
+                        <check>
+                            <ValidationMessage>Entry with that expression already exists.</ValidationMessage>
+                            <type>UniqueConstraint</type>
+                        </check>
+                    </constraints>
                 </expression>
                 <schedule type="ModelRelationField">
                     <required>N</required>
@@ -511,6 +529,12 @@
                 </enabled>
                 <expression type="TextField">
                     <required>Y</required>
+                    <constraints>
+                        <check>
+                            <ValidationMessage>Entry with that expression already exists.</ValidationMessage>
+                            <type>UniqueConstraint</type>
+                        </check>
+                    </constraints>
                 </expression>
                 <comment type="TextField">
                     <required>N</required>
@@ -623,6 +647,12 @@
                 </enabled>
                 <name type="TextField">
                     <required>Y</required>
+                    <constraints>
+                        <check>
+                            <ValidationMessage>Schedule with that name already exists.</ValidationMessage>
+                            <type>UniqueConstraint</type>
+                        </check>
+                    </constraints>
                 </name>
                 <!-- Monday -->
                 <mon_start_hour type="OptionField">
