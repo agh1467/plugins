@@ -2714,10 +2714,10 @@
             </help>
             <type>checkbox</type>
             <field_control>
-                <field checked="true" state="enabled">settings.dns64.prefixes</field>
-                <field checked="true" state="enabled">settings.dns64.resolvers</field>
-                <field checked="false" state="disabled">settings.dns64.prefixes</field>
-                <field checked="false" state="disabled">settings.dns64.resolvers</field>
+                <field checked="true" state="enabled">dns64_prefixes</field>
+                <field checked="true" state="enabled">dns64_resolvers</field>
+                <field checked="false" state="disabled">dns64_prefixes</field>
+                <field checked="false" state="disabled">dns64_resolvers</field>
             </field_control>
         </field>
         <field>
