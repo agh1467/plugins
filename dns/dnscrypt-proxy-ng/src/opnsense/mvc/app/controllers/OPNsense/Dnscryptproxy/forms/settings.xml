@@ -1198,7 +1198,6 @@
                     <field checked="true" state="enabled">settings.allowed_names_type</field>
                     <field checked="true" state="enabled">settings.allowed_names_logging</field>
                     <field checked="false" state="disabled">settings.allowed_names_type</field>
-                    <field checked="false" state="disabled">settings.allowed_names_file_external</field>
                     <field checked="false" state="disabled">settings.allowed_names_file_manual</field>
                     <field checked="false" state="disabled">settings.allowed_names_logging</field>
                     <field checked="false" state="disabled">allowed_names_internal_entries</field>
@@ -1216,8 +1215,6 @@
                     Select which allow list type to use:<br>
                     <b>Internal</b> - Allowed Names list entries are managed
                     within OPNsense via the list on this page.<br>
-                    <b>External</b> - Specify the filesystem path to a allow
-                    list file external to dnscrypt-proxy.<br>
                     <b>Manual</b> - Manage the allow list manaully by uploading
                     a allow list.
                     ]]>
@@ -1229,10 +1226,8 @@
                 <field_control>
                     <field checked="manual" state="enabled">settings.allowed_names_file_manual</field>
                     <field checked="internal" state="enabled">allowed_names_internal_entries</field>
-                    <field checked="manual" state="disabled">settings.allowed_names_file_external</field>
                     <field checked="manual" state="disabled">allowed_names_internal_entries</field>
                     <field checked="internal" state="disabled">settings.allowed_names_file_manual</field>
-                    <field checked="internal" state="disabled">settings.allowed_names_file_external</field>
                 </field_control>
             </field>
             <field>
@@ -1361,7 +1356,6 @@
                     <field checked="true" state="enabled">settings.allowed_ips_type</field>
                     <field checked="true" state="enabled">settings.allowed_ips_logging</field>
                     <field checked="false" state="disabled">settings.allowed_ips_type</field>
-                    <field checked="false" state="disabled">settings.allowed_ips_file_external</field>
                     <field checked="false" state="disabled">settings.allowed_ips_file_manual</field>
                     <field checked="false" state="disabled">settings.allowed_ips_logging</field>
                     <field checked="false" state="disabled">allowed_ips_internal_entries</field>
@@ -1379,8 +1373,6 @@
                     Select which allow list type to use:<br>
                     <b>Internal</b> - Allowed IPs entries are managed within
                     OPNsense via the list on this page.<br>
-                    <b>External</b> - Specify the filesystem path to a allow
-                    list file external to dnscrypt-proxy.<br>
                     <b>Manual</b> - Manage the allow list manaully by uploading
                     a allow list.
                     ]]>
@@ -1392,10 +1384,8 @@
                 <field_control>
                     <field checked="manual" state="enabled">settings.allowed_ips_file_manual</field>
                     <field checked="internal" state="enabled">allowed_ips_internal_entries</field>
-                    <field checked="manual" state="disabled">settings.allowed_ips_file_external</field>
                     <field checked="manual" state="disabled">allowed_ips_internal_entries</field>
                     <field checked="internal" state="disabled">settings.allowed_ips_file_manual</field>
-                    <field checked="internal" state="disabled">settings.allowed_ips_file_external</field>
                 </field_control>
             </field>
             <field>
