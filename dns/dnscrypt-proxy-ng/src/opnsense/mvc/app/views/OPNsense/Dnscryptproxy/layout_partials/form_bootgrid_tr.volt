@@ -160,22 +160,11 @@
                 </tr>
             </thead>
             <tbody
-{%      if this_field['style']|default('') == 'log' %}
-{#  # style field is probably overloaded here,
-    # supposed to also be used for css class(es) #}
-                    {# This is a style for displaying log files.
-                       It will respect whitespace and use a fixed-width font
-                       for better readability. We override the style and
-                       font of the tbody element. #}
-                style="
-                    white-space: pre-wrap;       /* Since CSS 2.1 */
-                    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-                    white-space: -pre-wrap;      /* Opera 4-6 */
-                    white-space: -o-pre-wrap;    /* Opera 7 */
-                    word-wrap: break-word;       /* Internet Explorer 5.5+ */
-                    font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
-                    font-size: small;"
-{%      elseif this_field['style']|default('') != '' %}
+{%      if this_field['class']|default('') != '' %}
+{#              # This is for if another style is specified in the form data. #}
+                class="{{ this_field['class'] }}"
+{%      endif %}
+{%      if this_field['style']|default('') != '' %}
 {#              # This is for if another style is specified in the form data. #}
                 style="{{ this_field['style'] }}"
 {%      endif %}
