@@ -486,39 +486,39 @@
     });
 {%                          endif %}
 {# =============================================================================
- # checkbox, radio: toggle functionality
+ # checkbox, radio, dropdown: toggle functionality
  # =============================================================================
- # A toggle function for both checkboxes and radio buttons.
+ # A toggle function for checkboxes, radio buttons, and dropdown menus.
  #}
-{%                          if ((field['type']|default('') == 'checkbox' or field['type']|default('') == 'radio') and
+{%                          if ((field['type']|default('') == 'checkbox' or
+                                 field['type']|default('') == 'radio' or
+                                 field['type']|default('') == 'dropdown') and
                                 field['id']|default('') != '' ) and
-                                field['field_control'] is defined  -%}
-{%                              if field['field_control']['field'] is defined %}
-{# Attach to the checkbox input element, or the text field associated with the radio buttons #}
+                                field['control'] is defined  %}
+{%                              if field['control']['action'] is defined %}
+{#  Attach to the element associated with the field id,
+    or the text field associated with the radio buttons #}
     $("#" + $.escapeSelector("{{ field['id'] }}")).change(function(e){
 {#  This prevents the field from acting out if it is in a disabled state. #}
         if ($(this).hasClass("disabled") == false) {
-{# This pulls the checked key values out of all of the field's attributes,
+{#  This pulls the on_set key values out of all of the field's attributes,
     and then creates an array of the unique values. #}
-<?php $checked_list = array_unique(array_column(array_column($field['field_control']['field'],'@attributes'),'checked')) ?>
+{# This needs a check to prevent undefined variable error. #}
+<?php $value_list = array_unique(array_column(array_column($field['control']['action'],'@attributes'),'on_set')) ?>
 {#  Iterate through the values we found to start building our if blocks. #}
-{%                              for checked in checked_list %}
+{%                              for on_set in value_list %}
 {#  Start if statments looking at different value based on field type #}
 {%                                  if field['type'] == 'checkbox' %}
-            if ($(this).prop("checked") == {{ checked }} ) {
-{%                                  elseif field['type'] == 'radio' %}
-            if ($(this).val() == "{{ checked }}") {
+            if ($(this).prop("checked") == {{ on_set }} ) {
+{%                                  elseif field['type'] == 'radio'
+                                        or field['type'] == 'dropdown' %}
+            if ($(this).val() == "{{ on_set }}") {
 {%                                  endif %}
-{#  Iterate through the fields only if the "checked" value matches that of the current for loop's "checked" variable. #}
-{%                                  for target_field in field['field_control']['field'] if target_field['@attributes']['checked'] == checked %}
+{#  Iterate through the fields only if the "on_set" value matches that of the current for loop's "on_set" variable. #}
+{%                                  for target_field in field['control']['action'] if target_field['@attributes']['on_set'] == on_set %}
 {#  We use the field's value so we don't have to have a line of code for each version, check first that they're OK. #}
-{%-                                     if target_field['@attributes']['state']|default('') == "disabled" or
-                                            target_field['@attributes']['state']|default('')  == "enabled" %}
-                toggleFields("{{ target_field[0] }}", "{{ target_field['@attributes']['state'] }}");
-{#  Here we do the same thing as above but for hide/show, check the values first because was use them in our code. #}
-{%                                      elseif target_field['@attributes']['state']|default('') == "hide" or
-                                            target_field['@attributes']['state']|default('') == "show" %}
-                $("#" + $.escapeSelector("{{ target_field[0] }}")).{{ target_field['@attributes']['state'] }}();
+{%                                     if target_field['@attributes']['do_state']|default('') in [ "disabled", "enabled", "hidden", "visible" ] %}
+                toggle("{{ target_field[0] }}", "{{ target_field['@attributes']['type'] }}", "{{ target_field['@attributes']['do_state'] }}");
 {%                                      endif %}
 {%                                  endfor %}
             }

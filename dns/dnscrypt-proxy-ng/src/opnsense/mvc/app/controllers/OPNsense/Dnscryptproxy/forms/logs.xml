@@ -19,10 +19,10 @@
             <id>settings.query_log.enabled</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_queries</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_queries</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_queries</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_queries</action>
+            </control>
         </field>
         <field>
             <target>query</target>
@@ -44,10 +44,10 @@
             <id>settings.nx_log.enabled</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_nx</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_nx</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_nx</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_nx</action>
+            </control>
         </field>
         <field>
             <target>nx</target>
@@ -69,10 +69,10 @@
             <id>settings.blocked_names_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_blocked_names</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_blocked_names</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_blocked_names</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_blocked_names</action>
+            </control>
         </field>
         <field>
             <target>blocked-names</target>
@@ -94,10 +94,10 @@
             <id>settings.blocked_ips_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_blocked_ips</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_blocked_ips</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_blocked_ips</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_blocked_ips</action>
+            </control>
         </field>
         <field>
             <target>blocked-ips</target>
@@ -119,10 +119,10 @@
             <id>settings.allowed_names_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_allowed_names</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_allowed_names</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_allowed_names</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_allowed_names</action>
+            </control>
         </field>
         <field>
             <target>allowed-names</target>
@@ -144,10 +144,10 @@
             <id>settings.allowed_ips_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
-            <field_control>
-                <field checked="true" state="show">tab_header_dnscryptproxy_logs_allowed_ips</field>
-                <field checked="false" state="hide">tab_header_dnscryptproxy_logs_allowed_ips</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="tab" do_state="visible">tab_header_dnscryptproxy_logs_allowed_ips</action>
+                <action on_set="false" type="tab" do_state="hidden">tab_header_dnscryptproxy_logs_allowed_ips</action>
+            </control>
         </field>
         <field>
             <target>allowed-ips</target>
