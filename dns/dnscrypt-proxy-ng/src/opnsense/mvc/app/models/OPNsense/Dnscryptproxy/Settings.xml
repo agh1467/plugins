@@ -10,9 +10,14 @@
             <required>Y</required>
             <default>0</default>
         </enabled>
-        <server_selection_method type="BooleanField">
+        <server_selection_method type="OptionField">
             <required>Y</required>
             <default>0</default> <!-- 0 = Automatic, 1 = Manual -->
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="0">Automatic</option>
+                <option value="1">Manual</option>
+            </OptionValues>
             <ValidationMessage>A server selection method must be selected.</ValidationMessage>
         </server_selection_method>
         <server_names type="JsonKeyValueStoreField">

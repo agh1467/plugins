@@ -116,28 +116,33 @@
                 </help>
             </field>
             <field>
-                <label>Manual Server Selection Options</label>
+                <label>Server Selection Options</label>
                 <type>header</type>
                 <help><![CDATA[
-                    Manual server selection allows for selecting specific
-                    servers to be used by dnscrypt-proxy.
+                    <b>Automatic</b> - dnscrypt-proxy will automatically analyze the resolvers
+                    available from <b>sources</b>, as defined in the config, and
+                    choose the best ones to use. These require_* selections will
+                    narrow the list to use only servers matching these
+                    requirements.<br>
+                    <b>Manual</b> - dnscrypt-proxy will only use servers specified in
+                    server_names.
                     ]]>
                 </help>
             </field>
             <field>
                 <id>settings.server_selection_method</id>
-                <label>Use manual server selection</label>
-                <type>checkbox</type>
-                <field_control>
-                    <field checked="true" state="enabled">settings.server_names</field>
-                    <field checked="true" state="disabled">settings.require_nofilter</field>
-                    <field checked="true" state="disabled">settings.require_nolog</field>
-                    <field checked="true" state="disabled">settings.require_dnssec</field>
-                    <field checked="false" state="enabled">settings.require_dnssec</field>
-                    <field checked="false" state="enabled">settings.require_nolog</field>
-                    <field checked="false" state="enabled">settings.require_nofilter</field>
-                    <field checked="false" state="disabled">settings.server_names</field>
-                </field_control>
+                <label>Server selection method</label>
+                <type>dropdown</type>
+                <control>
+                    <action on_set="0" type="field"  do_state="hidden">settings.server_names</action>
+                    <action on_set="0" type="field"  do_state="visible">settings.require_nofilter</action>
+                    <action on_set="0" type="field"  do_state="visible">settings.require_nolog</action>
+                    <action on_set="0" type="field"  do_state="visible">settings.require_dnssec</action>
+                    <action on_set="1" type="field"  do_state="hidden">settings.require_dnssec</action>
+                    <action on_set="1" type="field"  do_state="hidden">settings.require_nolog</action>
+                    <action on_set="1" type="field"  do_state="hidden">settings.require_nofilter</action>
+                    <action on_set="1" type="field"  do_state="visible">settings.server_names</action>
+                </control>
                 <help><![CDATA[
                     Select to use manual server selection options, instead of
                     the automatic server selection options. Selecting this
@@ -157,19 +162,6 @@
                     defined here dnscrypt-proxy will only pick working servers
                     from this list.<br><b>Note</b> that the require_* filters do
                     NOT apply when using this setting.
-                    ]]>
-                </help>
-            </field>
-            <field>
-                <label>Automatic Server Selection Options</label>
-                <type>header</type>
-                <help><![CDATA[
-                    When no servers are specified in server_names,
-                    dnscrypt-proxy will automatically analyze the resolvers
-                    available from <b>sources</b>, as defined in the config, and
-                    choose the best ones to use. These require_* selections will
-                    narrow the list to use only servers matching these
-                    requirements.
                     ]]>
                 </help>
             </field>
@@ -204,6 +196,9 @@
                     with parental control enabled.
                     ]]>
                 </help>
+            </field>
+            <field>
+                <type>separator</type>
             </field>
             <field>
                 <id>settings.disabled_server_names</id>
@@ -824,15 +819,15 @@
                 <help><![CDATA[Select to enable the blocklist feature.
                     ]]>
                 </help>
-                <field_control>
-                    <field checked="true" state="enabled">settings.blocked_names_type</field>
-                    <field checked="true" state="enabled">settings.blocked_names_logging</field>
-                    <field checked="false" state="disabled">settings.blocked_names_type</field>
-                    <field checked="false" state="disabled">settings.blocked_names_file_external</field>
-                    <field checked="false" state="disabled">settings.blocked_names_file_manual</field>
-                    <field checked="false" state="disabled">settings.blocked_names_logging</field>
-                    <field checked="false" state="disabled">blocked_names_internal_entries</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.blocked_names_type</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.blocked_names_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_names_type</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_names_file_external</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_names_file_manual</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_names_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">blocked_names_internal_entries</action>
+                </control>
             </field>
             <field>
                 <id>settings.blocked_names_type</id>
@@ -853,17 +848,17 @@
                     <button value="manual">Manual</button>
                     <button value="internal">Internal</button>
                 </buttons>
-                <field_control>
-                    <field checked="external" state="enabled">settings.blocked_names_file_external</field>
-                    <field checked="manual" state="enabled">settings.blocked_names_file_manual</field>
-                    <field checked="internal" state="enabled">blocked_names_internal_entries</field>
-                    <field checked="external" state="disabled">settings.blocked_names_file_manual</field>
-                    <field checked="external" state="disabled">blocked_names_internal_entries</field>
-                    <field checked="manual" state="disabled">settings.blocked_names_file_external</field>
-                    <field checked="manual" state="disabled">blocked_names_internal_entries</field>
-                    <field checked="internal" state="disabled">settings.blocked_names_file_manual</field>
-                    <field checked="internal" state="disabled">settings.blocked_names_file_external</field>
-                </field_control>
+                <control>
+                    <action on_set="external" type="field" do_state="enabled">settings.blocked_names_file_external</action>
+                    <action on_set="manual" type="field" do_state="enabled">settings.blocked_names_file_manual</action>
+                    <action on_set="internal" type="field" do_state="enabled">blocked_names_internal_entries</action>
+                    <action on_set="external" type="field" do_state="disabled">settings.blocked_names_file_manual</action>
+                    <action on_set="external" type="field" do_state="disabled">blocked_names_internal_entries</action>
+                    <action on_set="manual" type="field" do_state="disabled">settings.blocked_names_file_external</action>
+                    <action on_set="manual" type="field" do_state="disabled">blocked_names_internal_entries</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.blocked_names_file_manual</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.blocked_names_file_external</action>
+                </control>
             </field>
             <field>
                 <id>settings.blocked_names_file_external</id>
@@ -1022,15 +1017,15 @@
                     Select to enable the IP block list feature.
                     ]]>
                 </help>
-                <field_control>
-                    <field checked="true" state="enabled">settings.blocked_ips_type</field>
-                    <field checked="true" state="enabled">settings.blocked_ips_logging</field>
-                    <field checked="false" state="disabled">settings.blocked_ips_type</field>
-                    <field checked="false" state="disabled">settings.blocked_ips_file_external</field>
-                    <field checked="false" state="disabled">settings.blocked_ips_file_manual</field>
-                    <field checked="false" state="disabled">settings.blocked_ips_logging</field>
-                    <field checked="false" state="disabled">blocked_ips_internal_entries</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.blocked_ips_type</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.blocked_ips_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_ips_type</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_ips_file_external</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_ips_file_manual</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.blocked_ips_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">blocked_ips_internal_entries</action>
+                </control>
             </field>
             <field>
                 <id>settings.blocked_ips_type</id>
@@ -1051,17 +1046,17 @@
                     <button value="manual">Manual</button>
                     <button value="internal">Internal</button>
                 </buttons>
-                <field_control>
-                    <field checked="external" state="enabled">settings.blocked_ips_file_external</field>
-                    <field checked="manual" state="enabled">settings.blocked_ips_file_manual</field>
-                    <field checked="internal" state="enabled">blocked_ips_internal_entries</field>
-                    <field checked="external" state="disabled">settings.blocked_ips_file_manual</field>
-                    <field checked="external" state="disabled">blocked_ips_internal_entries</field>
-                    <field checked="manual" state="disabled">settings.blocked_ips_file_external</field>
-                    <field checked="manual" state="disabled">blocked_ips_internal_entries</field>
-                    <field checked="internal" state="disabled">settings.blocked_ips_file_manual</field>
-                    <field checked="internal" state="disabled">settings.blocked_ips_file_external</field>
-                </field_control>
+                <control>
+                    <action on_set="external" type="field" do_state="enabled">settings.blocked_ips_file_external</action>
+                    <action on_set="manual" type="field" do_state="enabled">settings.blocked_ips_file_manual</action>
+                    <action on_set="internal" type="field" do_state="enabled">blocked_ips_internal_entries</action>
+                    <action on_set="external" type="field" do_state="disabled">settings.blocked_ips_file_manual</action>
+                    <action on_set="external" type="field" do_state="disabled">blocked_ips_internal_entries</action>
+                    <action on_set="manual" type="field" do_state="disabled">settings.blocked_ips_file_external</action>
+                    <action on_set="manual" type="field" do_state="disabled">blocked_ips_internal_entries</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.blocked_ips_file_manual</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.blocked_ips_file_external</action>
+                </control>
             </field>
             <field>
                 <id>settings.blocked_ips_file_external</id>
@@ -1194,14 +1189,14 @@
                 <id>settings.allowed_names_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Allowed Names</label>
-                <field_control>
-                    <field checked="true" state="enabled">settings.allowed_names_type</field>
-                    <field checked="true" state="enabled">settings.allowed_names_logging</field>
-                    <field checked="false" state="disabled">settings.allowed_names_type</field>
-                    <field checked="false" state="disabled">settings.allowed_names_file_manual</field>
-                    <field checked="false" state="disabled">settings.allowed_names_logging</field>
-                    <field checked="false" state="disabled">allowed_names_internal_entries</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.allowed_names_type</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.allowed_names_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_names_type</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_names_file_manual</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_names_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">allowed_names_internal_entries</action>
+                </control>
                 <help><![CDATA[
                     Select to enable the allow list feature.
                     ]]>
@@ -1223,12 +1218,12 @@
                     <button value="manual">Manual</button>
                     <button value="internal">Internal</button>
                 </buttons>
-                <field_control>
-                    <field checked="manual" state="enabled">settings.allowed_names_file_manual</field>
-                    <field checked="internal" state="enabled">allowed_names_internal_entries</field>
-                    <field checked="manual" state="disabled">allowed_names_internal_entries</field>
-                    <field checked="internal" state="disabled">settings.allowed_names_file_manual</field>
-                </field_control>
+                <control>
+                    <action on_set="manual" type="field" do_state="enabled">settings.allowed_names_file_manual</action>
+                    <action on_set="internal" type="field" do_state="enabled">allowed_names_internal_entries</action>
+                    <action on_set="manual" type="field" do_state="disabled">allowed_names_internal_entries</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.allowed_names_file_manual</action>
+                </control>
             </field>
             <field>
                 <id>settings.allowed_names_file_manual</id>
@@ -1352,14 +1347,14 @@
                 <id>settings.allowed_ips_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Allowed IPs</label>
-                <field_control>
-                    <field checked="true" state="enabled">settings.allowed_ips_type</field>
-                    <field checked="true" state="enabled">settings.allowed_ips_logging</field>
-                    <field checked="false" state="disabled">settings.allowed_ips_type</field>
-                    <field checked="false" state="disabled">settings.allowed_ips_file_manual</field>
-                    <field checked="false" state="disabled">settings.allowed_ips_logging</field>
-                    <field checked="false" state="disabled">allowed_ips_internal_entries</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.allowed_ips_type</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.allowed_ips_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_ips_type</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_ips_file_manual</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.allowed_ips_logging</action>
+                    <action on_set="false" type="field" do_state="disabled">allowed_ips_internal_entries</action>
+                </control>
                 <help><![CDATA[
                     Select to enable the allow list feature.
                     ]]>
@@ -1381,12 +1376,12 @@
                     <button value="manual">Manual</button>
                     <button value="internal">Internal</button>
                 </buttons>
-                <field_control>
-                    <field checked="manual" state="enabled">settings.allowed_ips_file_manual</field>
-                    <field checked="internal" state="enabled">allowed_ips_internal_entries</field>
-                    <field checked="manual" state="disabled">allowed_ips_internal_entries</field>
-                    <field checked="internal" state="disabled">settings.allowed_ips_file_manual</field>
-                </field_control>
+                <control>
+                    <action on_set="manual" type="field" do_state="enabled">settings.allowed_ips_file_manual</action>
+                    <action on_set="internal" type="field" do_state="enabled">allowed_ips_internal_entries</action>
+                    <action on_set="manual" type="field" do_state="disabled">allowed_ips_internal_entries</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.allowed_ips_file_manual</action>
+                </control>
             </field>
             <field>
                 <id>settings.allowed_ips_file_manual</id>
@@ -1663,14 +1658,14 @@
                     Select to enable the cloaking feature.
                     ]]>
                 </help>
-                <field_control>
-                    <field checked="true" state="enabled">settings.cloaking_type</field>
-                    <field checked="true" state="enabled">settings.cloak_ttl</field>
-                    <field checked="false" state="disabled">settings.cloaking_type</field>
-                    <field checked="false" state="disabled">settings.cloaking_file_manual</field>
-                    <field checked="false" state="disabled">settings.cloak_ttl</field>
-                    <field checked="false" state="disabled">cloaking_internal_cloak</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.cloaking_type</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.cloak_ttl</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.cloaking_type</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.cloaking_file_manual</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.cloak_ttl</action>
+                    <action on_set="false" type="field" do_state="disabled">cloaking_internal_cloak</action>
+                </control>
             </field>
             <field>
                 <id>settings.cloaking_type</id>
@@ -1688,12 +1683,12 @@
                     <button value="manual">Manual</button>
                     <button value="internal">Internal</button>
                 </buttons>
-                <field_control>
-                    <field checked="manual" state="enabled">settings.cloaking_file_manual</field>
-                    <field checked="internal" state="enabled">cloaking_internal_cloak</field>
-                    <field checked="manual" state="disabled">cloaking_internal_cloak</field>
-                    <field checked="internal" state="disabled">settings.cloaking_file_manual</field>
-                </field_control>
+                <control>
+                    <action on_set="manual" type="field" do_state="enabled">settings.cloaking_file_manual</action>
+                    <action on_set="internal" type="field" do_state="enabled">cloaking_internal_cloak</action>
+                    <action on_set="manual" type="field" do_state="disabled">cloaking_internal_cloak</action>
+                    <action on_set="internal" type="field" do_state="disabled">settings.cloaking_file_manual</action>
+                </control>
             </field>
             <field>
                 <id>settings.cloaking_file_manual</id>
@@ -1830,10 +1825,10 @@
                     Select to enable the cloaking feature.
                     ]]>
                 </help>
-                <field_control>
-                    <field checked="true" state="enabled">forwards_forward</field>
-                    <field checked="false" state="disabled">forwards_forward</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">forwards_forward</action>
+                    <action on_set="false" type="field" do_state="disabled">forwards_forward</action>
+                </control>
             </field>
             <field>
                 <target>forwards.forward</target>
@@ -1922,16 +1917,16 @@
                 <id>settings.local_doh.enabled</id>
                 <label>Enable Local DoH server</label>
                 <type>checkbox</type>
-                <field_control>
-                    <field checked="true" state="enabled">settings.local_doh.listen_addresses</field>
-                    <field checked="true" state="enabled">settings.local_doh.path</field>
-                    <field checked="true" state="enabled">settings.local_doh.cert</field>
-                    <field checked="true" state="enabled">settings.local_doh.cert_key</field>
-                    <field checked="false" state="disabled">settings.local_doh.listen_addresses</field>
-                    <field checked="false" state="disabled">settings.local_doh.path</field>
-                    <field checked="false" state="disabled">settings.local_doh.cert</field>
-                    <field checked="false" state="disabled">settings.local_doh.cert_key</field>
-                </field_control>
+                <control>
+                    <action on_set="true" type="field" do_state="enabled">settings.local_doh.listen_addresses</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.local_doh.path</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.local_doh.cert</action>
+                    <action on_set="true" type="field" do_state="enabled">settings.local_doh.cert_key</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.local_doh.listen_addresses</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.local_doh.path</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.local_doh.cert</action>
+                    <action on_set="false" type="field" do_state="disabled">settings.local_doh.cert_key</action>
+                </control>
                 <help><![CDATA[
                     This will enable the local DoH (DNS over HTTP) server.<br>
                     For details, visit the
@@ -2473,10 +2468,10 @@
                 ]]>
             </help>
             <type>checkbox</type>
-            <field_control>
-                <field checked="true" state="enabled">captive_portals_entries</field>
-                <field checked="false" state="disabled">captive_portals_entries</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="field" do_state="enabled">captive_portals_entries</action>
+                <action on_set="false" type="field" do_state="disabled">captive_portals_entries</action>
+            </control>
         </field>
         <field>
             <target>captive_portals.entries</target>
@@ -2713,12 +2708,12 @@
                 ]]>
             </help>
             <type>checkbox</type>
-            <field_control>
-                <field checked="true" state="enabled">dns64_prefixes</field>
-                <field checked="true" state="enabled">dns64_resolvers</field>
-                <field checked="false" state="disabled">dns64_prefixes</field>
-                <field checked="false" state="disabled">dns64_resolvers</field>
-            </field_control>
+            <control>
+                <action on_set="true" type="field" do_state="enabled">dns64_prefixes</action>
+                <action on_set="true" type="field" do_state="enabled">dns64_resolvers</action>
+                <action on_set="false" type="field" do_state="disabled">dns64_prefixes</action>
+                <action on_set="false" type="field" do_state="disabled">dns64_resolvers</action>
+            </control>
         </field>
         <field>
             <target>dns64.prefixes</target>
