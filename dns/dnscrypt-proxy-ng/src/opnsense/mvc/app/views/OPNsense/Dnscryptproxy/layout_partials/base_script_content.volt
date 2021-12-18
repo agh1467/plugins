@@ -52,48 +52,60 @@
     # It uses the *= wildcard, so take care with the field name.
     # Field should be the id of an object or the prefix/suffix
     # for a set of objects. */#}
-    function toggleFields (field,toggle) {
-        var efield = $.escapeSelector(field);
-        if (toggle == "disabled") {
+    function toggle (id, type, toggle) {
+        var efield = $.escapeSelector(id);
+        if (type == "field") {
 {#/*        # This might need further refinement, selects the row matching field id,
             # uses .find() to select descendants, .addBack() to select itself. */#}
-            var selected = $('tr[id=row_' + efield + ']').find('div,[id*=' + efield + '],[data-id*=' + efield + '],[name*=' + efield + '],[class^="select-box"],[class^="btn"],ul[class^="tokens-container"]').addBack();
-{#/*        # Disable entire row related to a field */#}
-            selected.addClass("disabled");
-            selected.prop({
-                "readonly": true,
-                "disabled": true
-            });
-{#/*        # This element needs to be specially hidden because it is for some reason
-            # hidden when tokenizer creates the element. This is the target element
-            # <li class="token-search" style="width: 15px; display: none;"><input autocomplete="off"></li> */#}
-            selected.find('li[class="token-search"]').hide();
-{#/*        # Disable the Clear All link below dropdown boxes,
-            # the toggle column on grids (Enabled column),
-            # and the tokens in a tokenized field. */#}
-            selected.find('a[id^="clear-options_"],[class*="command-toggle"],li[class="token"]').css("pointer-events","none");
-            $('input[id=' + efield + ']').trigger("change");
-        } else if (toggle == "enabled") {
-{#/*        # This might need further refinement, selects the row matching field id,
-            # uses .find() to select descendants, .addBack() to select itself. */#}
-            var selected = $('tr[id=row_' + efield + ']').find('div,[id*=' + efield + '],[data-id*=' + efield + '],[name*=' + efield + '],[class^="select-box"],[class^="btn"],ul[class^="tokens-container"]').addBack();
-{#/*        # Disable entire row related to a field */#}
-            selected.removeClass("disabled");
-            selected.prop({
-                "readonly": false,
-                "disabled": false
-            });
-{#/*        # This element needs to be specially shown because it is for some reason
-            # hidden when tokenizer creates the element. This is the target element
-            # <li class="token-search" style="width: 15px; display: none;"><input autocomplete="off"></li>*/#}
-            selected.find('li[class="token-search"]').show();
-{#/*        # Enable the Clear All link below dropdown boxes,
-            # the toggle column on grids (Enabled column),
-            # and the tokens in a tokenized field.*/#}
-            selected.find('a[id^="clear-options_"],[class*="command-toggle"],li[class="token"]').css("pointer-events","auto");
-{#/*        # Trigger a field change to trigger a toggle of any dependent fields (i.e. fields that this field enables) */#}
-            var selected_field = $('input[id=' + efield + ']')
-            $('input[id=' + efield + ']').trigger("change");
+            var selected_row = $('tr[id=row_' + efield + ']')
+            var selected = selected_row.find('div,[id*=' + efield + '],[data-id*=' + efield + '],[name*=' + efield + '],[class^="select-box"],[class^="btn"],ul[class^="tokens-container"]').addBack();
+            if (toggle == "disabled") {
+{#/*            # Disable entire row related to a field */#}
+                selected.addClass("disabled");
+                selected.prop({
+                    "readonly": true,
+                    "disabled": true
+                });
+{#/*            # This element needs to be specially hidden because it is for some reason
+                # hidden when tokenizer creates the element. This is the target element
+                # <li class="token-search" style="width: 15px; display: none;"><input autocomplete="off"></li> */#}
+                selected.find('li[class="token-search"]').hide();
+{#/*            # Disable the Clear All link below dropdown boxes,
+                # the toggle column on grids (Enabled column),
+                # and the tokens in a tokenized field. */#}
+                selected.find('a[id^="clear-options_"],[class*="command-toggle"],li[class="token"]').css("pointer-events","none");
+                $('input[id=' + efield + ']').trigger("change");
+            } else if (toggle == "enabled") {
+{#/*            # Disable entire row related to a field */#}
+                selected.removeClass("disabled");
+                selected.prop({
+                    "readonly": false,
+                    "disabled": false
+                });
+{#/*            # This element needs to be specially shown because it is for some reason
+                # hidden when tokenizer creates the element. This is the target element
+                # <li class="token-search" style="width: 15px; display: none;"><input autocomplete="off"></li>*/#}
+                selected.find('li[class="token-search"]').show();
+{#/*            # Enable the Clear All link below dropdown boxes,
+                # the toggle column on grids (Enabled column),
+                # and the tokens in a tokenized field.*/#}
+                selected.find('a[id^="clear-options_"],[class*="command-toggle"],li[class="token"]').css("pointer-events","auto");
+{#/*            # Trigger a field change to trigger a toggle of any dependent fields (i.e. fields that this field enables) */#}
+                var selected_field = $('input[id=' + efield + ']')
+                $('input[id=' + efield + ']').trigger("change");
+            } else if (toggle == "hidden") {
+                selected_row.hide()
+                selected_row.after('<tr class="dummy_row" style="display: none"></tr>');
+            } else if (toggle == "visible") {
+                selected_row.show()
+                selected_row.next("tr[class=dummy_row]").remove();
+            }
+        } else if (type == "tab") {
+            if (toggle == "hidden") {
+                $("#" + efield).hide()
+            } else if (toggle == "visible") {
+                $("#" + efield).show()
+            }
         }
     }
 
