@@ -34,6 +34,9 @@
  # this_form    array   the form XML in an array
  #}
 
+{# Pull in CSS styles #}
+{{ partial("OPNsense/Dnscryptproxy/+styles") }}
+
 {# Pull in our macro definitions #}
 {{ partial("OPNsense/Dnscryptproxy/+macros") }}
 
