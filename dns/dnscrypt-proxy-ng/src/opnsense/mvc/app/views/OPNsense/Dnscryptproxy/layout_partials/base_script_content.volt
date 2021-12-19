@@ -100,7 +100,7 @@
                 selected_row.show()
                 selected_row.next("tr[class=dummy_row]").remove();
             }
-        } else if (type == "tab") {
+        } else if (["tab", "box"].includes(type)) {
             if (toggle == "hidden") {
                 $("#" + efield).hide()
             } else if (toggle == "visible") {
@@ -129,18 +129,7 @@
                 $("#" + frm_id + "_progress").removeClass("fa fa-spinner fa-pulse");
 
                 if (status != "success" || data['status'] != 'ok' ) {
-{#/*                # fix error handling */#}
-                    if (data['message'] != '' ) {
-                        var message = data['message']
-                    } else {
-                        var message = JSON.stringify(data)
-                    }
-                    BootstrapDialog.show({
-                        type:BootstrapDialog.TYPE_WARNING,
-                        title: frm_title,
-                        message: message,
-                        draggable: true
-                    });
+                    ajaxDataDialog(data, frm_title);
                 } else {
                     ajaxCall(url="/api/{{ plugin_name }}/service/status", sendData={}, callback=function(data,status) {
                         updateServiceStatusUI(data['status']);
@@ -152,6 +141,199 @@
         return dfObj;
     }
 
+    function toggleApplyChanges(){
+        const dfObj = new $.Deferred();
+{#/*
+        # Function to check if the config is dirty and display the Apply Changes box/button */#}
+        var api_url = "/api/{{ plugin_name }}/settings/state";
+        ajaxCall(url=api_url, sendData={}, callback=function(data,status){
+{#/*            # when done, disable progress animation. */#}
+
+            if ('state' in data) {
+                if (data['state'] == "dirty"){
+                    toggle("alt_{{ plugin_name }}_apply_changes", "box", "visible")
+                } else if (data['state'] == "clean" ){
+                    toggle("alt_{{ plugin_name }}_apply_changes", "box", "hidden")
+                }
+            }
+            dfObj.resolve();
+        });
+        return dfObj;
+    }
+
+    function saveForm(form, dfObj, callback_after, params){
+        var this_frm = form;
+        var frm_id = this_frm.attr("id");
+        var frm_title = this_frm.attr("data-title");
+        var frm_model = this_frm.attr("data-model");
+
+{#/*    # It's possible for a form to exist without a data-model, exclude them. */#}
+        if (frm_model) {
+            var api_url="/api/{{ plugin_name }}/" + frm_model + "/set";
+            saveFormToEndpoint(url=api_url, formid=frm_id, callback_ok=function(data, status){
+                if (data['result'] != 'saved' ) {
+                    ajaxDataDialog(data, frm_title);
+                } else {
+                    if (callback_after !== undefined) {
+                        callback_after.apply(this, params);
+                    }
+                    dfObj.resolve();
+                }
+            });
+        } else {
+                dfObj.resolve();
+        }
+        return dfObj;
+    }
+
+
+    function reconfigureService(button, dfObj, callback_after, params){
+        var frm_title = '{{ plugin_label }}';
+
+        busyButton(button);
+
+        var api_url = "/api/{{ plugin_name }}/service/reconfigure";
+        ajaxCall(url=api_url, sendData={}, callback=function(data, status){
+            if (status != "success" || data['status'] != 'ok' ) {
+                ajaxDataDialog(data, frm_title);
+            } else {
+                if (callback_after !== undefined) {
+                    callback_after.apply(this, params);
+                }
+                var api_url = "/api/{{ plugin_name }}/service/status";
+                ajaxCall(url=api_url, sendData={}, callback=function(data, status) {
+                    updateServiceStatusUI(data['status']);
+                    dfObj.resolve();
+                });
+            }
+        });
+        return dfObj;
+    }
+
+{#/*
+    # Make a button look busy, and disable it to prevent extra clicks. */#}
+    function busyButton(this_btn) {
+        this_btn.find('[id$="_progress"]').addClass("fa fa-spinner fa-pulse");
+        this_btn.addClass("disabled");
+    }
+
+{#/*
+    # Make a button clear from busy state, re-enable it. */#}
+    function clearButton(this_btn) {
+        this_btn.find('[id$="_progress"]').removeClass("fa fa-spinner fa-pulse");
+        this_btn.removeClass("disabled");
+    }
+
+{#/*
+    # Make a button clear from busy state, re-enable it,
+    # includes toggle for Apply Changes visibility. */#}
+    function clearButtonAndToggle(this_btn) {
+        clearButton(this_btn);
+        toggleApplyChanges();
+    }
+
+    function ajaxDataDialog(data, dialog_title){
+        if (data['message'] != '' ) {
+            var message = data['message']
+        } else {
+            var message = JSON.stringify(data)
+        }
+        BootstrapDialog.show({
+            type:BootstrapDialog.TYPE_WARNING,
+            title: dialog_title,
+            message: message,
+            draggable: true
+        });
+    }
+
+
+{#/*
+    # Save event handlers for all defined forms
+    # This uses jquery selector to match all button elements with id starting with "save_frm_" */#}
+    $('button[id^="btn_frm_"][id$="_save"]').each(function(){
+        $(this).click(function() {
+            const dfObj = new $.Deferred();
+            var this_frm = $(this).closest("form");
+            var this_btn = $(this);
+
+            busyButton(this_btn);
+
+            saveForm(this_frm, dfObj, clearButtonAndToggle, [this_btn]);
+
+            return dfObj;
+        });
+    });
+
+{#/*
+    # Save event handler for the Save All button.
+    # The ID should be unique and derived from the form data. */#}
+    $('button[id="btn_{{ plugin_name }}_save_all"]').click(function() {
+        const dfObj = new $.Deferred();
+        var this_btn = $(this);
+
+        busyButton(this_btn);
+
+        var models = $('form[id^="frm_"][data-model]').map(function() {
+{#          # Create a deferred object to pass to the function and wait on. #}
+            const model_dfObj = new $.Deferred();
+            saveForm($(this), model_dfObj);
+            return model_dfObj
+        });
+        $.when(...models.get()).then(function() {
+{#/*        # when done, disable progress animation. */#}
+            clearButton(this_btn);
+            toggleApplyChanges();
+            dfObj.resolve();
+        });
+        return dfObj;
+    });
+
+{#/*
+    # Save event handler for the Save All button.
+    # The ID should be unique and derived from the form data. */#}
+    $('button[id="btn_{{ plugin_name }}_save_apply_all"]').click(function() {
+        const reconObj = new $.Deferred();
+        var this_btn = $(this);
+
+        busyButton(this_btn);
+
+        var models = $('form[id^="frm_"][data-model]').map(function() {
+{#          # Create a deferred object to pass to the function and wait on. #}
+            const model_dfObj = new $.Deferred();
+            saveForm($(this), model_dfObj);
+            return model_dfObj
+        });
+        $.when(...models.get()).then(function() {
+{#/*        # when done, disable progress animation. */#}
+            reconfigureService(this_btn, reconObj, clearButtonAndToggle, [this_btn]);
+            dfObj.resolve();
+        });
+        return recon_dfObj;
+    });
+
+{#/*
+    # Apply event handler for the Apply Changes button.
+    # The ID should be unique. */#}
+    $('button[id="btn_{{ plugin_name }}_apply_changes"]').click(function() {
+        const dfObj = new $.Deferred();
+        var this_btn = $(this);
+        busyButton(this_btn);
+        reconfigureService(this_btn, dfObj, clearButtonAndToggle, [this_btn]);
+        return dfObj;
+    });
+
+
+{#/*
+    # Perform save and reconfigure for single form. */#}
+    $('button[id*="btn_frm_"][id$="_save_apply"]').click(function() {
+        const saveObj = new $.Deferred();
+        const reconObj = new $.Deferred();
+        var this_btn = $(this);
+        var this_frm = $(this).closest("form");
+        busyButton(this_btn);
+        saveForm(this_frm, saveObj, reconfigureService, [this_btn, reconObj, clearButtonAndToggle, [this_btn]]);
+        return { saveObj, reconObj };
+    });
 
 {#/*
     # Adds a hash tag to the URL, for example: http://opnsense/ui/dnscryptproxy/settings#subtab_schedules
@@ -163,15 +345,6 @@
 
     $('.nav-tabs a').on('shown.bs.tab', function (e) {
         history.pushState(null, null, e.target.hash);
-    });
-
-{#/*
-    # Save event handlers for all defined forms
-    # This uses jquery selector to match all button elements with id starting with "save_frm_" */#}
-    $('button[id^="save_frm_"]').each(function(){
-        $(this).click(function() {
-            saveFormAndReconfigure($(this));
-        });
     });
 
 {#/*

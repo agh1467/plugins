@@ -55,6 +55,7 @@ class LogsController extends \OPNsense\Base\IndexController
         $this->view->setVars(
             [
                 'plugin_name' => $settings->api_name,
+                'plugin_label' => $settings->label,
                 'this_form' => $myController->getForm('logs'),
                 // controllers/OPNsense/Dnscryptproxy/forms/logs.xml
             ]

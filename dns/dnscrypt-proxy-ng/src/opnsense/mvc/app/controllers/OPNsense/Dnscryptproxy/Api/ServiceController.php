@@ -103,8 +103,15 @@ class ServiceController extends ApiMutableServiceControllerBase
         if ($response != 'OK') {
             // Return an array containing a reponse for the message box to display.
             return array('status' => 'error', 'message' => $response);
+        } else {
+            $response = trim($backend->configdpRun($settings->configd_name . ' make clean'));
         }
 
-        return $reconfigure_result;
+        if ($response != 'OK') {
+            // Return an array containing a reponse for the message box to display.
+            return array('status' => 'error', 'message' => $response);
+        } else {
+            return $reconfigure_result;
+        }
     }
 }

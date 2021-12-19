@@ -55,6 +55,7 @@ class SettingsController extends \OPNsense\Base\IndexController
         $this->view->setVars(
             [
                 'plugin_name' => $settings->api_name,
+                'plugin_label' => $settings->label,
                 'this_form' => $myController->getForm('settings'),
                 // controllers/OPNsense/Dnscryptproxy/forms/settings.xml
             ]

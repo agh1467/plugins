@@ -55,6 +55,7 @@ class DiagnosticsController extends \OPNsense\Base\IndexController
         $this->view->setVars(
             [
                 'plugin_name' => $thisModel->api_name,
+                'plugin_label' => $settings->label,
                 'this_form' => $myController->getForm('diagnostics'),
                 // controllers/OPNsense/Dnscryptproxy/forms/diagnostics.xml
             ]

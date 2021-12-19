@@ -44,7 +44,7 @@
     tab headers,
     tabs content (include fields and bootgrids),
     and all bootgrid dialogs #}
-{{ build_page(this_form) }}
+{{ build_page(this_form, plugin_name, plugin_label, lang) }}
 
 {# Build the entire page including:
     tab headers,

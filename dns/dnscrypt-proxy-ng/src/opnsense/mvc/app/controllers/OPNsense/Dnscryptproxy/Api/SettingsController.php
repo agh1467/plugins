@@ -793,4 +793,75 @@ class SettingsController extends ApiMutableModelControllerBase
         return $result;
     }
 
+    /**
+     * This function overrides the setAction() provided by
+     * ApiMutableServiceControllerBase.
+     *
+     * API endpoint:
+     *   /api/dnscryptproxy/settings/set
+     *
+     * This overrides the function from ApiMutableServiceControllerBase, but
+     * also calls it itself. This action is used to perform extra activites
+     * after a setAction() action is complete. We pass on the
+     * setAction() result from the parent.
+     *
+     * @return array setAction() result or error message from configd.
+     */
+    public function setAction()
+    {
+        // Create a settings object to get some variables.
+        $settings = new Settings();
+
+        // Call the reconfigure action to save our settings.
+        $set_result = parent::setAction();
+
+        // Create a backend to run our activities.
+        $backend = new Backend();
+        $response = trim($backend->configdpRun($settings->configd_name . ' make dirty'));
+
+        if ($response != 'OK') {
+            // Return an array containing a reponse for the message box to display.
+            return array('status' => 'error', 'message' => $response);
+        }
+
+        return $set_result;
+    }
+
+    /**
+     * An API endpoint to return the clean/dirty state of the config.
+     *
+     * API endpoint:
+     *
+     *   `/api/dnscryptproxy/settings/state`
+     *
+     * Usage:
+     *
+     *   `/api/dnscryptproxy/settings/state`
+     *
+     * Returns an array containing the dirty state.
+     *
+     * @return array    [state] = dirty/clean
+     */
+    public function stateAction()
+    {
+        $result = array();
+        // Create a Settings class object to use for configd_name.
+        $settings = new Settings();
+
+        // Create a backend to run our activities.
+        $backend = new Backend();
+        $response = trim($backend->configdpRun($settings->configd_name . ' state'));
+
+        if (!in_array($response, array(
+            'dirty',
+            'clean'
+            ))
+        ) {
+            // Return an array containing a reponse for the message box to display.
+            return array('status' => 'error', 'message' => $response);
+        } else {
+            return array('status' => 'ok', 'state' => $response);
+        }
+    }
+
 }
