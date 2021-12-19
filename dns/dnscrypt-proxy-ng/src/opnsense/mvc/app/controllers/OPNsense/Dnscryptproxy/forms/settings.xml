@@ -2607,8 +2607,6 @@
                 <add>/api/dnscryptproxy/settings/grid/add</add>
                 <del>/api/dnscryptproxy/settings/grid/del</del>
                 <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                <import>/api/dnscryptproxy/settings/import</import>
-                <export>/api/dnscryptproxy/settings/export</export>
             </api>
             <dialog>
                 <label>Edit Route</label>
