@@ -191,7 +191,24 @@
  # to put the div definition in the right place on the page.
  #}
 
-{%  macro build_page(this_form = null) %}
+{%  macro build_page(this_form = null, plugin_name = null, plugin_label = null, lang = null) %}
+{# Hidden apply changes box, shown when configuration changed, but unsaved. #}
+<div class="col-xs-12">
+  <div class="alert alert-info" id="alt_{{ plugin_name }}_apply_changes" style="min-height: 65px; display: none;">
+    <form method="post">
+        <button type="button"
+                id="btn_{{ plugin_name }}_apply_changes"
+                class="btn btn-primary pull-right">
+            <b>Apply changes</b>
+{#          # Progress spinner to activate when applying changes. #}
+            <i id="btn_{{ plugin_name }}_apply_changes_progress" class=""></i>
+        </button>
+    </form>
+    <div style="margin-top: 8px;">
+        {{ lang._('The %s configuration has been changed. You must apply the changes in order for them to take effect.')|format(plugin_label) }}
+    </div>
+  </div>
+</div>
 {%      if this_form['tabs'] is defined
             and this_form['activetab'] is defined %}
 {{          build_tabs_headers(this_form['tabs'], this_form['activetab']) }}
@@ -219,6 +236,37 @@
   </div>
 </section>
 {%      endif %}
+{#  # Conditionally display the save all buttons at the bottom of the page. #}
+{%      if this_form['save']|default('') == "true" or
+            this_form['save_apply']|default('') == "true" %}
+<section class="page-content-main">
+{# Alert class used to get padding to look good.
+  Maybe there is another class that can be used. #}
+    <div class="alert alert-info" role="alert">
+{%          if this_form['save']|default('') == "true" %}
+    <button type="button"
+            id="btn_{{ plugin_name }}_save_all"
+            class="btn btn-primary"
+        <i class="fa fa-floppy-o"></i>
+        &nbsp<b>{{ lang._('Save All Settings') }}</b>
+{#      # Progress spinner to activate when applying changes. #}
+        <i id="btn_{{ plugin_name }}_save_all_progress" class=""></i>
+    </button>
+{%          endif %}
+{%          if this_form['save_apply']|default('') == "true" %}
+    <button type="button"
+            id="btn_{{ plugin_name }}_save_apply_all"
+            class="btn btn-primary"
+        <i class="fa fa-floppy-o"></i>
+        &nbsp<b>{{ lang._('Save and Apply All Settings') }}</b>
+{#      # Progress spinner to activate when applying changes. #}
+        <i id="btn_{{ plugin_name }}_save_all_progress" class=""></i>
+    </button>
+{%          endif %}
+{%      endif %}
+    </div>
+</div>
+
 {%  endmacro %}
 
 

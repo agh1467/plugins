@@ -232,7 +232,8 @@
                     ]]>
                 </help>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="advanced_settings" description="Advanced Settings">
             <model>settings</model>
@@ -786,7 +787,8 @@
                     ]]>
                 </help>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
     </tab>
     <tab id="lists" description="Lists/Rules">
@@ -966,7 +968,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="blocked_ips" description="Blocked IPs">
             <model>settings</model>
@@ -1154,7 +1157,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="allowed_names" description="Allowed Names">
             <model>settings</model>
@@ -1322,7 +1326,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="allowed_ips" description="Allowed IPs">
             <model>settings</model>
@@ -1469,7 +1474,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="schedules" description="Schedules">
             <model>settings</model>
@@ -1611,7 +1617,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="cloaking" description="Cloaking Rules">
             <model>settings</model>
@@ -1785,7 +1792,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="forwarding" description="Forwarding Rules">
             <model>settings</model>
@@ -1896,7 +1904,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
     </tab>
     <tab id="doh" description="DoH Server/Client">
@@ -2018,7 +2027,8 @@
                     ]]>
                 </help>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="doh_client_x509_auth" description="DoH Client x509 Authentication">
             <model>settings</model>
@@ -2149,7 +2159,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
     </tab>
     <tab id="resolvers" description="Resolvers">
@@ -2317,7 +2328,8 @@
                 <error>Error occurred executing API</error>
                 <widget>dnscryptproxy</widget>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="static" description="Static">
             <model>settings</model>
@@ -2388,7 +2400,8 @@
                     </field>
                 </dialog>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
         <subtab id="broken_implementations" description="Broken Implementations">
             <model>settings</model>
@@ -2441,7 +2454,8 @@
                     ]]>
                 </help>
             </field>
-            <apply>true</apply>
+            <save>true</save>
+            <save_apply>true</save_apply>
         </subtab>
     </tab>
     <tab id="captive_portals" description="Captive Portals">
@@ -2534,7 +2548,8 @@
                 </field>
             </dialog>
         </field>
-        <apply>true</apply>
+        <save>true</save>
+        <save_apply>true</save_apply>
     </tab>
     <tab id="anonymized_dns" description="Anonymized DNS">
         <model>settings</model>
@@ -2667,7 +2682,8 @@
             </api>
             <row_count>7,14,20,50,100,-1</row_count>
         </field>
-        <apply>true</apply>
+        <save>true</save>
+        <save_apply>true</save_apply>
     </tab>
     <tab id="dns64" description="DNS64">
         <model>settings</model>
@@ -2807,7 +2823,10 @@
                 </field>
             </dialog>
         </field>
-        <apply>true</apply>
+        <save>true</save>
+        <save_apply>true</save_apply>
     </tab>
+    <save>true</save>
+    <save_apply>true</save_apply>
     <activetab>basic_settings</activetab>
 </form>
