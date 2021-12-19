@@ -43,6 +43,7 @@
  # this_field['api']['toggle']     : API for bootgrid to toggle entries (enable/disable)
  # this_field['api']['export']     : API for bootgrid to export entries
  # this_field['api']['import']     : API for bootgrid to import entries
+ # this_field['api']['clear']      : API for clearing log files from the bootgrid
  # this_field['columns']['column'] : array of columns for the bootgrid
  # this_field['dialog']            : array containing the fields for the dialog
  # this_field['label']             : attribute label (visible text)
@@ -121,12 +122,19 @@
 {%      for index, column in columns_var %}
 {%          set data_formatter = "" %}
                     <th
-                        data-column-id="{{ column['@attributes']['id']|default('') }}"
-                        data-width="{{ column['@attributes']['width']|default('') }}"
-                        data-size="{{ column['@attributes']['size']|default('') }}"
                         data-type="{{ column['@attributes']['type']|default('string') }}"
                         data-visible="{{ column['@attributes']['visible']|default('true') }}"
-                        data-formatter="{{ column['@attributes']['data-formatter']|default('') }}"
+                        data-sortable="{{ column['@attributes']['sortable']|default('true') }}"
+                        {{ (column['@attributes']['id']|default('') != '') ?
+                            'data-column-id="'~column['@attributes']['id']~'"' : '' }}
+                        {{ (column['@attributes']['size']|default('') != '') ?
+                            'data-size="'~column['@attributes']['size']~'"' : '' }}
+                        {{ (column['@attributes']['data-formatter']|default('') != '') ?
+                            'data-formatter="'~column['@attributes']['data-formatter']~'"' : '' }}
+                        {{ (column['@attributes']['width']|default('') != '') ?
+                            'data-width="'~column['@attributes']['width']~'"' : '' }}
+                        {{ (column['@attributes']['width']|default('') != '') ?
+                            'width="'~column['@attributes']['width']~'"' : '' }}
                     >
 {%          if column is type('array') %}
                         {{ lang._('%s')|format(column[0]|default('')) }}
@@ -161,7 +169,7 @@
             </thead>
             <tbody
 {%      if this_field['class']|default('') != '' %}
-{#              # This is for if another style is specified in the form data. #}
+{#              # This is for if another class is specified in the form data. #}
                 class="{{ this_field['class'] }}"
 {%      endif %}
 {%      if this_field['style']|default('') != '' %}
@@ -197,7 +205,7 @@
 {%          endif %}
                     </td>
 {%      endif %}
-{%      if (this_field['api']['export']|default('') != '' or
+{%      if (this_field['api']['import']|default('') != '' or
             this_field['api']['export']|default('') != '') %}
                 </tr>
 {#  # Close the previous row, and start a new one.
@@ -213,7 +221,8 @@
                             data-toggle="tooltip"
                             title="{{ lang._('%s')|format('Download') }}"
                             type="button"
-                            class="btn btn-xs btn-default"
+                            class="btn btn-md btn-default pull-right"
+                            style="margin-left: 6px;"
                         >
                             <span class="fa fa-cloud-download"></span>
                         </button>
@@ -224,7 +233,7 @@
                             data-toggle="tooltip"
                             title="{{ lang._('%s')|format('Upload') }}"
                             type="button"
-                            class="btn btn-xs btn-default"
+                            class="btn btn-md btn-default pull-right"
                         >
                             <span class="fa fa-cloud-upload"></span>
                         </button>
@@ -234,6 +243,22 @@
                 </tr>
             </tfoot>
         </table>
+{%      if this_field['api']['clear']|default('') != '' %}
+        <div class="alert alert-info" role="alert" style="min-height: 65px;">
+            <form method="post">
+                <button type="button"
+                        id="btn_bootgrid_{{ safe_id }}_clear"
+                        class="btn btn-danger pull-right"
+                        >
+                        <i class="fa fa-fw fa-trash-o"></i>
+                        &nbsp{{ lang._('Clear Log') }}
+                </button>
+            </form>
+            <div style="margin-top: 8px;">
+                {{ lang._('This log can be cleared using the button on the right.') }}
+            </div>
+        </div>
+{%      endif %}
     </td>
 </tr>
 {%  endif %}

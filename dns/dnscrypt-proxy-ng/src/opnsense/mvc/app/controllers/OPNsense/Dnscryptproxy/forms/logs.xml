@@ -1,15 +1,20 @@
 <form>
     <tab id="dnscryptproxy_logs_main" description="Main">
         <field>
-            <target>main</target>
+            <label>/var/log/dnscrypt-proxy/main.log</label>
             <type>bootgrid</type>
+            <target>main</target>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/main.log</column>
+                <column id="timestamp" width="11em" sortable="false">Timestamp</column>
+                <column id="severity" width="5em" sortable="false">Severity</column>
+                <column id="msg" width="90em" sortable="false">Message</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/main/export</export>
+                <clear>/api/dnscryptproxy/log/main/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -26,15 +31,24 @@
             </control>
         </field>
         <field>
+            <label>/var/log/dnscrypt-proxy/query.log</label>
             <target>query</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/query.log</column>
+                <column id="timestamp" width="20em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="13em" sortable="false">Client IP</column>
+                <column id="query_name" width="64em" sortable="false">Query Name</column>
+                <column id="query_type" width="10em" sortable="false">Query Type</column>
+                <column id="return_code" width="10em" sortable="false">Return Code</column>
+                <column id="request_duration" width="10em" sortable="false">Request Duration</column>
+                <column id="server_name" width="48em" sortable="false">Server Name</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/query/export</export>
+                <clear>/api/dnscryptproxy/log/query/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -52,15 +66,21 @@
             </control>
         </field>
         <field>
+            <label>/var/log/dnscrypt-proxy/nx.log</label>
             <target>nx</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/nx.log</column>
+                <column id="timestamp" width="11em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="10em" sortable="false">Client IP</column>
+                <column id="query_name" width="64em" sortable="false">Query Name</column>
+                <column id="query_type" width="10em" sortable="false">Query Type</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/nx/export</export>
+                <clear>/api/dnscryptproxy/log/nx/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -78,15 +98,21 @@
             </control>
         </field>
         <field>
-            <target>blocked-names</target>
+            <label>/var/log/dnscrypt-proxy/blocked-names.log</label>
+            <target>blockednames</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/blocked-names.log</column>
+                <column id="timestamp" width="12em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="20em" sortable="false">Client IP</column>
+                <column id="query_name" width="60em" sortable="false">Query Name</column>
+                <column id="matching_rule" width="18em" sortable="false">Matching Rule</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/blockednames/export</export>
+                <clear>/api/dnscryptproxy/log/blockednames/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -104,15 +130,22 @@
             </control>
         </field>
         <field>
-            <target>blocked-ips</target>
+            <label>/var/log/dnscrypt-proxy/blocked-ips.log</label>
+            <target>blockedips</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/blocked-ips.log</column>
+                <column id="timestamp" width="11em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="20em" sortable="false">Client IP</column>
+                <column id="query_name" width="28em" sortable="false">Query Name</column>
+                <column id="ip" width="20em" sortable="false">IP</column>
+                <column id="matching_rule" width="18em" sortable="false">Matching Rule</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/blockedips/export</export>
+                <clear>/api/dnscryptproxy/log/blockedips/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -130,15 +163,21 @@
             </control>
         </field>
         <field>
-            <target>allowed-names</target>
+            <label>/var/log/dnscrypt-proxy/allowed-names.log</label>
+            <target>allowednames</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/allowed-names.log</column>
+                <column id="timestamp" width="12em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="20em" sortable="false">Client IP</column>
+                <column id="query_name" width="60em" sortable="false">Query Name</column>
+                <column id="matching_rule" width="18em" sortable="false">Matching Rule</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/allowednames/export</export>
+                <clear>/api/dnscryptproxy/log/allowednames/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
@@ -156,15 +195,22 @@
             </control>
         </field>
         <field>
-            <target>allowed-ips</target>
+            <label>/var/log/dnscrypt-proxy/allowed-ips.log</label>
+            <target>allowedips</target>
             <type>bootgrid</type>
             <style></style>
             <class>logs</class>
             <columns>
-                <column id="line">/var/log/dnscrypt-proxy/allowed-ips.log</column>
+                <column id="timestamp" width="11em" sortable="false">Timestamp</column>
+                <column id="client_ip" width="20em" sortable="false">Client IP</column>
+                <column id="query_name" width="28em" sortable="false">Query Name</column>
+                <column id="ip" width="20em" sortable="false">IP</column>
+                <column id="matching_rule" width="18em" sortable="false">Matching Rule</column>
             </columns>
             <api>
-                <search>/api/diagnostics/log/dnscrypt-proxy</search>
+                <search>/api/dnscryptproxy/log</search>
+                <export>/api/dnscryptproxy/log/allowedips/export</export>
+                <clear>/api/dnscryptproxy/log/allowedips/clear</clear>
             </api>
             <row_count>20,50,100,200,500,1000,-1</row_count>
         </field>
