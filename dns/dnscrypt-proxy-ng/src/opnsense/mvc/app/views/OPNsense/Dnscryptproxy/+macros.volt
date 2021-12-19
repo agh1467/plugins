@@ -387,21 +387,71 @@
 {#      Create an id derived from the target, escaping periods. #}
 <?php $safe_id = preg_replace('/\./','_',$field['target']); ?>
     $("#btn_bootgrid_{{ safe_id }}_export").click(function(){
-        ajaxGet("{{ field['api']['export'] }}", {"target": "{{ field['target'] }}"}, function(data, status){
-            if (data) {
-                let output_data = JSON.stringify(data, null, 2);
-                let a_tag = $('<a></a>').attr('href','data:application/json;charset=utf8,' + encodeURIComponent(output_data))
-                    .attr('download','{{ field['target'] }}_export.json').appendTo('body');
+{#      Make ajax call to URL. #}
+        return $.ajax({
+            type: 'GET',
+            url: "{{ field['api']['export'] }}",
+            complete: function(data,status) {
+                if (data) {
+                    var output_data = '';
+                    var ext = '';
+                    try {
+                        var response = jQuery.parseJSON(data);
+                        output_data = JSON.stringify(data, null, 2);
+                        ext = 'json';
 
-                a_tag.ready(function() {
-                    if ( window.navigator.msSaveOrOpenBlob && window.Blob ) {
-                        var blob = new Blob( [ output_data ], { type: "text/csv" } );
-                        navigator.msSaveOrOpenBlob( blob, '{{ field['target'] }}_export.json' );
-                    } else {
-                        a_tag.get(0).click();
+                    } catch {
+                        // Assume text
+                        output_data = data['responseText'];
+                        ext = 'txt';
                     }
-                });
-            }
+                    let a_tag = $('<a></a>').attr('href','data:application/json;charset=utf8,' + encodeURIComponent(output_data))
+                        .attr('download','{{ field['target'] }}_export.' + ext).appendTo('body');
+
+                    a_tag.ready(function() {
+                        if ( window.navigator.msSaveOrOpenBlob && window.Blob ) {
+                            var blob = new Blob( [ output_data ], { type: "text/csv" } );
+                            navigator.msSaveOrOpenBlob( blob, '{{ field['target'] }}_export.' + ext );
+                        } else {
+                            a_tag.get(0).click();
+                        }
+                    });
+                }
+            },
+            data: { "target": "{{ field['target'] }}"}
+        });
+    });
+{%                          endif %}
+{# =============================================================================
+ # bootgrid: clear button
+ # =============================================================================
+ # Allows clearing the log file that the bootgrid is displaying the contents of.
+ #
+ #}
+{%                          if (field['type']|default('') == 'bootgrid' and
+                                field['target']|default('') != '' and
+                                field['api']['clear']|default('') != '') %}
+<?php $safe_id = preg_replace('/\./','_',$field['target']); ?>
+    $("#btn_bootgrid_{{ safe_id }}_clear").click(function(){
+        event.preventDefault();
+        BootstrapDialog.show({
+            type: BootstrapDialog.TYPE_DANGER,
+            title: "Log",
+            message: "Do you really want to flush this log?",
+            buttons: [{
+                label: "No",
+                action: function(dialogRef) {
+                    dialogRef.close();
+                }
+            }, {
+                label: "Yes",
+                action: function(dialogRef) {
+                    ajaxCall("{{ field['api']['clear'] }}", {}, function(){
+                        dialogRef.close();
+                        $('#bootgrid_{{ safe_id }}').bootgrid('reload');
+                    });
+                }
+            }]
         });
     });
 {%                          endif %}
@@ -435,10 +485,10 @@
             'toggle':'{{ field['api']['toggle'] }}/{{ field['target'] }}/',
 {%                              endif %}
             'options':{ 'selection':
-{%-                             if (field['style']|default('') == 'log' or
-                                    field['columns']['select']|default('true') == 'false') -%}
+{%-                             if (field['class']|default('') == 'logs' or
+                                    field['columns']['select']|default('false') == 'false') -%}
                             false
-{%-                             else -%}
+{%-                             elseif field['columns']['select']|default('false') == 'true' -%}
                             true
 {%-                             endif %}
 {%                              if (field['row_count']|default('') != '') %},

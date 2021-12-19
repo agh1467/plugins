@@ -70,4 +70,12 @@ class Settings extends BaseModel
      * @var string $configd_name
      */
     public $configd_name = 'dnscryptproxy';
+
+    /**
+     * The log directory name. Assuming this is located in /var/log.
+     *
+     * @var string $configd_name
+     */
+    public $log_dir_name = 'dnscrypt-proxy';
+
 }

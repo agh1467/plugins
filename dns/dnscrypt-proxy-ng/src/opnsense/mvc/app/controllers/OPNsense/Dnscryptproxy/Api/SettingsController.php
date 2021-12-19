@@ -242,8 +242,7 @@ class SettingsController extends ApiMutableModelControllerBase
      */
     public function gridAction($action, $target, $uuid = null)
     {
-        if (
-            in_array($action, array(
+        if (in_array($action, array(
                 'search',
                 'get',
                 'set',
@@ -427,20 +426,18 @@ class SettingsController extends ApiMutableModelControllerBase
             $target = $this->request->get('target');
             if (! is_null($target)) {  // If we have a target, check it against the list.
                 if (array_key_exists($target, $this->valid_grid_targets)) {  // Only operate on valid targets.
-                    $path = $this->$target;  // Set the path to the class var of the same name as the value of $target.
+                    // Get the model, and walk to the appropriate path.
+                    $mdl = $this->getModel();
+                    foreach (explode('.', $target) as $step) {
+                        $mdl = $mdl->{$step};
+                    }
+                    // Send via HTTP response the content type.
+                    $this->response->setContentType('application/json', 'UTF-8');
+                    // Send via HTTP response the JSON encoded array of the node.
+                    $this->response->setContent(json_encode($mdl->getNodes()));
                 } else {
                     return array('status' => 'Specified target "' . $target . "' does not exist.");
                 }
-
-                // Get the model, and walk to the appropriate path.
-                $mdl = $this->getModel();
-                foreach (explode('.', $path) as $step) {
-                    $mdl = $mdl->{$step};
-                }
-                // Send via HTTP response the content type.
-                $this->response->setContentType('application/json', 'UTF-8');
-                // Send via HTTP response the JSON encoded array of the node.
-                $this->response->setContent(json_encode($mdl->getNodes()));
             } else {
                 throw new UserException('Unsupported request type');
             }
@@ -489,61 +486,59 @@ class SettingsController extends ApiMutableModelControllerBase
             if (! is_null($target)) {  // Only do stuff if target is actually set.
                 if (is_array($data)) {  // Only do this if the data we have is an array.
                     if (array_key_exists($target, $this->valid_grid_targets)) {  // Only operate on valid targets.
-                        // Set the path to the class var of the same name as the value of $target.
-                        $path = $this->$target;
+                        // Get the model for use later. (used for updating records)
+                        $mdl = $this->getModel();
+                        // Create a second model object that is walked to the last node. (used for new records)
+                        $tmp = $mdl;
+                        foreach (explode('.', $target) as $step) {
+                            $tmp = $tmp->{$step};
+                        }
+                        // Get a lock on the config.
+                        Config::getInstance()->lock();
+                        // For each data[n], store it as uuid (string) and its content (array).
+                        foreach ($data as $data_uuid => $data_content) {
+                            // Reset the node on each iteration.
+                            $node = null;
+                            // Only do if our content is the correct format.
+                            if (is_array($data_content)) {
+                                // If the node exists (by UUID), this selects the node.
+                                $node = $mdl->getNodeByReference($target . '.' . $data_uuid);
+                                // If no node is found, create a new node.
+                                if ($node == null) {
+                                    $node = $tmp->Add();
+                                }
+                                // Set the new or found node to the content.
+                                $node->setNodes($data_content);
+                                // Increment the import counter.
+                                $result['import'] += 1;
+                            }
+                        }
+
+                        // Create the uuid mapping for validation messaging.
+                        $uuid_mapping = array();
+                        // perform validation, record details.
+                        foreach ($this->getModel()->performValidation() as $msg) {
+                            if (empty($result['validations'])) {
+                                $result['validations'] = array();
+                            }
+                            $parts = explode('.', $msg->getField());
+                            $uuid = $parts[count($parts) - 2];
+                            $fieldname = $parts[count($parts) - 1];
+                            $uuid_mapping[$uuid] = "$uuid";
+                            $result['validations'][$uuid_mapping[$uuid] . '.' . $fieldname] = $msg->getMessage();
+                        }
+
+                        // possibly use save() from ApiMutableModelControllerBase
+                        // only persist when valid import
+                        if (empty($result['validations'])) {
+                            $result['status'] = 'ok';
+                            $this->save();
+                        } else {
+                            $result['status'] = 'failed';
+                            Config::getInstance()->unlock();
+                        }
                     } else {
                         return array('status' => 'Specified target "' . $target . "' does not exist.");
-                    }
-                    // Get the model for use later. (used for updating records)
-                    $mdl = $this->getModel();
-                    // Create a second model object that is walked to the last node. (used for new records)
-                    $tmp = $mdl;
-                    foreach (explode('.', $path) as $step) {
-                        $tmp = $tmp->{$step};
-                    }
-                    // Get a lock on the config.
-                    Config::getInstance()->lock();
-                    // For each data[n], store it as uuid (string) and its content (array).
-                    foreach ($data as $data_uuid => $data_content) {
-                        // Reset the node on each iteration.
-                        $node = null;
-                        // Only do if our content is the correct format.
-                        if (is_array($data_content)) {
-                            // If the node exists (by UUID), this selects the node.
-                            $node = $mdl->getNodeByReference($path . '.' . $data_uuid);
-                            // If no node is found, create a new node.
-                            if ($node == null) {
-                                $node = $tmp->Add();
-                            }
-                            // Set the new or found node to the content.
-                            $node->setNodes($data_content);
-                            // Increment the import counter.
-                            $result['import'] += 1;
-                        }
-                    }
-
-                    // Create the uuid mapping for validation messaging.
-                    $uuid_mapping = array();
-                    // perform validation, record details.
-                    foreach ($this->getModel()->performValidation() as $msg) {
-                        if (empty($result['validations'])) {
-                            $result['validations'] = array();
-                        }
-                        $parts = explode('.', $msg->getField());
-                        $uuid = $parts[count($parts) - 2];
-                        $fieldname = $parts[count($parts) - 1];
-                        $uuid_mapping[$uuid] = "$uuid";
-                        $result['validations'][$uuid_mapping[$uuid] . '.' . $fieldname] = $msg->getMessage();
-                    }
-
-                    // possibly use save() from ApiMutableModelControllerBase
-                    // only persist when valid import
-                    if (empty($result['validations'])) {
-                        $result['status'] = 'ok';
-                        $this->save();
-                    } else {
-                        $result['status'] = 'failed';
-                        Config::getInstance()->unlock();
                     }
                 }
             } else {
@@ -633,7 +628,7 @@ class SettingsController extends ApiMutableModelControllerBase
      *
      * It executes configd with the given commands, and returns JSON for bootrid
      * to consume. It works similar to, and sourced mostly from `searchBase()`,
-     * but with some differences and added functionality.
+     * and UIModelGrid() but with some differences and added functionality.
      *
      * Takes most parameters via POST just like *Base() functions.
      *
@@ -690,7 +685,9 @@ class SettingsController extends ApiMutableModelControllerBase
             // This sorts by the desired column $rows, and rearranges $response
             // to be in the same order, thus sorting $response by the desired
             // column.
-            array_multisort($rows[$sortBy[0]], $sort, $response);
+            if ($this->request->has('sort') && is_array($this->request->get('sort'))) {
+                array_multisort($rows[$sortBy[0]], $sort, $response);
+            }
             // ^ This will throw an error if an element is missing from one of
             // the entries. Like description being missing on static server entries.
             // $rows will be shorter than $response. This has been mitigated by
@@ -791,8 +788,9 @@ class SettingsController extends ApiMutableModelControllerBase
         $result['status'] = 'ok';
         $result['POST'] = $_POST;
         $result['params'] = array('configd_cmd' => $configd_cmd, 'fields' => $fields);
-        $result['response'] = $response;
+        //$result['response'] = $response;
 
         return $result;
     }
+
 }
