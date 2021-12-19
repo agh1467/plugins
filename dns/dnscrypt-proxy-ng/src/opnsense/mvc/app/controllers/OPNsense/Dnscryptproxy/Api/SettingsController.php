@@ -54,8 +54,16 @@ use OPNsense\Dnscryptproxy\Settings;
  * ```
  *
  * Functions with a name ending in "Action" become API endpoints by extending
- * `ApiMutableModelControllerBase`.
-
+ * `ApiMutableModelControllerBase`. That class creates the following encpoints:
+ * ```
+ *   search
+ *   get
+ *   add
+ *   del
+ *   set
+ *   toggle
+ * ```
+ *
  * @package OPNsense\Dnscryptproxy
  */
 class SettingsController extends ApiMutableModelControllerBase
