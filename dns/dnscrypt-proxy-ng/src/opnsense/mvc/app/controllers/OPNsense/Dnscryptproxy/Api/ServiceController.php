@@ -81,8 +81,10 @@ class ServiceController extends ApiMutableServiceControllerBase
      * API endpoint:
      *   /api/dnscryptproxy/service/reconfigure
      *
-     * This action is used to perform extra activites after a reconfigure
-     * action is complete. We pass on the reconfigure result from the parent.
+     * This overrides the function from ApiMutableServiceControllerBase, but
+     * also calls it itself. This action is used to perform extra activites
+     * after a reconfigureAction() action is complete. We pass on the
+     * reconfigureAction() result from the parent.
      *
      * @return array reconfigure() result or error message from configd.
      */
