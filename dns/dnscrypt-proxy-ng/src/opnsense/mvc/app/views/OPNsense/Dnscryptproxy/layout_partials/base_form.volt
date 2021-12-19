@@ -197,7 +197,11 @@
 {%  if this_part[2]['apply']|default(false) == "true" %}
         <tr>
             <td colspan="3">
-                <button class="btn btn-primary" id="save_frm_{{ base_form_id }}" type="button"><b>{{ lang._('Apply') }} </b><i id="frm_tab_{{ base_form_id }}_progress" class=""></i></button>
+                <button class="btn btn-primary" id="save_frm_{{ base_form_id }}" type="button">
+                    <i class="fa fa-floppy-o"></i>
+                    &nbsp<b>{{ lang._('Save & Apply') }} </b>
+                    <i id="frm_tab_{{ base_form_id }}_progress" class=""></i>
+                </button>
             </td>
         </tr>
 {%  endif %}
