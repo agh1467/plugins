@@ -40,4 +40,4 @@
 {{ partial("OPNsense/Dnscryptproxy/+macros") }}
 
 {# Build the entire page based on the form data. #}
-{{ build_page(this_form) }}
+{{ build_page(this_form, plugin_name, plugin_label, lang) }}

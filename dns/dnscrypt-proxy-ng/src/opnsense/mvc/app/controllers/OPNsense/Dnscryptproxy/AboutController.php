@@ -58,6 +58,7 @@ class AboutController extends \OPNsense\Base\IndexController
             [
                 'plugin_name' => $thisModel->api_name,
                 'plugin_version' => $this->invokeConfigdRun('plugin_version'),
+                'plugin_label' => $settings->label,
                 'dnscrypt_proxy_version' => $this->invokeConfigdRun('version'),
                 'this_form' => $myController->getForm('about'),
                 // controllers/OPNsense/Dnscryptproxy/forms/about.xml

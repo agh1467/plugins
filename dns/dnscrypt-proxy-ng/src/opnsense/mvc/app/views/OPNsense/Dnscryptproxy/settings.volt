@@ -46,7 +46,7 @@
     tab headers,
     tabs content (include fields and bootgrids),
     and all bootgrid dialogs #}
-{{ build_page(this_form) }}
+{{ build_page(this_form, plugin_name, plugin_label, lang) }}
 
 <script>
 
@@ -147,6 +147,8 @@ $( document ).ready(function() {
         formatTokenizersUI();
 {#/*    # Refresh the data for the select picker fields. */#}
         $('.selectpicker').selectpicker('refresh');
+{#/*    # Toggle the apply changes message for when the config is dirty/clean. */#}
+        toggleApplyChanges();
 {#/*    # Dismiss our loading dialog */#}
         $('div[class^="modal bootstrap-dialog"]').modal('toggle');
     });

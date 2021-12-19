@@ -194,14 +194,27 @@
 {%          endif %}
 {%      endif %}
 {%  endfor %}
-{%  if this_part[2]['apply']|default(false) == "true" %}
+{%  if this_part[2]['save']|default(false) == "true" or
+        this_part[2]['save_apply']|default(false) == "true"%}
         <tr>
             <td colspan="3">
-                <button class="btn btn-primary" id="save_frm_{{ base_form_id }}" type="button">
-                    <i class="fa fa-floppy-o"></i>
-                    &nbsp<b>{{ lang._('Save & Apply') }} </b>
-                    <i id="frm_tab_{{ base_form_id }}_progress" class=""></i>
-                </button>
+{#              # We set our own style here to put the button in the right place. #}
+                <div style="padding-left: 10px;">
+{%                  if this_part[2]['save']|default(false) == "true" %}
+                        <button class="btn btn-primary" id="btn_frm_{{ base_form_id }}_save" type="button">
+                            <i class="fa fa-floppy-o"></i>
+                            &nbsp<b>{{ lang._('Save These Settings') }}</b>
+                            <i id="btn_frm_{{ base_form_id }}_save_progress" class=""></i>
+                        </button>
+{%                  endif %}
+{%                  if this_part[2]['save_apply']|default(false) == "true" %}
+                        <button class="btn btn-primary" id="btn_frm_{{ base_form_id }}_save_apply" type="button">
+                            <i class="fa fa-floppy-o"></i>
+                            &nbsp<b>{{ lang._('Save and Apply These Settings') }}</b>
+                            <i id="btn_frm_{{ base_form_id }}_save_apply_progress" class=""></i>
+                        </button>
+{%                  endif %}
+                </div>
             </td>
         </tr>
 {%  endif %}
