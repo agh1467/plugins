@@ -169,6 +169,7 @@
 {%      elseif this_field['type'] == "password" %}
             <input
                 type="password"
+                autocomplete="new-password"
                 class="form-control {{ this_field['style']|default('') }}"
                 size="{{ this_field['size']|default("43") }}"
                 id="{{ this_field['id'] }}"
