@@ -134,14 +134,14 @@
                 <label>Server selection method</label>
                 <type>dropdown</type>
                 <control>
-                    <action on_set="0" type="field"  do_state="hidden">settings.server_names</action>
-                    <action on_set="0" type="field"  do_state="visible">settings.require_nofilter</action>
-                    <action on_set="0" type="field"  do_state="visible">settings.require_nolog</action>
-                    <action on_set="0" type="field"  do_state="visible">settings.require_dnssec</action>
-                    <action on_set="1" type="field"  do_state="hidden">settings.require_dnssec</action>
-                    <action on_set="1" type="field"  do_state="hidden">settings.require_nolog</action>
-                    <action on_set="1" type="field"  do_state="hidden">settings.require_nofilter</action>
-                    <action on_set="1" type="field"  do_state="visible">settings.server_names</action>
+                    <action on_set="0" type="field" do_state="hidden">settings.server_names</action>
+                    <action on_set="0" type="field" do_state="visible">settings.require_nofilter</action>
+                    <action on_set="0" type="field" do_state="visible">settings.require_nolog</action>
+                    <action on_set="0" type="field" do_state="visible">settings.require_dnssec</action>
+                    <action on_set="1" type="field" do_state="hidden">settings.require_dnssec</action>
+                    <action on_set="1" type="field" do_state="hidden">settings.require_nolog</action>
+                    <action on_set="1" type="field" do_state="hidden">settings.require_nofilter</action>
+                    <action on_set="1" type="field" do_state="visible">settings.server_names</action>
                 </control>
                 <help><![CDATA[
                     Select to use manual server selection options, instead of
