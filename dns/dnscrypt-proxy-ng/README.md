@@ -21,17 +21,101 @@ Here are some useful resources for `dnscrypt-proxy`:
 
 ## Features
 
-Here is a summary of the features of this plugin:
+Across the plugin, there have been improvements made, such as:
+* All settings represented in the UI.
+* All logs visible from the UI
+* All items/pages/headers include help text
+* Elaborations, examples, and explanations included where helpful
+* Lists support multiple pages, sorting, and filtering (search)
+* Some lists support additional features such as:
+  * Multi-row select/delete
+  * Importing
+  * Exporting
+* Show setting name in help text where applicable
+* Settings grouped/ordered/organized as appropriate
+* Added section headers for several groups
+* Feature toggling
+* Conditionally toggle settings, due to conflict
+* Diagnostic tools included for troubleshooting
 
-* All settings represented in the UI
-* Enable/disable complex/advanced features
-* Upload/Download of allowed/blocked lists
-* External allowed/blocked names support
-* Importing/Exporting of allowed/blocked lists and some others
-* Diagnostic tools
-* All logs supported
-* Resolver list, displays all currently available resolvers.
-* Anonymized DNS configuration and relay list
+Here is a rundown of the features throughout the plugin:
+* Settings
+  * Global
+    * Basic Settings
+    * Advanced Settings
+  * Lists/Rules
+    * Blocked Names
+      * Toggle/configure Blocked Names features including
+      * External/Internal/Manual list types
+      * Toggle blocked names logging
+      * List of blocked names for the internal list
+    * Blocked IPs
+      * Toggle/configure Blocked IPs features including
+      * External/Internal/Manual list types
+      * Toggle blocked IPs logging
+      * List of blocked IPs for the internal list
+    * Allowed Names
+      * Toggle/configure Blocked Names features including
+      * Internal/Manual list types
+      * Toggle blocked names logging
+      * List of blocked names for the internal list
+    * Allowed IPs
+      * Toggle/configure Allowed IPs features including
+      * Internal/Manual list types
+      * Toggle Allowed IPs logging
+      * List of Allowed IPs for the internal list
+    * Schedules
+      * List of schedules for use with the allow/block lists.
+    * Cloaking Rules
+      * Toggle/configuration of cloaking settings
+      * Internal/Manual cloaking list types
+      * List of cloaking rules for the internal list
+    * Forwarding Rules
+      * Toggle/configuration of forwarding rules
+      * List of forward rules
+  * DoH Server/Client
+    * Local DoH Server
+      * Toggle and configure Local DoH server features.
+    * DoH Client x509 Authentication
+      * Configure DoH Client x509 configuration for specific servers.
+  * Resolvers
+      * Resolvers
+        * List of currently configured resolvers.
+        * Retrieves the list from dnscrypt-proxy itself.
+        * Includes dynamic servers populated by configured sources and statically configured servers.
+      * Sources
+        * List of source configurations.
+        * Add/Edit/Remove/Toggle source configurations.
+        * Restore the sources provided by default.
+      * Static
+        * List of static server configurations.
+        * Add/Edit/Remove/Toggle static server configurations.
+      * Broken Implementations
+        * Configure fragments_blocked configuration for specific servers.
+  * Captive Portals
+    * Toggle/configure captive portal settings.
+    * List of captive portals
+  * Anonymized DNS
+    * Settings for anonymized DNS.
+    * List of configurable anonymized DNS routes.
+    * List of available relays from sources.
+  * DNS64
+    * Toggle/configuration of DNS64 settings
+* Diagnostics
+  * Hostname lookup
+  * Show DoH Certificates
+  * Configuration Check
+  * View configuration files
+* Logs
+  * Main
+  * Query
+  * NX
+  * Blocked Names
+  * Blocked IPs
+  * Allowed Names
+  * Allowed IPs
+* About
+  * Introduction, links to resources, documentation, FAQs, etc.
 
 ## Operation
 
