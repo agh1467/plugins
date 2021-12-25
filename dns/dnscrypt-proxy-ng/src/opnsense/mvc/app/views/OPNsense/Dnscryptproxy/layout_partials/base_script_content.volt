@@ -94,17 +94,24 @@
                 var selected_field = $('input[id=' + efield + ']')
                 $('input[id=' + efield + ']').trigger("change");
             } else if (toggle == "hidden") {
-                selected_row.hide()
-                selected_row.after('<tr class="dummy_row" style="display: none"></tr>');
+{#              # Do a nice fade out with a hide once done,
+                # and add dummy row for striping. #}
+                selected_row.fadeOut(400, function() {
+                    selected_row.after('<tr class="dummy_row" style="display: none"></tr>');
+                });
             } else if (toggle == "visible") {
-                selected_row.show()
-                selected_row.next("tr[class=dummy_row]").remove();
+{#              # Do a nice fade in instead of a show() pop #}
+                selected_row.fadeIn(200, function() {
+                    selected_row.next("tr[class=dummy_row]").remove();
+                });
             }
         } else if (["tab", "box"].includes(type)) {
             if (toggle == "hidden") {
-                $("#" + efield).hide()
+{#              # Use a fadeOut instead of hide() for a nice effect. #}
+                $("#" + efield).fadeOut();
             } else if (toggle == "visible") {
-                $("#" + efield).show()
+{#              # Use a fadeIn instead of show() for a nice effect. #}
+                $("#" + efield).fadeIn();
             }
         }
     }
@@ -150,10 +157,19 @@
 {#/*            # when done, disable progress animation. */#}
 
             if ('state' in data) {
+                var apply_field = "alt_{{ plugin_name }}_apply_changes";
                 if (data['state'] == "dirty"){
-                    toggle("alt_{{ plugin_name }}_apply_changes", "box", "visible")
+{#                  # Do a slide down for a clean entrance, then scroll to show the box. #}
+                    $("#" + apply_field).slideDown(1000);
+                    var element = document.getElementById(apply_field);
+                    const y = element.getBoundingClientRect().top + window.scrollY;
+                    window.scroll({
+                      top: (y - 140),
+                      behavior: 'smooth'
+                    });
                 } else if (data['state'] == "clean" ){
-                    toggle("alt_{{ plugin_name }}_apply_changes", "box", "hidden")
+{#                  # Do a slide up for a clean exit. #}
+                    $("#" + apply_field).slideUp(1000);
                 }
             }
             dfObj.resolve();
