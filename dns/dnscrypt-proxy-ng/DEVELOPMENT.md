@@ -1526,9 +1526,9 @@ Notes:
 
   This setting is not stored in OPNsense, and is defined statically in the `dnscrypt-proxy.toml.jinja` template.
 
-#### [query_log] format
+#### [query_log] ignored_qtypes
 
-  dnscrypt-proxy source data type: `[]string` [dnscrypt-proxy/config.go#L177](https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/config.go#L177)
+  dnscrypt-proxy source data type: `[]string` [dnscrypt-proxy/config.go#L179](https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/config.go#L179)
 
   dnscrypt-proxy source default: None
 
