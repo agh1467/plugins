@@ -36,23 +36,23 @@
  #
  # @returns array   the fields
  #}
-{%  macro get_fields(elements) %}
-{%      set fields_found = 0 %}
-{%      set field_array = [] %}
-{%      if elements['field'] is defined %}
-{%          for key, value in elements['field']|default({})|keys %} {# Get a list of the elements in 'field' #}
+{%  macro get_elements(elements, type) %}
+{%      set elements_found = 0 %}
+{%      set element_array = [] %}
+{%      if elements[type] is defined %}
+{%          for key, value in elements[type]|default({})|keys %} {# Get a list of the elements in 'field' #}
 {%              if value is numeric %}  {# An array of fields will not have names, instead they are indexed. #}
-{%                  set fields_found = 1 %}
+{%                  set elements_found = 1 %}
 {%                  break %} {# once we found a number, that means there are multiple fields. break out #}
 {%              endif %}
 {%          endfor %}
-{%          if fields_found == 0 %} {# If there is more than 1 field, this will be 1. #}
-{%              set field_array = [ elements['field'] ] %} {# Here we wrap our field in an iterable array #}
+{%          if elements_found == 0 %} {# If there is more than 1 field, this will be 1. #}
+{%              set element_array = [ elements[type] ] %} {# Here we wrap our field in an iterable array #}
 {%          else %}
-{%              set field_array = elements['field']|default({}) %}
+{%              set element_array = elements[type]|default({}) %}
 {%          endif %}
 {%      endif %}
-{%      return field_array %}
+{%      return element_array %}
 {%  endmacro %}
 
 {##
@@ -81,7 +81,7 @@
  # execute the partial base_dialog sending the field as this_field.
  #}
 {%  macro build_bootgrid_dialog(elements) %}
-{%      for field in get_fields(elements|default({})) %}
+{%      for field in get_elements(elements|default({}),'field') %}
 {%          if field is iterable %}
 {%              if field['type']|default('') != '' %}
 {%                  if (field['type'] == 'bootgrid' and field['target']|default('') != '') %}
@@ -193,8 +193,10 @@
 
 {%  macro build_page(this_form = null, plugin_name = null, plugin_label = null, lang = null) %}
 {# Hidden apply changes box, shown when configuration changed, but unsaved. #}
-<div class="col-xs-12">
-  <div class="alert alert-info" id="alt_{{ plugin_name }}_apply_changes" style="min-height: 65px; display: none;">
+<div class="col-xs-12" id="alt_{{ plugin_name }}_apply_changes" style="display: none;">
+  <div class="alert alert-info"
+       id="alt_{{ plugin_name }}_apply_changes_info"
+       style="min-height: 65px;">
     <form method="post">
         <button type="button"
                 id="btn_{{ plugin_name }}_apply_changes"
@@ -236,36 +238,57 @@
   </div>
 </section>
 {%      endif %}
-{#  # Conditionally display the save all buttons at the bottom of the page. #}
-{%      if this_form['save']|default('') == "true" or
-            this_form['save_apply']|default('') == "true" %}
+{#  # Conditionally display buttons at the bottom of the page. #}
+{%  if this_form['button']|default('') != "" and
+       this_form['button'] is iterable %} {# Check what we have is an array #}
 <section class="page-content-main">
 {# Alert class used to get padding to look good.
   Maybe there is another class that can be used. #}
     <div class="alert alert-info" role="alert">
-{%          if this_form['save']|default('') == "true" %}
-    <button type="button"
-            id="btn_{{ plugin_name }}_save_all"
-            class="btn btn-primary"
-        <i class="fa fa-floppy-o"></i>
-        &nbsp<b>{{ lang._('Save All Settings') }}</b>
-{#      # Progress spinner to activate when applying changes. #}
-        <i id="btn_{{ plugin_name }}_save_all_progress" class=""></i>
-    </button>
+{%      for button in get_elements(this_form,'button') %}
+{%          if button['@attributes']['type']|default('primary') in ['primary', 'group' ] %} {# Assume primary if not defined #}
+{%              if button['@attributes']['type']|default('') == 'primary' and
+                    button['@attributes']['action']|default('') != '' %}
+                    <button class="btn btn-primary"
+                            id="btn_{{ plugin_name }}_{{ button['@attributes']['action'] }}"
+                            type="button">
+                        <i class="{{ button['@attributes']['icon']|default('') }}"></i>
+                        &nbsp<b>{{ lang._('%s') | format(button[0]) }}</b>
+                        <i id="btn_{{ plugin_name }}_progress"></i>
+                    </button>
+{%              elseif button['@attributes']['type']|default('') == 'group' %}
+{#              # We set our own style here to put the button in the right place. #}
+                    <div class="btn-group"
+                        {{ (button['@attributes']['id']|default('') != '') ?
+                            'id="'~button['@attributes']['id']~'"' : '' }}>
+                        <button type="button"
+                                class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown">
+                                <i class="{{ button['@attributes']['icon'] }}"></i>
+                                &nbsp<b>{{ lang._('%s') | format(button['@attributes']['label']) }}</b>
+                                <i id="btn_{{ plugin_name }}_progress"></i>
+                                &nbsp<i class="caret"></i>
+                        </button>
+{%                  if button['dropdown']|default('') != "" and
+                       button['dropdown']is iterable %}
+                        <ul class="dropdown-menu" role="menu">
+{%                      for dropdown in button['dropdown'] %}
+                            <li>
+                                <a id="drp_{{ plugin_name }}_{{ dropdown['@attributes']['action'] }}">
+                                    <i class="{{ button['@attributes']['icon'] }}"></i>
+                                    &nbsp{{ lang._('%s') | format(dropdown[0]) }}
+                                </a>
+                            </li>
+{%                      endfor %}
+                        </ul>
+{%                  endif %}
+                    </div>
+{%              endif %}
 {%          endif %}
-{%          if this_form['save_apply']|default('') == "true" %}
-    <button type="button"
-            id="btn_{{ plugin_name }}_save_apply_all"
-            class="btn btn-primary"
-        <i class="fa fa-floppy-o"></i>
-        &nbsp<b>{{ lang._('Save and Apply All Settings') }}</b>
-{#      # Progress spinner to activate when applying changes. #}
-        <i id="btn_{{ plugin_name }}_save_all_progress" class=""></i>
-    </button>
-{%          endif %}
-{%      endif %}
+{%      endfor %}
     </div>
-</div>
+</section>
+{%  endif %}
 
 {%  endmacro %}
 
@@ -314,7 +337,7 @@
 {%          if node[2]['model']|default('') != '' %}
                 data_get_map['frm_tab_{{ node[0] }}'] = '/api/{{ plugin_name }}/{{ node[2]['model'] }}/get';
 {%          endif %}
-{%              for field in get_fields(node[2]) %}
+{%              for field in get_elements(node[2],'field') %}
 {%                  if field is iterable %}
 {# =============================================================================
  # bootgrid: import button

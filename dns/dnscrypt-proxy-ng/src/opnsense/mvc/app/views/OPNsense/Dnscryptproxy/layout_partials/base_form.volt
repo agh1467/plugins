@@ -46,7 +46,7 @@
 {%  set base_form_id = this_part[0]|default('') %}
 {%  set help = false %}
 {%  set advanced = false %}
-{%  set fields = get_fields(this_part[2]|default({})) %}
+{%  set fields = get_elements(this_part[2]|default({}), 'field') %}
 {%  for field in fields %}
 {%      if field is iterable %}
 {%          for name,element in field %}
@@ -194,26 +194,54 @@
 {%          endif %}
 {%      endif %}
 {%  endfor %}
-{%  if this_part[2]['save']|default(false) == "true" or
-        this_part[2]['save_apply']|default(false) == "true"%}
+{%  if this_part[2]['button']|default('') != "" and
+       this_part[2]['button'] is iterable %} {# Check what we have is an array #}
         <tr>
             <td colspan="3">
 {#              # We set our own style here to put the button in the right place. #}
                 <div style="padding-left: 10px;">
-{%                  if this_part[2]['save']|default(false) == "true" %}
-                        <button class="btn btn-primary" id="btn_frm_{{ base_form_id }}_save" type="button">
-                            <i class="fa fa-floppy-o"></i>
-                            &nbsp<b>{{ lang._('Save These Settings') }}</b>
-                            <i id="btn_frm_{{ base_form_id }}_save_progress" class=""></i>
+{%      for button in get_elements(this_part[2],'button') %}
+{%          if button['@attributes']['type']|default('primary') in ['primary', 'group' ] %} {# Assume primary if not defined #}
+{%              if button['@attributes']['type']|default('') == 'primary' and
+                    button['@attributes']['action']|default('') != '' %}
+                    <button class="btn btn-primary"
+                            id="btn_frm_{{ base_form_id }}_{{ button['@attributes']['action'] }}"
+                            type="button">
+                        <i class="{{ button['@attributes']['icon']|default('') }}"></i>
+                        &nbsp<b>{{ lang._('%s') | format(button[0]) }}</b>
+                        <i id="btn_frm_{{ base_form_id }}_progress"></i>
+                    </button>
+
+{%              elseif button['@attributes']['type']|default('') == 'group' %}
+{#              # We set our own style here to put the button in the right place. #}
+                    <div class="btn-group"
+                        {{ (button['@attributes']['id']|default('') != '') ?
+                            'id="'~button['@attributes']['id']~'"' : '' }}>
+                        <button type="button"
+                                class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown">
+                                <i class="{{ button['@attributes']['icon'] }}"></i>
+                                &nbsp<b>{{ lang._('%s') | format(button['@attributes']['label']) }}</b>
+                                <i id="btn_frm_{{ base_form_id }}_progress"></i>
+                                &nbsp<i class="caret"></i>
                         </button>
+{%                  if button['dropdown']|default('') != "" and
+                       button['dropdown']is iterable %}
+                        <ul class="dropdown-menu" role="menu">
+{%                      for dropdown in button['dropdown'] %}
+                            <li>
+                                <a id="drp_frm_{{ base_form_id }}_{{ dropdown['@attributes']['action'] }}">
+                                    <i class="{{ button['@attributes']['icon'] }}"></i>
+                                    &nbsp{{ lang._('%s') | format(dropdown[0]) }}
+                                </a>
+                            </li>
+{%                      endfor %}
+                        </ul>
 {%                  endif %}
-{%                  if this_part[2]['save_apply']|default(false) == "true" %}
-                        <button class="btn btn-primary" id="btn_frm_{{ base_form_id }}_save_apply" type="button">
-                            <i class="fa fa-floppy-o"></i>
-                            &nbsp<b>{{ lang._('Save and Apply These Settings') }}</b>
-                            <i id="btn_frm_{{ base_form_id }}_save_apply_progress" class=""></i>
-                        </button>
-{%                  endif %}
+                    </div>
+{%              endif %}
+{%          endif %}
+{%      endfor %}
                 </div>
             </td>
         </tr>
