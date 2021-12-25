@@ -250,11 +250,15 @@
 {#/*
     # Save event handlers for all defined forms
     # This uses jquery selector to match all button elements with id starting with "save_frm_" */#}
-    $('button[id^="btn_frm_"][id$="_save"]').each(function(){
+    $('a[id^="drp_frm_"][id$="_save"],button[id^="btn_frm_"][id$="_save"]').each(function(){
         $(this).click(function() {
             const dfObj = new $.Deferred();
             var this_frm = $(this).closest("form");
-            var this_btn = $(this);
+            if ($(this).attr('type') == "button") {
+                var this_btn = $(this);
+            } else {
+                var this_btn = $(this).closest('div').find('button').first();
+            }
 
             busyButton(this_btn);
 
@@ -264,12 +268,31 @@
         });
     });
 
+
+{#/*
+    # Perform save and reconfigure for single form. */#}
+    $('a[id^="drp_frm_"][id$="_save_apply"],button[id*="btn_frm_"][id$="_save_apply"]').click(function() {
+        const saveObj = new $.Deferred();
+        const reconObj = new $.Deferred();
+        var this_btn = $(this);
+        var this_frm = $(this).closest("form");
+        busyButton(this_btn);
+        saveForm(this_frm, saveObj, reconfigureService, [this_btn, reconObj, clearButtonAndToggle, [this_btn]]);
+
+        return { saveObj, reconObj };
+    });
+
+
 {#/*
     # Save event handler for the Save All button.
     # The ID should be unique and derived from the form data. */#}
-    $('button[id="btn_{{ plugin_name }}_save_all"]').click(function() {
+    $('a[id^="drp_{{ plugin_name }}_save"],button[id="btn_{{ plugin_name }}_save_all"]').click(function() {
         const dfObj = new $.Deferred();
-        var this_btn = $(this);
+        if ($(this).attr('type') == "button") {
+            var this_btn = $(this);
+        } else {
+            var this_btn = $(this).closest('div').find('button').first();
+        }
 
         busyButton(this_btn);
 
@@ -291,7 +314,7 @@
 {#/*
     # Save event handler for the Save All button.
     # The ID should be unique and derived from the form data. */#}
-    $('button[id="btn_{{ plugin_name }}_save_apply_all"]').click(function() {
+    $('a[id^="drp_{{ plugin_name }}_save_apply_all"],button[id="btn_{{ plugin_name }}_save_apply_all"]').click(function() {
         const reconObj = new $.Deferred();
         var this_btn = $(this);
 
@@ -320,19 +343,6 @@
         busyButton(this_btn);
         reconfigureService(this_btn, dfObj, clearButtonAndToggle, [this_btn]);
         return dfObj;
-    });
-
-
-{#/*
-    # Perform save and reconfigure for single form. */#}
-    $('button[id*="btn_frm_"][id$="_save_apply"]').click(function() {
-        const saveObj = new $.Deferred();
-        const reconObj = new $.Deferred();
-        var this_btn = $(this);
-        var this_frm = $(this).closest("form");
-        busyButton(this_btn);
-        saveForm(this_frm, saveObj, reconfigureService, [this_btn, reconObj, clearButtonAndToggle, [this_btn]]);
-        return { saveObj, reconObj };
     });
 
 {#/*

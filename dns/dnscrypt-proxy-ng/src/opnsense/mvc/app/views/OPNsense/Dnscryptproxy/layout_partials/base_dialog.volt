@@ -43,7 +43,7 @@
 {#      Find if there are help supported or advanced field on this page #}
 {%      set base_dialog_help = false %}
 {%      set base_dialog_advanced = false %}
-{%      set fields = get_fields(base_dialog_elements|default({})) %}
+{%      set fields = get_elements(base_dialog_elements|default({}), 'field') %}
 {%      for field in fields %}
 {%          if field is iterable %}
 {%              for name,element in field %}

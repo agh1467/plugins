@@ -232,8 +232,10 @@
                     ]]>
                 </help>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Basic Settings" id="lol_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="advanced_settings" description="Advanced Settings">
             <model>settings</model>
@@ -787,8 +789,10 @@
                     ]]>
                 </help>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Advanced Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
     </tab>
     <tab id="lists" description="Lists/Rules">
@@ -968,8 +972,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Blocked Names Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="blocked_ips" description="Blocked IPs">
             <model>settings</model>
@@ -1157,8 +1163,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Blocked IPs Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="allowed_names" description="Allowed Names">
             <model>settings</model>
@@ -1326,8 +1334,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Allowed Names Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="allowed_ips" description="Allowed IPs">
             <model>settings</model>
@@ -1474,8 +1484,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Allowed IPs Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="schedules" description="Schedules">
             <model>settings</model>
@@ -1617,8 +1629,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Schedule Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="cloaking" description="Cloaking Rules">
             <model>settings</model>
@@ -1792,8 +1806,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Cloaking Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="forwarding" description="Forwarding Rules">
             <model>settings</model>
@@ -1904,8 +1920,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Forwarding Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
     </tab>
     <tab id="doh" description="DoH Server/Client">
@@ -2027,8 +2045,10 @@
                     ]]>
                 </help>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Local DoH Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="doh_client_x509_auth" description="DoH Client x509 Authentication">
             <model>settings</model>
@@ -2159,8 +2179,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save DoH Client Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
     </tab>
     <tab id="resolvers" description="Resolvers">
@@ -2328,8 +2350,10 @@
                 <error>Error occurred executing API</error>
                 <widget>dnscryptproxy</widget>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Sources Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="static" description="Static">
             <model>settings</model>
@@ -2400,8 +2424,10 @@
                     </field>
                 </dialog>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Static Server Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
         <subtab id="broken_implementations" description="Broken Implementations">
             <model>settings</model>
@@ -2454,8 +2480,10 @@
                     ]]>
                 </help>
             </field>
-            <save>true</save>
-            <save_apply>true</save_apply>
+            <button type="group" icon="fa fa-floppy-o" label="Save Broken Implementation Settings" id="save_actions">
+                <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+                <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+            </button>
         </subtab>
     </tab>
     <tab id="captive_portals" description="Captive Portals">
@@ -2548,8 +2576,10 @@
                 </field>
             </dialog>
         </field>
-        <save>true</save>
-        <save_apply>true</save_apply>
+        <button type="group" icon="fa fa-floppy-o" label="Save Captive Portal Settings" id="save_actions">
+            <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+            <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+        </button>
     </tab>
     <tab id="anonymized_dns" description="Anonymized DNS">
         <model>settings</model>
@@ -2682,8 +2712,10 @@
             </api>
             <row_count>7,14,20,50,100,-1</row_count>
         </field>
-        <save>true</save>
-        <save_apply>true</save_apply>
+        <button type="group" icon="fa fa-floppy-o" label="Save Anonymized DNS Settings" id="save_actions">
+            <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+            <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+        </button>
     </tab>
     <tab id="dns64" description="DNS64">
         <model>settings</model>
@@ -2823,10 +2855,14 @@
                 </field>
             </dialog>
         </field>
-        <save>true</save>
-        <save_apply>true</save_apply>
+        <button type="group" icon="fa fa-floppy-o" label="Save DNS64 Settings" id="save_actions">
+            <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+            <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+        </button>
     </tab>
-    <save>true</save>
-    <save_apply>true</save_apply>
+    <button type="group" icon="fa fa-floppy-o" label="Save All Settings" id="save_actions">
+        <dropdown action="save_all" icon="fa fa-floppy-o">Save Only</dropdown>
+        <dropdown action="save_apply_all" icon="fa fa-floppy-o">Save and Apply</dropdown>
+    </button>
     <activetab>basic_settings</activetab>
 </form>

@@ -42,6 +42,7 @@
 {# Pull in our macros for use throughout #}
 {{ partial("OPNsense/Dnscryptproxy/+macros") }}
 
+{{ partial("OPNsense/Dnscryptproxy/+styles") }}
 {# Build the entire page including:
     tab headers,
     tabs content (include fields and bootgrids),
