@@ -28,13 +28,15 @@
 
 namespace OPNsense\Dnscryptproxy;
 
+use OPNsense\Dnscryptproxy\Plugin;
+
 /**
  * An IndexController-based class that creates an endpoint to display the Settings
  * page in the UI.
  *
  * @package OPNsense\Dnscryptproxy
  */
-class SettingsController extends \OPNsense\Base\IndexController
+class SettingsController extends PluginIndexController
 {
     /**
      * This function creates an endpoint in the UI for the Settings Controller.
@@ -42,26 +44,25 @@ class SettingsController extends \OPNsense\Base\IndexController
      * UI endpoint:
      * `/ui/dnscryptproxy/settings`
      *
-     * This is the default action when no parameters are provided.
+     * indexAction() analogous to index.html, it's the default if no action is provided.
      */
     public function indexAction()
     {
-        // Create a settings object to get some variables.
-        $settings = new Settings();
+        // Pull the name of this api from the Phalcon router to use in getFormXml call.
+        //$this_api_name = $this->view->getNamespaceName();            // "about"
 
-        // Create our own instance of a Controller to use getForm().
-        $myController = new ControllerBase();
 
         $this->view->setVars(
             [
-                'plugin_name' => $settings->api_name,
-                'plugin_label' => $settings->label,
-                'this_form' => $myController->getForm('settings'),
+                // Derive the API path from the UI path of the view, swapping out the leading "/ui/" for "/api/".
+                // This is crude, but it will work until I discover a more reliable way to do it in the view.
+                'plugin_api_path' => preg_replace("/^\/ui\//", "/api/", $this->router->getMatches()[0]),
+                'this_xml' => $this->getFormXml('settings'),
                 // controllers/OPNsense/Dnscryptproxy/forms/settings.xml
             ]
         );
-
-        // pick the template as the next view to render
+        // Since the directory structure of OPNsense's plugins isn't conducive to automatically loading the template,
+        // pick the specific template we want to load. Relative to /usr/local/opnsense/mvc/app/views, no file extension
         $this->view->pick('OPNsense/Dnscryptproxy/settings');
         // views/OPNsense/Dnscryptproxy/settings.volt
     }

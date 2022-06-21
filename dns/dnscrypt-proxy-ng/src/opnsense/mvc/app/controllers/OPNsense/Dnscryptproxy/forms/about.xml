@@ -1,13 +1,13 @@
-<form>
+<form model="about">
     <field>
+        <id>dnscryptproxy_version</id>
         <label>dnscrypt-proxy version</label>
-        <type>variable</type>
-        <variable>dnscrypt_proxy_version</variable>
+        <type>info</type>
     </field>
     <field>
+        <id>dnscryptproxy_plugin_version</id>
         <label>dnscrypt-proxy plugin version</label>
-        <type>variable</type>
-        <variable>plugin_version</variable>
+        <type>info</type>
     </field>
     <field>
         <label>Resolve Hostname</label>

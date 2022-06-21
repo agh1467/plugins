@@ -33,7 +33,7 @@ namespace OPNsense\Dnscryptproxy\Api;
 use OPNsense\Base\ApiMutableServiceControllerBase;
 use OPNsense\Core\Backend;
 use OPNsense\Dnscryptproxy;
-use OPNsense\Dnscryptproxy\Settings;
+use OPNsense\Dnscryptproxy\Plugin;
 
 /**
  * An ApiMutableServiceControllerBase based class which is used to control
@@ -91,20 +91,21 @@ class ServiceController extends ApiMutableServiceControllerBase
     public function reconfigureAction()
     {
         // Create a settings object to get some variables.
-        $settings = new Settings();
+        $plugin = new Plugin();
+        $configd_name = $plugin->getConfigdName();
 
         // Call the reconfigure action to save our settings.
         $reconfigure_result = parent::reconfigureAction();
 
         // Create a backend to run our activities.
         $backend = new Backend();
-        $response = trim($backend->configdpRun($settings->configd_name . ' import-doh-client-certs'));
+        $response = trim($backend->configdpRun($configd_name . ' import-doh-client-certs'));
 
         if ($response != 'OK') {
             // Return an array containing a reponse for the message box to display.
             return array('status' => 'error', 'message' => $response);
         } else {
-            $response = trim($backend->configdpRun($settings->configd_name . ' make clean'));
+            $response = trim($backend->configdpRun($configd_name . ' make clean'));
         }
 
         if ($response != 'OK') {

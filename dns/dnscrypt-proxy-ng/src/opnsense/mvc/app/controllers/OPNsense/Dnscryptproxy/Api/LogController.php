@@ -32,9 +32,8 @@ namespace OPNsense\Dnscryptproxy\Api;
 
 use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
-use OPNsense\Dnscryptproxy\Settings;
-use Phalcon\Filter;
-
+use OPNsense\Dnscryptproxy\Plugin;
+use OPNsense\Phalcon\Filter\Filter;
 
 /**
  * An ApiControllerBase class used to read log files for dnscrypt-proxy.
@@ -75,7 +74,7 @@ class LogController extends ApiControllerBase
     public function __call($name, $arguments)
     {
         // Example Call: /api/diagnostics/log/core/audit/clear
-        //                   | this  api     |module|scope|action
+        //               | this  api     |module|scope|action
         // --limit %s --offset %s --filter %s  --module %s --filename %s --severity %s
         //$itemsPerPage,                        limit     'limit number of results'
         //($currentPage - 1) * $itemsPerPage,   offset    'begin at row number'
@@ -99,17 +98,25 @@ class LogController extends ApiControllerBase
             }
         ]);
 
-        $settings = new Settings();
-        $configd_name = $settings->configd_name;
+        $plugin = new Plugin();
+        $configd_name = $plugin->getConfigdName();
         $configd_action = "log read";
 
         $backend = new Backend();
 
+        // Prep our result array and variables in case there are no log files to populate it.
+        $result = array();
+        $result['rows'] = array();
+        $result['rowCount'] = 0;
+        $result['total'] = 0;
+        $result['current'] = 0;
+        $result['status'] = 'ok';
+        $result['POST'] = $_POST;
 
         if ($this->request->isPost() && substr($name, -6) == 'Action') {
             $this->sessionClose();
             if ($action == "clear") {
-                return ["status" => $backend->configdpRun($settings->configd_name . " log clear " . $log . " YES")];
+                return ["status" => $backend->configdpRun($configd_name . " log clear " . $log . " YES")];
             } else {
                 // fetch query parameters (limit results to prevent out of memory issues)
                 $itemsPerPage = $this->request->getPost('rowCount', 'int', 9999);
@@ -128,13 +135,15 @@ class LogController extends ApiControllerBase
                     ($currentPage - 1) * $itemsPerPage
                 ]);
 
-                // Parse the output, and set some values in the JSON.
-                $result = json_decode($response, true);
-                if ($result != null) {
-                    $result['rowCount'] = count($result['rows']);
-                    $result['total'] = $result['total_rows'];
+                // Parse the output, and copy over relevant data.
+                // This might not be efficient, maybe an array merge?
+                $response_json = json_decode($response, true);
+                if ($response_json != null) {
+                    $result['rows'] = $response_json['rows'];
+                    $result['rowCount'] = count($response_json['rows']);
+                    $result['total'] = $response_json['total_rows'];
                     $result['current'] = (int)$currentPage;
-                    return $result;
+                    //return $result;
                 }
             }
         } elseif ($this->request->isGet() && substr($name, -6) == 'Action') {
@@ -164,7 +173,9 @@ class LogController extends ApiControllerBase
                 return;
             }
         }
-        return array();
+
+        // We're all done, so now return what we have in a way bootgrid expects.
+        return $result;
     }
 
 }

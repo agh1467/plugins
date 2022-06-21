@@ -1,5 +1,4 @@
 {#
- # Copyright (c) 2017 Franco Fichtner <franco@opnsense.org>
  # Copyright (c) 2014-2015 Deciso B.V.
  # All rights reserved.
  #
@@ -40,10 +39,6 @@
  # All comments encapsulated in Javascript friendly notation so JS syntax
  # highlighting works correctly.
  #}
-
-{#/*
-    Call the attachments macro to build all of our attachments using the form data */#}
-{{  build_attachments(this_form, lang, plugin_name) }}
 
 {#/*
     # Toggle function is for enabling or disabling field(s)
@@ -116,6 +111,22 @@
         }
     }
 
+    {#/*
+        # This function will go through and find all of the forms, for each form, it will
+        # create a named index for the form by id, and set it to the API endpoint for the plugin
+        # along with the designated model assigned to the data-model attribute.
+        # Returns an array consumable by mapDataToFormUI().
+        #  */#}
+    function setDataGetMap(){
+        var data = {};
+        $('form[id^=frm_').each(function(){
+            if ($(this).attr('data-model') !== undefined && $(this).attr('data-model') != "" ) {
+                data[$(this).attr('id')] = '/api/{{ plugin_api_name }}/'+ $(this).attr('data-model') + '/get';
+            }
+        });
+        return data;
+    }
+
 {#/*
     # Basic function to save the form, and reconfigure after saving
     # displays a dialog if there is some issue */#}
@@ -125,20 +136,20 @@
         var frm_id = this_frm.attr("id");
         var frm_title = this_frm.attr("data-title");
         var frm_model = this_frm.attr("data-model");
-        var api_url="/api/{{ plugin_name }}/" + frm_model + "/set";
+        var api_url="/api/{{ plugin_api_name }}/" + frm_model + "/set";
 
 {#/*    # set progress animation when saving */#}
         $("#" + frm_id + "_progress").addClass("fa fa-spinner fa-pulse");
 
         saveFormToEndpoint(url=api_url, formid=frm_id, callback_ok=function(){
-            ajaxCall(url="/api/{{ plugin_name }}/service/reconfigure", sendData={}, callback=function(data,status){
+            ajaxCall(url="/api/{{ plugin_api_name }}/service/reconfigure", sendData={}, callback=function(data,status){
 {#/*            # when done, disable progress animation. */#}
                 $("#" + frm_id + "_progress").removeClass("fa fa-spinner fa-pulse");
 
                 if (status != "success" || data['status'] != 'ok' ) {
                     ajaxDataDialog(data, frm_title);
                 } else {
-                    ajaxCall(url="/api/{{ plugin_name }}/service/status", sendData={}, callback=function(data,status) {
+                    ajaxCall(url="/api/{{ plugin_api_name }}/service/status", sendData={}, callback=function(data,status) {
                         updateServiceStatusUI(data['status']);
                         dfObj.resolve();
                     });
@@ -152,12 +163,12 @@
         const dfObj = new $.Deferred();
 {#/*
         # Function to check if the config is dirty and display the Apply Changes box/button */#}
-        var api_url = "/api/{{ plugin_name }}/settings/state";
+        var api_url = "/api/{{ plugin_api_name }}/settings/state";
         ajaxCall(url=api_url, sendData={}, callback=function(data,status){
 {#/*            # when done, disable progress animation. */#}
 
             if ('state' in data) {
-                var apply_field = "alt_{{ plugin_name }}_apply_changes";
+                var apply_field = "alt_{{ plugin_api_name }}_apply_changes";
                 if (data['state'] == "dirty"){
 {#                  # Do a slide down for a clean entrance, then scroll to show the box. #}
                     $("#" + apply_field).slideDown(1000);
@@ -185,7 +196,7 @@
 
 {#/*    # It's possible for a form to exist without a data-model, exclude them. */#}
         if (frm_model) {
-            var api_url="/api/{{ plugin_name }}/" + frm_model + "/set";
+            var api_url="/api/{{ plugin_api_name }}/" + frm_model + "/set";
             saveFormToEndpoint(url=api_url, formid=frm_id, callback_ok=function(data, status){
                 if (data['result'] != 'saved' ) {
                     ajaxDataDialog(data, frm_title);
@@ -208,7 +219,7 @@
 
         busyButton(button);
 
-        var api_url = "/api/{{ plugin_name }}/service/reconfigure";
+        var api_url = "/api/{{ plugin_api_name }}/service/reconfigure";
         ajaxCall(url=api_url, sendData={}, callback=function(data, status){
             if (status != "success" || data['status'] != 'ok' ) {
                 ajaxDataDialog(data, frm_title);
@@ -216,7 +227,7 @@
                 if (callback_after !== undefined) {
                     callback_after.apply(this, params);
                 }
-                var api_url = "/api/{{ plugin_name }}/service/status";
+                var api_url = "/api/{{ plugin_api_name }}/service/status";
                 ajaxCall(url=api_url, sendData={}, callback=function(data, status) {
                     updateServiceStatusUI(data['status']);
                     dfObj.resolve();
@@ -302,7 +313,7 @@
 {#/*
     # Save event handler for the Save All button.
     # The ID should be unique and derived from the form data. */#}
-    $('a[id^="drp_{{ plugin_name }}_save"],button[id="btn_{{ plugin_name }}_save_all"]').click(function() {
+    $('a[id^="drp_{{ plugin_safe_name }}_save"],button[id="btn_{{ plugin_safe_name }}_save_all"]').click(function() {
         const dfObj = new $.Deferred();
         if ($(this).attr('type') == "button") {
             var this_btn = $(this);
@@ -328,9 +339,9 @@
     });
 
 {#/*
-    # Save event handler for the Save All button.
+    # Save event handler for the Save and Apply All button.
     # The ID should be unique and derived from the form data. */#}
-    $('a[id^="drp_{{ plugin_name }}_save_apply_all"],button[id="btn_{{ plugin_name }}_save_apply_all"]').click(function() {
+    $('a[id^="drp_{{ plugin_safe_name }}_save_apply_all"],button[id="btn_{{ plugin_safe_name }}_save_apply_all"]').click(function() {
         const reconObj = new $.Deferred();
         var this_btn = $(this);
 
@@ -353,7 +364,7 @@
 {#/*
     # Apply event handler for the Apply Changes button.
     # The ID should be unique. */#}
-    $('button[id="btn_{{ plugin_name }}_apply_changes"]').click(function() {
+    $('button[id="btn_{{ plugin_safe_name }}_apply_changes"]').click(function() {
         const dfObj = new $.Deferred();
         var this_btn = $(this);
         busyButton(this_btn);
@@ -374,5 +385,6 @@
     });
 
 {#/*
-    # Update the service controls any time the page is loaded. */#}
-    updateServiceControlUI('{{ plugin_name }}');
+    # Update the service controls any time the page is loaded.
+    # This makes a called to /api/{{ plugin_api_name}}/service/status */#}
+    updateServiceControlUI('{{ plugin_api_name }}');

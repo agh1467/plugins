@@ -27,10 +27,45 @@
 */
 
 /**
+ * This performs an evaluation to understand if the plugin is enabled or not.
+ *
+ * This is split into a separate function because it makes it easier to have
+ * different ways of performing this evaluation. Not all plugin models will be
+ * structured the same.
+ *
+ * @return boolean evaluation of the enabled state of the plugin
+*/
+function dnscryptproxy_enabled()
+{
+    // Create a model object which includes the settings from the config.
+    $model = new \OPNsense\Dnscryptproxy\Settings();
+    return $model->enabled->__toString() == "1";
+}
+
+/**
  * Function to add dnscrypt-proxy plugin to the services of OPNsense.
  *
+ * This function must be prefixed with the same name as this file.
+ *
  * This add the service to the System: Diagnostics: Services page at
- * http://<opnsense>/status_services.php
+ *   http://<opnsense>/status_services.php
+ *
+ * And the service widget that appears at the top of the page using
+ *   updateServiceControlUI();
+ *
+ * References:
+ * src/www/status_services.php
+ * src/www/widgets/widgets/services_status.widget.php
+ *
+ * Both of these call plugins_services() which calls plugins_scan()
+ * Which scans the plugins.inc.d path for .inc files to include (this one).
+ *
+ * plugin_services() will then assume that a function exists ending in "_services"
+ * for each .inc file and put them together in an array. That array is then
+ * returned to be used as the list of services on the system.
+ *
+ * The function is then called by name, to populate information
+ * on the pages where displayed.
  *
  * @return array the services array
 */
@@ -39,21 +74,22 @@ function dnscryptproxy_services()
 
     $services = array();
 
-    $model = new \OPNsense\Dnscryptproxy\Settings();
-
-    if (! ((string) $model->enabled == '1')) {
-        // return empty array if not enabled
+    // If the plugin isn't enabled, just return the empty array.
+    if (!dnscryptproxy_enabled()) {
         return $services;
     }
 
+    // Create a Plugin object with values for use in the services array.
+    $plugin = new \OPNsense\Dnscryptproxy\Plugin();
+
     $services[] = array(
-        'description' => gettext($model->label), // Description column
+        'description' => gettext($plugin->getSettings()['plugin_label']), // Description column
         'configd' => array(
-            'restart' => array($model->configd_name . ' restart'),
-            'start' => array($model->configd_name . ' start'),
-            'stop' => array($model->configd_name . ' stop'),
+            'restart' => array($plugin->getSettings()['configd_name'] . ' restart'),
+            'start' => array($plugin->getSettings()['configd_name'] . ' start'),
+            'stop' => array($plugin->getSettings()['configd_name'] . ' stop'),
         ),
-        'name' => $model->name, // Service column
+        'name' => $plugin->getSettings()['plugin_name'], // Service column
         'pid' => '/var/run/dnscrypt-proxy.pid',
     );
 

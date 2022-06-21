@@ -32,41 +32,32 @@
  # This is the main page for this plugin.
  #
  # Variables sent in by the controller:
- # plugin_name  string  name of this plugin, used for API calls
- # this_form    array   the form XML in an array
+ # plugin_api_name  string  name of this plugin, used for API calls
+ # this_form        array   the form XML in an array
  #}
 
+{% extends 'OPNsense/Dnscryptproxy/plugin_main.volt' %}
 
-<?php ob_start(); ?>
-
-{# Pull in our macros for use throughout #}
-{{ partial("OPNsense/Dnscryptproxy/+macros") }}
-
-{{ partial("OPNsense/Dnscryptproxy/+styles") }}
-{# Build the entire page including:
-    tab headers,
-    tabs content (include fields and bootgrids),
-    and all bootgrid dialogs #}
-{{ build_page(this_form, plugin_name, plugin_label, lang) }}
-
-<script>
-
-$( document ).ready(function() {
+{% block script %}
 {#/* global Object container, used by file upload/download functions.*/#}
+{# XXX we should be able to conditionally add this if needed for upload/download usage. #}
     window.this_namespace = {};
-{#/* Define this object now so we can push tabs to it later. */#}
-    var data_get_map = {};
 
-{#/* Display a message to the user while we load settings. */#}
-    BootstrapDialog.show({
-        title: 'Loading settings',
-        closable: false,
-        message:
-            '{{ lang._("Please wait while settings are loaded...") }}' +
-            '&nbsp&nbsp<i class="fa fa-cog fa-spin"></i>'
+{# XXX need to address the model specification here, needs to be dynamically populated from the form XML data. #}
+{#/* Create an event hanlder for whenever a create/update/delete call is made to the bootgrid API.
+     This isn't truly ideal but was the first successful method I've discovered. */#}
+    $(document).on("ajaxSuccess", function(event, jqxhr, settings) {
+        if ((settings.url.startsWith("/api/{{ plugin_api_name }}/settings/bootgrid/set") ||
+             settings.url.startsWith("/api/{{ plugin_api_name }}/settings/bootgrid/del") ||
+             settings.url.startsWith("/api/{{ plugin_api_name }}/settings/bootgrid/add")
+            )) {
+            // Run the toggle for the apply changes pane. Won't show if config isn't dirty.
+            toggleApplyChanges();
+        }
     });
 
-{#/* Attachment to trigger restoring the default sources via api. */#}
+{#/*
+    Attachment to trigger restoring the default sources via api. */#}
     $("#btn_restoreSourcesAct").SimpleActionButton({
 {#/*    We're defining onPreAction here in order to display a confirm dialog
         before executing the button's API call. */#}
@@ -100,18 +91,17 @@ $( document ).ready(function() {
             return dfObj;
         },
         onAction: function(data, status){
+{#/*        Toggle the Apply Changes area since the configuration changed, it's dirty now. */#}
+            toggleApplyChanges();
 {#/*        This executes after the API call is complete.
-             We need to refresh the grid since the data has changed. */#}
+            We need to refresh the grid since the data has changed. */#}
             std_bootgrid_reload("bootgrid_sources_source"); {#/* id attribute of the bootgrid HTML element. */#}
         }
     });
 
-{#/* Dynamically build all attachments using the form data */#}
-{{ partial("OPNsense/Dnscryptproxy/layout_partials/base_script_content") }}
-
 {#/*
-    # Map data to our fields. */#}
-    mapDataToFormUI(data_get_map).done(function(){
+    # This mapDataToFormUI() uses a callback to perform first time configuration. */#}
+    mapDataToFormUI(setDataGetMap()).done(function(){
 {#/*    # Do the first time setup, pre-configuring some default settings and such. */#}
         if ($('#' + $.escapeSelector('settings.first_time_setup')).prop("checked") == false) {
 {#/*        # Set up default sources */#}
@@ -120,7 +110,7 @@ $( document ).ready(function() {
             var this_frm = $(element).closest("form");
             var frm_id = this_frm.attr("id");
             var frm_model = this_frm.attr("data-model");
-            var api_url="/api/{{ plugin_name }}/" + frm_model + "/set";
+            var api_url="/api/{{ plugin_api_name }}/" + frm_model + "/set";
 {#/*        # Dismiss the loading dialog, and then display a new First-Time setup dialog */#}
             $('div[class^="modal bootstrap-dialog"]').modal('toggle');
             BootstrapDialog.show({
@@ -135,28 +125,25 @@ $( document ).ready(function() {
 {#/*            # flip bit for first time set up */#}
                 $('#' + $.escapeSelector('settings.first_time_setup')).prop("checked", true)
                 saveFormToEndpoint(url=api_url, formid=frm_id, callback_ok=function(){
-                    ajaxCall(url="/api/{{ plugin_name }}/service/reconfigure", sendData={}, function(data,status){
+                    ajaxCall(url="/api/{{ plugin_api_name }}/service/reconfigure", sendData={}, function(data,status){
 {#/*                # Force a page reload to reload dropdowns and such. */#}
                     window.location.reload();
                     });
                 });
                 return dfObj;
             });
-
         };
-{#/*    # Update the fields using the tokenizer style. */#}
+{#/*
+    Update the fields using the tokenizer style. */#}
         formatTokenizersUI();
-{#/*    # Refresh the data for the select picker fields. */#}
+{#/*
+    Refresh the data for the select picker fields. */#}
         $('.selectpicker').selectpicker('refresh');
-{#/*    # Toggle the apply changes message for when the config is dirty/clean. */#}
+{#/*
+    Toggle the apply changes message for when the config is dirty/clean. */#}
         toggleApplyChanges();
-{#/*    # Dismiss our loading dialog */#}
+{#/*
+    Dismiss our loading dialog */#}
         $('div[class^="modal bootstrap-dialog"]').modal('toggle');
     });
-
-});
-
-</script>
-
-{# Clean up the blank lines, probably inefficient, but makes things look nice. #}
-<?php  echo join("\n", array_filter(array_map(function ($i) { $o = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "", $i); if (!empty(trim($o))) {return $o;} }, explode("\n", ob_get_clean()))));  ?>
+{% endblock %}

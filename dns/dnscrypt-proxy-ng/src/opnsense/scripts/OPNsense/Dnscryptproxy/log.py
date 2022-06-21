@@ -223,14 +223,14 @@ def main():
               'origin': inputargs.log
               }
 
-
     # Check that we have args[1] to work with.
     if inputargs.log != "":
         log = inputargs.log
         if inputargs.clear == "YES":
-            # This is a janky way of doing this. Need to find a better way.
+            # XXX This is a janky way of doing this. Need to find a better way.
             if log in LOGS.keys():
-                filename = os.path.basename(os.path.splitext(LOGS[log]['file'])[0])
+                filename = os.path.basename(
+                    os.path.splitext(LOGS[log]['file'])[0])
                 clearlog = subprocess.run(
                     [
                         '/usr/local/sbin/configctl',
@@ -244,7 +244,7 @@ def main():
                 print(clearlog)
                 sys.exit()
 
-        limit = int(inputargs.limit) if inputargs.limit.isdigit()  else 0
+        limit = int(inputargs.limit) if inputargs.limit.isdigit() else 0
         offset = int(inputargs.offset) if inputargs.offset.isdigit() else 0
         try:
             filter = inputargs.filter.replace('*', '.*').lower()

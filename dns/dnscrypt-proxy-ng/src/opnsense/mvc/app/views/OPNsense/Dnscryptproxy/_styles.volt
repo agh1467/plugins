@@ -1,6 +1,6 @@
-{##
- #
- # OPNsense® is Copyright © 2022 – 2018 by Deciso B.V.
+{#
+ # Copyright (c) 2017 Franco Fichtner <franco@opnsense.org>
+ # Copyright (c) 2014-2015 Deciso B.V.
  # All rights reserved.
  #
  # Redistribution and use in source and binary forms, with or without modification,
@@ -13,7 +13,7 @@
  #     this list of conditions and the following disclaimer in the documentation
  #     and/or other materials provided with the distribution.
  #
- # THIS SOFTWARE IS PROVIDED “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
  # INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  # AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  # AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
@@ -23,16 +23,19 @@
  # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  # POSSIBILITY OF SUCH DAMAGE.
-#}
-
-{##
- # This is the template for the about page.
- #
- # Variables sent in by the controller:
- # plugin_name            string  name of this plugin, used for API calls
- # plugin_version         string  version of this plugin
- # dnscrypt_proxy_version string  version of dnscrypt-proxy
- # this_form              array   the form XML in an array
  #}
 
-{% extends 'OPNsense/Dnscryptproxy/plugin_main.volt' %}
+<style>
+{# This is a style for displaying log files.
+   It will respect whitespace and use a fixed-width font
+   for better readability. Has some extra stuff to do wrapping. #}
+    .logs {
+        white-space: pre-wrap;       /* Since CSS 2.1 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+        font-size: small;
+    }
+</style>

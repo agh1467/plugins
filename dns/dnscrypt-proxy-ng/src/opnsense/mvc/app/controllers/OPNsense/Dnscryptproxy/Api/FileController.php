@@ -30,10 +30,10 @@ namespace OPNsense\Dnscryptproxy\Api;
 
 use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
-use OPNsense\Dnscryptproxy\Settings;
+use OPNsense\Dnscryptproxy\Plugin;
 
 /**
- * This Controller extends ApiMutableModelControllerBase to create API endpoints
+ * This Controller extends ApiControllerBase to create API endpoints
  * for file uploading and downloading.
  *
  * This API is accessiable at the following URL endpoint:
@@ -77,7 +77,7 @@ class FileController extends ApiControllerBase
      */
     public function uploadAction()
     {
-        $settings = new Settings();
+        $plugin = new Plugin();
 
         // we only care about the content, the file name will be statically configured
         // this will reduce the need to manage the file system like cleaning up if a file name changes, etc.
@@ -103,7 +103,7 @@ class FileController extends ApiControllerBase
                     $target == 'settings.cloaking_file_manual'
                 ) {
                     // create a temporary file name to use
-                    $temp_filename = '/tmp/' . $settings->name . '_file_upload.tmp';
+                    $temp_filename = '/tmp/' . $plugin->name . '_file_upload.tmp';
                     // let's put the file in /tmp
                     file_put_contents($temp_filename, $content);
                     $target_exp = explode('.', $target);
@@ -114,7 +114,7 @@ class FileController extends ApiControllerBase
                     // If parse passes, the uploaded file is copied to the
                     // destination. Returns JSON of status and action.
                     $response = $backend->configdpRun(
-                        $settings->configd_name . ' import-list ' . end($target_exp) . ' ' . $temp_filename
+                        $plugin->configd_name . ' import-list ' . end($target_exp) . ' ' . $temp_filename
                     );
 
                     // If configd reports "Execute error," then $response is NULL.
@@ -156,7 +156,7 @@ class FileController extends ApiControllerBase
      */
     public function downloadAction($target)
     {
-        $settings = new Settings();
+        $plugin = new Plugin();
 
         if ($target != '') {
             if ($target == 'settings.blocked_names_file_manual') {
@@ -178,7 +178,7 @@ class FileController extends ApiControllerBase
             if ($filename != '') {
                 $backend = new Backend();
                 $target_exp = explode('.', $target);
-                $result = $backend->configdRun($settings->configd_name . ' export-' . end($target_exp));
+                $result = $backend->configdRun($plugin->configd_name . ' export-' . end($target_exp));
                 if ($result != null) {
                     $this->response->setRawHeader('Content-Type: ' . $content_type);
                     $this->response->setRawHeader('Content-Disposition: attachment; filename=' . $filename);
@@ -224,7 +224,7 @@ class FileController extends ApiControllerBase
      */
     public function removeAction()
     {
-        $settings = new Settings();
+        $plugin = new Plugin();
 
         if ($this->request->isPost() && $this->request->hasPost('field')) {
             $field = $this->request->getPost('field');
@@ -241,7 +241,7 @@ class FileController extends ApiControllerBase
                     $target_exp = explode('.', $field);
                     $response = array(
                         'status' => $backend->configdpRun(
-                            $settings->configd_name . ' remove-' . end($target_exp)
+                            $plugin->configd_name . ' remove-' . end($target_exp)
                         ),
                     );
                     if (trim($response['status']) != 'OK') {

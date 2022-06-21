@@ -1,4 +1,4 @@
-<form>
+<form model="settings">
     <tab id="dnscryptproxy_logs_main" description="Main">
         <field>
             <label>/var/log/dnscrypt-proxy/main.log</label>
@@ -20,9 +20,8 @@
         </field>
     </tab>
     <tab id="dnscryptproxy_logs_queries" description="Query">
-        <model>settings</model>
         <field>
-            <id>settings.query_log.enabled</id>
+            <id>query_log.enabled</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -55,9 +54,8 @@
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
     <tab id="dnscryptproxy_logs_nx" description="NX">
-        <model>settings</model>
         <field>
-            <id>settings.nx_log.enabled</id>
+            <id>nx_log.enabled</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -87,9 +85,8 @@
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
     <tab id="dnscryptproxy_logs_blocked_names" description="Blocked Names">
-        <model>settings</model>
         <field>
-            <id>settings.blocked_names_logging</id>
+            <id>blocked_names_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -119,9 +116,8 @@
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
     <tab id="dnscryptproxy_logs_blocked_ips" description="Blocked IPs">
-        <model>settings</model>
         <field>
-            <id>settings.blocked_ips_logging</id>
+            <id>blocked_ips_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -152,9 +148,8 @@
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
     <tab id="dnscryptproxy_logs_allowed_names" description="Allowed Names">
-        <model>settings</model>
         <field>
-            <id>settings.allowed_names_logging</id>
+            <id>allowed_names_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -184,9 +179,8 @@
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
     <tab id="dnscryptproxy_logs_allowed_ips" description="Allowed IPs">
-        <model>settings</model>
         <field>
-            <id>settings.allowed_ips_logging</id>
+            <id>allowed_ips_logging</id>
             <type>checkbox</type>
             <hidden>true</hidden>
             <control>
@@ -216,5 +210,4 @@
         </field>
         <style>display:none</style> <!-- Tab will be hidden to begin with, and shown when logging is enabled. -->
     </tab>
-    <activetab>dnscryptproxy_logs_main</activetab>
 </form>

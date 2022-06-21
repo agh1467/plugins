@@ -30,41 +30,8 @@
  # This is the template for the logs page.
  #
  # Variables sent in by the controller:
- # plugin_name  string  name of this plugin, used for API calls
+ # plugin_api_name  string  name of this plugin, used for API calls
  # this_form    array   the form XML in an array
  #}
 
-{# Pull in CSS styles #}
-{{ partial("OPNsense/Dnscryptproxy/+styles") }}
-
-{# Pull in our macro definitions #}
-{{ partial("OPNsense/Dnscryptproxy/+macros") }}
-
-{# Build the entire page including:
-    tab headers,
-    tabs content (include fields and bootgrids),
-    and all bootgrid dialogs #}
-{{ build_page(this_form, plugin_name, plugin_label, lang) }}
-
-{# Build the entire page including:
-    tab headers,
-    tabs content (include fields and bootgrids),
-    and all bootgrid dialogs #}
-
-<script>
-$( document ).ready(function() {
-{# /* Define this object now so we can push tabs to it later. */ #}
-    var data_get_map = {};
-
-{# /* Define this object now so we can push tabs to it later. */ #}
-{{  partial("OPNsense/Dnscryptproxy/layout_partials/base_script_content") }}
-
-    mapDataToFormUI(data_get_map).done(function(){
-{#/*    # Update the fields using the tokenizer style. */#}
-        formatTokenizersUI();
-{#/*    # Refresh the data for the select picker fields. */#}
-        $('.selectpicker').selectpicker('refresh');
-    });
-
-});
-</script>
+{% extends 'OPNsense/Dnscryptproxy/plugin_main.volt' %}

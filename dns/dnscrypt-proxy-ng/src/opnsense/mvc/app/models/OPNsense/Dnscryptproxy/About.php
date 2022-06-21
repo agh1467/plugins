@@ -28,39 +28,16 @@
 
 namespace OPNsense\Dnscryptproxy;
 
-use OPNsense\Dnscryptproxy\Plugin;
+use OPNsense\Base\BaseModel;
 
 /**
- * An IndexController-based class that creates an endpoint to display the
- * Diagnostics page in the UI.
+ * Class About is a BaseModel class used when retriving model data
+ * via getModel().
+ *
+ * Functionality of this class is inherited entirely from BaseModel.
  *
  * @package OPNsense\Dnscryptproxy
  */
-class DiagnosticsController extends PluginIndexController
+class About extends BaseModel
 {
-    /**
-     * This function creates an endpoint in the UI for the Diagnostics Controller.
-     *
-     * UI endpoint:
-     * `/ui/dnscryptproxy/diagnostics`
-     *
-     * This is the default action when no parameters are provided.
-     */
-    public function indexAction()
-    {
-        // Pull the name of this api from the Phalcon router to use in getFormXml call.
-        $this_api_name = $this->router->getMatches()[1];            // "about"
-
-
-        $this->view->setVars(
-            [
-                'this_xml' => $this->getFormXml($this_api_name),
-                // controllers/OPNsense/Dnscryptproxy/forms/diagnostics.xml
-            ]
-        );
-
-        // pick the template as the next view to render
-        $this->view->pick('OPNsense/Dnscryptproxy/diagnostics');
-        // views/OPNsense/Dnscryptproxy/diagnostics.volt
-    }
 }

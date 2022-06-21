@@ -30,16 +30,15 @@
 
 namespace OPNsense\Dnscryptproxy\Api;
 
-use OPNsense\Base\ApiMutableModelControllerBase;
-use OPNsense\Base\UserException;
-use OPNsense\Core\Backend;
-use OPNsense\Core\Config;
 use OPNsense\Dnscryptproxy\ControllerBase;
-use OPNsense\Dnscryptproxy\Settings;
+use OPNsense\Dnscryptproxy\PluginApiMutableModelControllerBase;
 
 /**
  * An ApiMutableModelControllerBase class used to perform settings related
  * actions for dnscrypt-proxy.
+ *
+ * This API is called by opnsense_ui.js::mapDataToFormUI() to set DOM object
+ * attributes on the various config settings on this page.
  *
  * This API is accessible at the following URL endpoint:
  *
@@ -47,9 +46,6 @@ use OPNsense\Dnscryptproxy\Settings;
  *
  * This class creates the following API endpoints:
  * ```
- *   grid
- *   import
- *   export
  *   restoreSources
  * ```
  *
@@ -66,7 +62,7 @@ use OPNsense\Dnscryptproxy\Settings;
  *
  * @package OPNsense\Dnscryptproxy
  */
-class SettingsController extends ApiMutableModelControllerBase
+class SettingsController extends PluginApiMutableModelControllerBase
 {
     /**
      * This variable defines what to call the <model> that is defined for this
@@ -124,15 +120,7 @@ class SettingsController extends ApiMutableModelControllerBase
     protected static $internalModelClass = 'OPNsense\Dnscryptproxy\Settings';
 
     /**
-     * Array for defining valid targets to use with the functions within
-     * this class.
-     *
-     * @var array $validGridTargets
-     */
-    public $valid_grid_targets = array();
-
-    /**
-     * Initilize the class, populate the valid_grid_targets with values from the
+     * Initilize the class, populate the grid_fields with values from the
      * form XML for this form.
      *
      * This parses the form XML for bootgrid fields, and puts them into a class
@@ -144,10 +132,9 @@ class SettingsController extends ApiMutableModelControllerBase
      */
     public function initialize()
     {
-        $myController = new ControllerBase();
-        $this_form = $myController->getForm('settings'); // Pull in the form data.
-        // Search the form data for bootgrids.
-        $this->searchGrids($this_form['tabs']);
+        // Initialize the PluginApiMutableModelControllerBase
+        // XXX I wonder if there is a way to make this automatic.
+        parent::initialize();
     }
 
     /**
@@ -169,384 +156,6 @@ class SettingsController extends ApiMutableModelControllerBase
     public function indexAction()
     {
         return array('status' => 'ok');
-    }
-
-    /**
-     * This is a super API for Bootgrid which will do all the things.
-     *
-     * Instead of having many copies of the same functions over and over, this
-     * function replaces all of them, and it requires only setting a couple of
-     * variables and adjusting the conditional statements to add or remove
-     * grids.
-     *
-     * API endpoint:
-     *
-     *   `/api/dnscryptproxy/settings/grid`
-     *
-     * Parameters for this function are passed in via POST/GET request in the URL like so:
-     * ```
-     * |-------API Endpoint (Here)-----|api|----$target---|--------------$uuid----------------|
-     * api/dnscryptproxy/settings/grid/get/servers.server/9d606689-19e0-48a7-84b2-9173525255d8
-     * ```
-     * This handles all of the bootgrid API calls, and keeps everything in
-     * a single function. Everything is controled via the `$target` and
-     * pre-defined variables which include the config path, and the
-     * key name for the edit dialog.
-     *
-     * A note on the edit dialog, the `$key_name` must match the prefix of
-     * the IDs of the fields defined in the form data for that dialog.
-     *
-     * Example:
-     * ```
-     *  <field>
-     *     <id>server.enabled</id>
-     *     <label>Enabled</label>
-     *     <type>checkbox</type>
-     *     <help>This will enable or disable the server stamp.</help>
-     *  </field>
-     * ```
-     *
-     * For the case above, the `$key_name` must be: "server"
-     *
-     * This correlates to the config path:
-     *
-     * `//OPNsense/dnscrypt-proxy/servers/server`
-     *
-     * `servers` is the ArrayField that these bootgrid functions are designed
-     *           for.
-     *
-     * `server`  is the final node in the config path, and are
-     *           entries in the ArrayField.
-     *
-     * The `$key_name`, the final node in the path, and the field ids in the form
-     * XML must match. The field <id> is important because when `mapDataToFormUI()`
-     * runs to populate the fields with data, the scope is just the dialog
-     * box (which includes the fields). It will try to match ids with the
-     * data it receives, and it splits up the ids at the period, using the
-     * first element as its `key_name` for matching. This is also how the main
-     * form works, and why all of those ids are prefixed with the model name.
-     *
-     * So get/set API calls return a JSON with a key named 'server', and the
-     * data gets sent to fields which have a dotted prefix of the same name.
-     * This links these elements together, though they are not directly
-     * linked, only merely aligned together.
-     *
-     * Upon saving (using `setBase()`) it sends the POST data specified
-     * in the function call wholesale, that array has to overlay perfectly
-     * on the model.
-     *
-     * @param string       $action The desired action to take for the API call.
-     * @param string       $target The desired pre-defined target for the API.
-     * @param string       $uuid   The UUID of the target object.
-     * @return array Array to be consumed by bootgrid.
-     */
-    public function gridAction($action, $target, $uuid = null)
-    {
-        if (in_array($action, array(
-                'search',
-                'get',
-                'set',
-                'add',
-                'del',
-                'toggle',
-            ))
-        ) { // Check that we only operate on valid actions.
-            if (array_key_exists($target, $this->valid_grid_targets)) {  // Only operate on valid targets.
-                $tmp = explode('.', $target);  // Split target on dots, have to use a temp var here.
-                $key_name = end($tmp);         // Get the last node from the path, and this will be our $key_name.
-
-                // Create a Settings class object to use for configd_name.
-                $settings = new Settings();
-
-                switch (true) {
-                    case ($action === 'search' && isset($this->valid_grid_targets[$target])):
-                        // Take care of special mode searches first.
-                        if (isset($this->valid_grid_targets[$target]['mode'])) {
-                            if ($this->valid_grid_targets[$target]['mode'] == 'configd_cmd') {
-                                return $this->bootgridConfigd(
-                                    $settings->configd_name . ' ' . $target,
-                                    $this->valid_grid_targets[$target]['columns']
-                                );
-                            }
-                        } elseif (isset($target)) { // All other searches, check $target is set.
-                            return $this->searchBase($target, $this->valid_grid_targets[$target]['columns']);
-                        }
-                        // no break
-                    case ($action === 'get' && isset($key_name) && isset($target)):
-                        return $this->getBase($key_name, $target, $uuid);
-                    case ($action === 'add' && isset($key_name) && isset($target)):
-                        return $this->addBase($key_name, $target);
-                    case ($action === 'del' && isset($target) && isset($uuid)):
-                        return $this->delBase($target, $uuid);
-                    case ($action === 'set' && isset($key_name) && isset($target) && isset($uuid)):
-                        return $this->setBase($key_name, $target, $uuid);
-                    case ($action === 'toggle' && isset($target) && isset($uuid)):
-                        return $this->toggleBase($target, $uuid);
-                    default:
-                        // If we get here it's probably a bug in this function.
-                        $result['message'] =
-                            'Some parameters were missing for action "' . $action . '" on target "' . $target . '"';
-                }
-            } else {
-                $result['message'] = 'Unsupported target ' . $target;
-            }
-        } else {
-            $result['message'] = 'Action "' . $action . '" not found.';
-        }
-        // Since we've gotten here, no valid options were presented,
-        // we need to return a valid array for the bootgrid to consume though.
-        $result['rows'] = array();
-        $result['rowCount'] = 0;
-        $result['total'] = 0;
-        $result['current'] = 1;
-        $result['status'] = 'failed';
-
-        return $result;
-    }
-
-    /**
-     * Form parser for bootgrid fields.
-     *
-     * This is used by initiatize() to walk through te tabs array to pull
-     * bootgrid fields, and their respsective targets, and fields.
-     *
-     * This funciton utilizes recursion to reduce code duplication.
-     *
-     * @param   array   $tabs   The form's tabs to be parsed.
-     * @return  array           Associtative array of targets, and their field
-     *                          names.
-     */
-    private function searchGrids($tabs)
-    {
-        foreach ($tabs as $tab) {
-            // Perform recursion based on which type of tabs we have.
-            // Continue to the next tab  when we're done with this tab.
-            if (isset($tab['subtabs'])) {
-                $this->searchGrids($tab['subtabs']);
-
-                continue;
-            } elseif (isset($tab['tabs'])) {
-                $this->searchGrids($tab['tabs']);
-
-                continue;
-            }
-
-            // This is where the tab is actually parsed.
-            // Iterate through all of the elements, and look for fields.
-            foreach ($tab[2] as $tab_element => $tab_element_value) {
-                if ($tab_element == 'field') {
-                    // This is for a corner case of only a single field on a tab
-                    // We need to detect when SimpleXMLElement puts a field as the
-                    // field array itself, instead of inside an array.
-                    // We wrap it in an array to fix this.
-                    if (! (isset($tab_element_value[0]))) {
-                        $fields = [$tab_element_value];
-                    } elseif (
-                        is_array($tab_element_value[0]) ||
-                        ($tab_element_value[0]) instanceof Traversable
-                    ) {
-                        $fields = $tab_element_value;
-                    }
-                    foreach ($fields as $field) {
-                        if (isset($field['type'])) {
-                            if ($field['type'] == 'bootgrid') {
-                                if (isset($field['target'])) {
-                                    if (isset($field['mode'])) {
-                                        $this->valid_grid_targets[$field['target']]['mode'] = $field['mode'];
-                                    }
-                                    if (isset($field['columns'])) {
-                                        foreach ($field['columns'] as $field_element => $field_element_value) {
-                                            if ($field_element == 'column') {
-                                                // This is another check for non-nested array
-                                                // corner case same as with field above.
-                                                // This will happen if there is only one column defined.
-                                                if (
-                                                    ! (
-                                                        is_array($field_element_value[0]) ||
-                                                    ($field_element_value[0]) instanceof Traversable
-                                                    )
-                                                ) {
-                                                    $column_var = [$field_element_value];
-                                                } elseif (
-                                                    is_array($field_element_value[0]) ||
-                                                    ($field_element_value[0]) instanceof Traversable
-                                                ) {
-                                                    $column_var = $field_element_value;
-                                                }
-                                                // Add each column's id as a field.
-                                                foreach ($column_var as $column) {
-                                                    $this->valid_grid_targets[$field['target']]['columns'][] =
-                                                        $column['@attributes']['id'];
-                                                }
-                                            }
-                                        }
-                                        // Add the enabled column if toggle api is present.
-                                        foreach ($field['api'] as $field_element => $field_element_value) {
-                                            if ($field_element == 'toggle') {
-                                                array_unshift(
-                                                    $this->valid_grid_targets[$field['target']]['columns'],
-                                                    'enabled'
-                                                );
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Export entries out of an ArrayField type node in the config..
-     *
-     * Uses a pre-defined set of targets (paths) to prevent arbitrary
-     * export of data.
-     *
-     * API endpoint:
-     *   /api/dnscryptproxy/settings/export
-     *
-     * Expects to receive a value "target" defined in the data in the GET
-     * request.
-     *
-     * Example usage (in Javascript):
-     * ajaxGet("/api/dnscryptproxy/settings/export",
-     *          {"target": "allowed_names_internal"},
-     *          function(data, status){...
-     *
-     * The second parameter is the data (array) where "target" is defined.
-     */
-    public function exportAction()
-    {
-        // Check that this function is being called by a GET request.
-        if ($this->request->isGet()) {
-            // Retrive the value of the target key in the GET request.
-            $target = $this->request->get('target');
-            if (! is_null($target)) {  // If we have a target, check it against the list.
-                if (array_key_exists($target, $this->valid_grid_targets)) {  // Only operate on valid targets.
-                    // Get the model, and walk to the appropriate path.
-                    $mdl = $this->getModel();
-                    foreach (explode('.', $target) as $step) {
-                        $mdl = $mdl->{$step};
-                    }
-                    // Send via HTTP response the content type.
-                    $this->response->setContentType('application/json', 'UTF-8');
-                    // Send via HTTP response the JSON encoded array of the node.
-                    $this->response->setContent(json_encode($mdl->getNodes()));
-                } else {
-                    return array('status' => 'Specified target "' . $target . "' does not exist.");
-                }
-            } else {
-                throw new UserException('Unsupported request type');
-            }
-        }
-    }
-
-    /**
-     * Import data provided by the user in a file upload into ArrayField type
-     * nodes in the config.
-     *
-     * API endpoint:
-     *
-     * `/api/dnscryptproxy/settings/import`
-     *
-     * Takes data from POST variables `data` and `target`, validates accordingly,
-     * then updates existing objects with the same UUID, or creates new entries
-     * then saves the entries into the config.
-     *
-     * Example usage (Javascript):
-     * ```
-     * ajaxCall("/api/dnscryptproxy/settings/import",
-     *          {'data': import_data,'target': 'allowed_names_internal' },
-     *          function(data,status) {...
-     * ```
-     * The second paramter is the data (array) where `data`, and `target` are
-     * defined.
-     *
-     * No support for `CSVListField` types within an ArrayField type.
-     * Attempting currently returns error:
-     * ```
-     * Error at /usr/local/opnsense/mvc/app/models/OPNsense/Base/FieldTypes/BaseField.php:639
-     * It is not yet possible to assign complex types to properties (errno=2)
-     * ```
-     * This was mostly copied from the firewall plugin.
-     */
-    public function importAction()
-    {
-        if ($this->request->isPost()) {
-            $this->sessionClose();
-            $result = array('import' => 0, 'status' => '');
-
-            // Get target, and data from the POST.
-            $data = $this->request->getPost('data');
-            $target = $this->request->getPost('target');
-
-            if (! is_null($target)) {  // Only do stuff if target is actually set.
-                if (is_array($data)) {  // Only do this if the data we have is an array.
-                    if (array_key_exists($target, $this->valid_grid_targets)) {  // Only operate on valid targets.
-                        // Get the model for use later. (used for updating records)
-                        $mdl = $this->getModel();
-                        // Create a second model object that is walked to the last node. (used for new records)
-                        $tmp = $mdl;
-                        foreach (explode('.', $target) as $step) {
-                            $tmp = $tmp->{$step};
-                        }
-                        // Get a lock on the config.
-                        Config::getInstance()->lock();
-                        // For each data[n], store it as uuid (string) and its content (array).
-                        foreach ($data as $data_uuid => $data_content) {
-                            // Reset the node on each iteration.
-                            $node = null;
-                            // Only do if our content is the correct format.
-                            if (is_array($data_content)) {
-                                // If the node exists (by UUID), this selects the node.
-                                $node = $mdl->getNodeByReference($target . '.' . $data_uuid);
-                                // If no node is found, create a new node.
-                                if ($node == null) {
-                                    $node = $tmp->Add();
-                                }
-                                // Set the new or found node to the content.
-                                $node->setNodes($data_content);
-                                // Increment the import counter.
-                                $result['import'] += 1;
-                            }
-                        }
-
-                        // Create the uuid mapping for validation messaging.
-                        $uuid_mapping = array();
-                        // perform validation, record details.
-                        foreach ($this->getModel()->performValidation() as $msg) {
-                            if (empty($result['validations'])) {
-                                $result['validations'] = array();
-                            }
-                            $parts = explode('.', $msg->getField());
-                            $uuid = $parts[count($parts) - 2];
-                            $fieldname = $parts[count($parts) - 1];
-                            $uuid_mapping[$uuid] = "$uuid";
-                            $result['validations'][$uuid_mapping[$uuid] . '.' . $fieldname] = $msg->getMessage();
-                        }
-
-                        // possibly use save() from ApiMutableModelControllerBase
-                        // only persist when valid import
-                        if (empty($result['validations'])) {
-                            $result['status'] = 'ok';
-                            $this->save();
-                        } else {
-                            $result['status'] = 'failed';
-                            Config::getInstance()->unlock();
-                        }
-                    } else {
-                        return array('status' => 'Specified target "' . $target . "' does not exist.");
-                    }
-                }
-            } else {
-                throw new UserException('Unsupported request type');
-            }
-            // Return messages, either success or failure.
-            return $result;
-        }
     }
 
     /**
@@ -572,12 +181,10 @@ class SettingsController extends ApiMutableModelControllerBase
      */
     public function restoreSourcesAction()
     {
-        $myController = new ControllerBase();
-        $this_form = $myController->getForm('settings');   // Pull in the form data.
-
+        // Hard code the target.
         $target = 'sources.source';
         // First we get the current sources to use the UUIDs of each to delete them.
-        $sources = $this->searchBase($target, $this->valid_grid_targets[$target]['columns']);
+        $sources = $this->searchBase($target, $this->grid_fields[$target]['columns']);
 
         // Deleting each rows in the sources node. This is inefficient,
         // but negligable as most wont add more than these two anyway.
@@ -616,252 +223,11 @@ class SettingsController extends ApiMutableModelControllerBase
         // Add our settings, and put the settings into the results variable. Also inefficient.
         $result[1] = $this->addBase('public_resolvers', $target);
         $result[2] = $this->addBase('relays', $target);
+        // Set the config dirty flag since it's changed.
+        $this->markConfig('dirty');
         // Setting our status to ok for SimpleActionButton()
         $result['status'] = 'ok';
 
         return $result;
     }
-
-    /**
-     * Execute a configd command, and return the output in a format consumable
-     * by bootgrid.
-     *
-     * It executes configd with the given commands, and returns JSON for bootrid
-     * to consume. It works similar to, and sourced mostly from `searchBase()`,
-     * and UIModelGrid() but with some differences and added functionality.
-     *
-     * Takes most parameters via POST just like *Base() functions.
-     *
-     * Lots of comments because this function is a bit confusing to start.
-     *
-     * @param string  $configd_cmd   path to search, relative to this model
-     * @param array   $fields        field names to fetch in result
-     * @return array output from the configd command
-     */
-    public function bootgridConfigd($configd_cmd, $fields)
-    {
-        $backend = new Backend();
-        $sort = SORT_ASC;
-        $sortBy = array($fields[0]); // set a default column to sort with as the first column defined.
-        // Get the items per page, and current page from the GET sent by bootgrid.
-        $itemsPerPage = $this->request->get('rowCount', 'int', -1);
-        $currentPage = $this->request->get('current', 'int', 1);
-        // Set up the sort stuff.
-        if ($this->request->has('sort') && is_array($this->request->get('sort'))) {
-            $sortBy = array_keys($this->request->get('sort'));
-            if ($this->request->get('sort')[$sortBy[0]] == 'desc') {
-                $sort = SORT_DESC;
-            }
-        }
-        // Grab the search phrase from the GET call.
-        $searchPhrase = $this->request->get('searchPhrase', 'string', '');
-        $rows = array();
-
-        $this->sessionClose();
-        $result = array('rows' => array());
-        $recordIndex = 0;
-
-        // Run the configd command and get the results put into an array.
-        // Expects to receive JSON. Maybe add validation later.
-        $response = json_decode($backend->configdpRun($configd_cmd), true);
-
-        if (! empty($response)) {
-            // Pivot the data to create arrays of each column of data.
-            // ex. rows['description'], rows['nolog'], etc.
-            // These are used to sort based on column.
-            foreach ($response as $item) {
-                foreach ($item as $key => $value) {
-                    if (! isset($rows[$key])) { // Establish the row if it does not already exist.
-                        $rows[$key] = array();
-                    }
-                    $rows[$key][] = $value;
-                }
-            }
-
-            // This bit here is taking the desired sort column sent as param
-            // and sorting it ASC, or DESC also sent as param.
-            // At the same time it's taking the cooresponding index from
-            // $reponse and put it in the same position as the sorted row.
-            // This sorts by the desired column $rows, and rearranges $response
-            // to be in the same order, thus sorting $response by the desired
-            // column.
-            if ($this->request->has('sort') && is_array($this->request->get('sort'))) {
-                array_multisort($rows[$sortBy[0]], $sort, $response);
-            }
-            // ^ This will throw an error if an element is missing from one of
-            // the entries. Like description being missing on static server entries.
-            // $rows will be shorter than $response. This has been mitigated by
-            // adding an empty description field in the script.
-
-            // This was copied almost wholesale from UIModelGrid(), if it ain't broke.
-            // I added a boolean check in the search bit.
-            foreach ($response as $row) {
-                // if a search phrase is provided, use it to search in all requested fields
-                if (! empty($searchPhrase)) {
-                    $searchFound = false;
-
-                    foreach ($fields as $fieldname) {  //Iterate through the field list provided as function param.
-                        // For each field in the row, we check to see if the searchPhrase is found, one at a time.
-                        // Catch a corner case where a row is missing from the data,
-                        // test for null (manually defined servers have no description).
-                        $field = (isset($row[$fieldname]) ? $row[$fieldname] : null);
-                        if (! is_null($field)) {
-                            if (is_array($field)) {  // Only do if this is an array
-                                foreach ($field as $fieldvalue) {
-                                    if (strtolower($searchPhrase) == strtolower($fieldname)) {
-                                        // If the field name happens to match the searchPhrase, we might be a boolean.
-                                        if (is_int($fieldvalue) && ($fieldvalue == 0 || $fieldvalue == 1)) {
-                                            // Guess if the field is a boolean.
-                                            if ($fieldvalue == 1) {
-                                                // Guessing that int(1) will mean true.
-                                                // Have to use 0 or 1 here because opensense_bootgrid_plugin.js
-                                                // uses that instead of true/false.
-                                                $searchFound = true;
-
-                                                break;
-                                            }
-                                            // $fieldvalue is 0, so we should abort the rest of the columns.
-                                            // We assume that we're searching for a bool, and if this is 0
-                                            // then this row should not be included. Do not set $searchFound,
-                                            // but still break out of the loop, effectively skipping the row.
-                                            // Not ideal as it prevents string searching for a value
-                                            // the same as a field name in the rest of the colums.
-                                            // Need some special syntax to signify a bool search via $searchPhrase.
-                                            break;
-                                        }
-                                    } elseif (strpos(strtolower($fieldvalue), strtolower($searchPhrase)) !== false) {
-                                        $searchFound = true;
-
-                                        break;
-                                    }
-                                }
-                            } else {
-                                if (strtolower($searchPhrase) == strtolower($fieldname)) {
-                                    // If the field name happens to match the searchPhrase, we might be a boolean.
-                                    if (is_int($field) && ($field == 0 || $field == 1)) {
-                                        // Guess if the field is a boolean.
-                                        if ($field == 1) {
-                                            # Guessing that int(1) will mean true.
-                                            $searchFound = true;
-
-                                            break;
-                                        }
-                                        // $field is 0, so we should abort the rest of the columns.
-                                        // We assume that we're searching for a bool, and if this is 0
-                                        // then this row should not be included. Do not set $searchFound,
-                                        // but still break out of the loop, effectively skipping the row.
-                                        // Not ideal as it prevents string searching for a value
-                                        // the same as a field name in the rest of the colums.
-                                        // Need some special syntax to signify a bool search via $searchPhrase.
-                                        break;
-                                    }
-                                } elseif (strpos(strtolower($field), strtolower($searchPhrase)) !== false) {
-                                    $searchFound = true;
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // If there is no search phrase, we assume all rows are relevent.
-                    $searchFound = true;
-                }
-
-                // if result is relevant, count total and add (max number of) items to result.
-                // $itemsPerPage = -1 is used as wildcard for "all results"
-                if ($searchFound) {
-                    if (
-                        (count($result['rows']) < $itemsPerPage &&
-                        $recordIndex >= ($itemsPerPage * ($currentPage - 1)) || $itemsPerPage == -1)
-                    ) {
-                        $result['rows'][] = $row;
-                    }
-                    $recordIndex++;
-                }
-            }
-        }
-        // We're all done, so now return what we have in a way bootgrid expects.
-        $result['rowCount'] = count($result['rows']);
-        $result['total'] = $recordIndex;
-        $result['current'] = (int) $currentPage;
-        $result['status'] = 'ok';
-        $result['POST'] = $_POST;
-        $result['params'] = array('configd_cmd' => $configd_cmd, 'fields' => $fields);
-        //$result['response'] = $response;
-
-        return $result;
-    }
-
-    /**
-     * This function overrides the setAction() provided by
-     * ApiMutableServiceControllerBase.
-     *
-     * API endpoint:
-     *   /api/dnscryptproxy/settings/set
-     *
-     * This overrides the function from ApiMutableServiceControllerBase, but
-     * also calls it itself. This action is used to perform extra activites
-     * after a setAction() action is complete. We pass on the
-     * setAction() result from the parent.
-     *
-     * @return array setAction() result or error message from configd.
-     */
-    public function setAction()
-    {
-        // Create a settings object to get some variables.
-        $settings = new Settings();
-
-        // Call the reconfigure action to save our settings.
-        $set_result = parent::setAction();
-
-        // Create a backend to run our activities.
-        $backend = new Backend();
-        $response = trim($backend->configdpRun($settings->configd_name . ' make dirty'));
-
-        if ($response != 'OK') {
-            // Return an array containing a reponse for the message box to display.
-            return array('status' => 'error', 'message' => $response);
-        }
-
-        return $set_result;
-    }
-
-    /**
-     * An API endpoint to return the clean/dirty state of the config.
-     *
-     * API endpoint:
-     *
-     *   `/api/dnscryptproxy/settings/state`
-     *
-     * Usage:
-     *
-     *   `/api/dnscryptproxy/settings/state`
-     *
-     * Returns an array containing the dirty state.
-     *
-     * @return array    [state] = dirty/clean
-     */
-    public function stateAction()
-    {
-        $result = array();
-        // Create a Settings class object to use for configd_name.
-        $settings = new Settings();
-
-        // Create a backend to run our activities.
-        $backend = new Backend();
-        $response = trim($backend->configdpRun($settings->configd_name . ' state'));
-
-        if (!in_array($response, array(
-            'dirty',
-            'clean'
-            ))
-        ) {
-            // Return an array containing a reponse for the message box to display.
-            return array('status' => 'error', 'message' => $response);
-        } else {
-            return array('status' => 'ok', 'state' => $response);
-        }
-    }
-
 }

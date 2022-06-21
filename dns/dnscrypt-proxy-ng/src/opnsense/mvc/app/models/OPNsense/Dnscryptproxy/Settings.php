@@ -36,46 +36,8 @@ use OPNsense\Base\BaseModel;
  *
  * Functionality of this class is inherited entirely from BaseModel.
  *
- * There are variables defined here that are used elsewhere to make code
- * more portable, and reduce typographic errors.
- *
  * @package OPNsense\Dnscryptproxy
  */
 class Settings extends BaseModel
 {
-    /**
-     * The name of this plugin.
-     *
-     * @var string $name
-     */
-    public $name = 'dnscrypt-proxy';
-
-    /**
-     * A label to use for this plugin.
-     *
-     * @var string $label
-     */
-    public $label = 'DNSCrypt Proxy';
-
-    /**
-     * The API endpoint name as created by Phalcon.
-     *
-     * @var string $api_name
-     */
-    public $api_name = 'dnscryptproxy';
-
-    /**
-     * The name to use to reference the service with configd.
-     *
-     * @var string $configd_name
-     */
-    public $configd_name = 'dnscryptproxy';
-
-    /**
-     * The log directory name. Assuming this is located in /var/log.
-     *
-     * @var string $configd_name
-     */
-    public $log_dir_name = 'dnscrypt-proxy';
-
 }

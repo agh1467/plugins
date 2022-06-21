@@ -28,13 +28,15 @@
 
 namespace OPNsense\Dnscryptproxy;
 
+use OPNsense\Dnscryptproxy\Plugin;
+
 /**
  * An IndexController-based class that creates an endpoint to display the Log
  * page in the UI.
  *
  * @package OPNsense\Dnscryptproxy
  */
-class LogsController extends \OPNsense\Base\IndexController
+class LogsController extends PluginIndexController
 {
     /**
      * This function creates an endpoint in the UI for the Logs Controller.
@@ -46,17 +48,15 @@ class LogsController extends \OPNsense\Base\IndexController
      */
     public function indexAction()
     {
-        // Create a settings object to get some variables.
-        $settings = new Settings();
-
-        // Create our own instance of a Controller to use getForm().
-        $myController = new ControllerBase();
+        // Pull the name of this api from the Phalcon router to use in getFormXml call.
+        $this_api_name = $this->router->getMatches()[1];            // "logs"
 
         $this->view->setVars(
             [
-                'plugin_name' => $settings->api_name,
-                'plugin_label' => $settings->label,
-                'this_form' => $myController->getForm('logs'),
+                // Derive the API path from the UI path of the view, swapping out the leading "/ui/" for "/api/".
+                // This is crude, but it will work until I discover a more reliable way to do it in the view.
+                'plugin_api_path' => preg_replace("/^\/ui\//", "/api/", $this->router->getMatches()[0]),
+                'this_xml' => $this->getFormXml($this_api_name),
                 // controllers/OPNsense/Dnscryptproxy/forms/logs.xml
             ]
         );

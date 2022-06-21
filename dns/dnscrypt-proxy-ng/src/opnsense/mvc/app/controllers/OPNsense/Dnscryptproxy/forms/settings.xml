@@ -1,14 +1,13 @@
-<form>
+<form active_tab="basic_settings" model="settings">
     <tab id="global" description="Global">
         <subtab id="basic_settings" description="Basic Settings">
-            <model>settings</model>
             <field>
-                <id>settings.first_time_setup</id>
+                <id>first_time_setup</id>
                 <hidden>true</hidden>
                 <type>checkbox</type>
             </field>
             <field>
-                <id>settings.enabled</id>
+                <id>enabled</id>
                 <label>Enable DNSCrypt Proxy</label>
                 <help><![CDATA[
                     This will enable the dnscrypt-proxy service.
@@ -17,7 +16,7 @@
                 <type>checkbox</type>
             </field>
             <field>
-                <id>settings.listen_addresses</id>
+                <id>listen_addresses</id>
                 <label>Listen Addresses</label>
                 <hint>127.0.0.1:5353, [::1]:5353</hint>
                 <help><![CDATA[
@@ -31,7 +30,7 @@
                 <type>select_multiple</type>
             </field>
             <field>
-                <id>settings.allowprivileged</id>
+                <id>allowprivileged</id>
                 <label>Allow Privileged Ports</label>
                 <help><![CDATA[
                     This will allow you to run the service on port 53.
@@ -40,7 +39,7 @@
                 <type>checkbox</type>
             </field>
             <field>
-                <id>settings.max_clients</id>
+                <id>max_clients</id>
                 <hint>250</hint>
                 <help><![CDATA[
                     <b>max_clients</b><br>
@@ -63,7 +62,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.ipv4_servers</id>
+                <id>ipv4_servers</id>
                 <label>Use IPv4 Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -73,7 +72,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.ipv6_servers</id>
+                <id>ipv6_servers</id>
                 <label>Use IPv6 Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -83,7 +82,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.dnscrypt_servers</id>
+                <id>dnscrypt_servers</id>
                 <label>Use DNSCrypt Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -94,7 +93,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.doh_servers</id>
+                <id>doh_servers</id>
                 <label>Use DNS-over-HTTPS (DoH) Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -105,7 +104,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.odoh_servers</id>
+                <id>odoh_servers</id>
                 <label>Use Oblivious DNS-over-HTTPS (DoH) Servers</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -130,7 +129,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.server_selection_method</id>
+                <id>server_selection_method</id>
                 <label>Server selection method</label>
                 <type>dropdown</type>
                 <control>
@@ -151,7 +150,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.server_names</id>
+                <id>server_names</id>
                 <label>Server Names</label>
                 <type>select_multiple</type>
                 <style>selectpicker</style>
@@ -166,7 +165,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.require_dnssec</id>
+                <id>require_dnssec</id>
                 <label>Require DNSSEC</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -177,7 +176,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.require_nolog</id>
+                <id>require_nolog</id>
                 <label>Require No Logging</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -187,7 +186,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.require_nofilter</id>
+                <id>require_nofilter</id>
                 <label>Require No Filtering</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -201,7 +200,7 @@
                 <type>separator</type>
             </field>
             <field>
-                <id>settings.disabled_server_names</id>
+                <id>disabled_server_names</id>
                 <label>Disabled Server Names</label>
                 <type>select_multiple</type>
                 <style>selectpicker</style>
@@ -212,7 +211,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.disabled_server_names_extra</id>
+                <id>disabled_server_names_extra</id>
                 <label>Disabled Server Names (Extra)</label>
                 <type>select_multiple</type>
                 <style>tokenize</style>
@@ -238,9 +237,8 @@
             </button>
         </subtab>
         <subtab id="advanced_settings" description="Advanced Settings">
-            <model>settings</model>
             <field>
-                <id>settings.force_tcp</id>
+                <id>force_tcp</id>
                 <label>Force TCP</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -252,7 +250,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.proxy</id>
+                <id>proxy</id>
                 <label>Proxy</label>
                 <type>text</type>
                 <hint>socks5://127.0.0.1:9050</hint>
@@ -264,7 +262,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.http_proxy</id>
+                <id>http_proxy</id>
                 <label>HTTP Proxy</label>
                 <type>text</type>
                 <hint>http://127.0.0.1:8888</hint>
@@ -276,7 +274,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.timeout</id>
+                <id>timeout</id>
                 <label>Timeout</label>
                 <type>text</type>
                 <hint>5000</hint>
@@ -291,7 +289,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.keepalive</id>
+                <id>keepalive</id>
                 <label>Keepalive</label>
                 <type>text</type>
                 <hint>30</hint>
@@ -302,7 +300,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.edns_client_subnet</id>
+                <id>edns_client_subnet</id>
                 <label>EDNS Client Subnet</label>
                 <help><![CDATA[
                     <b>edns_client_subnet</b><br>
@@ -319,7 +317,7 @@
                 <allownew>true</allownew>
             </field>
             <field>
-                <id>settings.blocked_query_response</id>
+                <id>blocked_query_response</id>
                 <label>Blocked Query Response</label>
                 <type>text</type>
                 <hint>hinfo</hint>
@@ -331,7 +329,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.lb_strategy</id>
+                <id>lb_strategy</id>
                 <label>Load Balancing Strategy</label>
                 <type>text</type>
                 <hint>p2</hint>
@@ -343,7 +341,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.lb_estimator</id>
+                <id>lb_estimator</id>
                 <label>Load Balance Estimator</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -362,7 +360,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.log_level</id>
+                <id>log_level</id>
                 <label>Log Level</label>
                 <type>dropdown</type>
                 <help><![CDATA[
@@ -373,7 +371,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.log_file_latest</id>
+                <id>log_file_latest</id>
                 <label>Only keep latest logs</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -384,7 +382,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.log_files_max_size</id>
+                <id>log_files_max_size</id>
                 <label>Log File Maximum Size</label>
                 <type>text</type>
                 <hint>10</hint>
@@ -395,7 +393,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.log_files_max_age</id>
+                <id>log_files_max_age</id>
                 <label>Log File Maximum Age</label>
                 <type>text</type>
                 <hint>7</hint>
@@ -407,7 +405,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.log_files_max_backups</id>
+                <id>log_files_max_backups</id>
                 <label>Log File Maximum Backups</label>
                 <type>text</type>
                 <hint>1</hint>
@@ -419,7 +417,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.query_log.enabled</id>
+                <id>query_log.enabled</id>
                 <label>Enable Query Logging</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -429,7 +427,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.query_log.ignored_qtypes</id>
+                <id>query_log.ignored_qtypes</id>
                 <label>Ignored Query Types</label>
                 <type>select_multiple</type>
                 <style>tokenize</style>
@@ -443,7 +441,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.nx_log.enabled</id>
+                <id>nx_log.enabled</id>
                 <label>Enable NX (Non-Existant) Query Logging</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -461,7 +459,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cert_refresh_delay</id>
+                <id>cert_refresh_delay</id>
                 <label>Cert Refresh Delay</label>
                 <type>text</type>
                 <hint>240</hint>
@@ -472,7 +470,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.dnscrypt_ephemeral_keys</id>
+                <id>dnscrypt_ephemeral_keys</id>
                 <label>Ephemeral Keys</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -492,7 +490,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.tls_disable_session_tickets</id>
+                <id>tls_disable_session_tickets</id>
                 <label>TLS Disable Session Tickets</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -503,7 +501,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.tls_cipher_suite</id>
+                <id>tls_cipher_suite</id>
                 <label>DoH TLS Cipher Suite</label>
                 <type>select_multiple</type>
                 <style>selectpicker</style>
@@ -537,7 +535,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.bootstrap_resolvers</id>
+                <id>bootstrap_resolvers</id>
                 <label>Bootstrap Resolvers</label>
                 <type>select_multiple</type>
                 <style>tokenize</style>
@@ -582,7 +580,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.ignore_system_dns</id>
+                <id>ignore_system_dns</id>
                 <label>Ignore System DNS</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -600,7 +598,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.netprobe_timeout</id>
+                <id>netprobe_timeout</id>
                 <label>Net Probe Timeout</label>
                 <type>text</type>
                 <hint>60</hint>
@@ -610,7 +608,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.netprobe_address</id>
+                <id>netprobe_address</id>
                 <label>Net Probe Address</label>
                 <type>text</type>
                 <hint>9.9.9.9:53</hint>
@@ -625,7 +623,7 @@
                 <help>These settings didn't fit into any other groups.</help>
             </field>
             <field>
-                <id>settings.offline_mode</id>
+                <id>offline_mode</id>
                 <label>Offline Mode</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -637,7 +635,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.query_meta</id>
+                <id>query_meta</id>
                 <label>Query Metadata</label>
                 <type>select_multiple</type>
                 <style>tokenize</style>
@@ -669,7 +667,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.block_ipv6</id>
+                <id>block_ipv6</id>
                 <label>Block IPv6</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -682,7 +680,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.block_unqualified</id>
+                <id>block_unqualified</id>
                 <label>Block Unqualified</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -693,7 +691,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.block_undelegated</id>
+                <id>block_undelegated</id>
                 <label>Block Undelegated</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -705,7 +703,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.reject_ttl</id>
+                <id>reject_ttl</id>
                 <label>Reject TTL</label>
                 <type>text</type>
                 <hint>10</hint>
@@ -725,7 +723,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache</id>
+                <id>cache</id>
                 <label>Enable Cache</label>
                 <type>checkbox</type>
                 <help><![CDATA[
@@ -735,7 +733,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache_size</id>
+                <id>cache_size</id>
                 <label>Cache Size</label>
                 <type>text</type>
                 <hint>4096</hint>
@@ -746,7 +744,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache_min_ttl</id>
+                <id>cache_min_ttl</id>
                 <label>Cache Min TTL</label>
                 <type>text</type>
                 <hint>2400</hint>
@@ -757,7 +755,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache_max_ttl</id>
+                <id>cache_max_ttl</id>
                 <label>Cache Max TTL</label>
                 <type>text</type>
                 <hint>86400</hint>
@@ -768,7 +766,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache_neg_min_ttl</id>
+                <id>cache_neg_min_ttl</id>
                 <label>Cache Negative Min TTL</label>
                 <type>text</type>
                 <hint>60</hint>
@@ -779,7 +777,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cache_neg_max_ttl</id>
+                <id>cache_neg_max_ttl</id>
                 <label>Cache Negative Max TTL</label>
                 <type>text</type>
                 <hint>600</hint>
@@ -797,7 +795,6 @@
     </tab>
     <tab id="lists" description="Lists/Rules">
         <subtab id="blocked_names" description="Blocked Names">
-            <model>settings</model>
             <field>
                 <label>Blocked Names List</label>
                 <type>header</type>
@@ -819,7 +816,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_names_enabled</id>
+                <id>blocked_names_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Blocked Names</label>
                 <help><![CDATA[Select to enable the blocklist feature.
@@ -836,7 +833,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.blocked_names_type</id>
+                <id>blocked_names_type</id>
                 <label>Blocked Names List type</label>
                 <type>radio</type>
                 <help><![CDATA[
@@ -849,6 +846,7 @@
                     a blocklist.
                     ]]>
                 </help>
+                <builtin>button-group</builtin>
                 <buttons>
                     <button value="external">External</button>
                     <button value="manual">Manual</button>
@@ -867,7 +865,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.blocked_names_file_external</id>
+                <id>blocked_names_file_external</id>
                 <type>text</type>
                 <label>External Blocked Names file</label>
                 <help><![CDATA[
@@ -877,7 +875,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_names_file_manual</id>
+                <id>blocked_names_file_manual</id>
                 <type>managefile</type>
                 <label>Manual Blocked Names file management</label>
                 <api>
@@ -893,7 +891,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_names_logging</id>
+                <id>blocked_names_logging</id>
                 <type>checkbox</type>
                 <label>Enable Blocked Names Logging</label>
                 <help><![CDATA[
@@ -920,20 +918,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="entries">
                     <label>Edit Entry</label>
                     <field>
-                        <id>entries.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -942,7 +940,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.expression</id>
+                        <id>expression</id>
                         <label>Expression</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -952,7 +950,7 @@
                         <hint>*.example.com</hint>
                     </field>
                     <field>
-                        <id>entries.schedule</id>
+                        <id>schedule</id>
                         <label>Schedule</label>
                         <type>dropdown</type>
                         <style></style>
@@ -962,7 +960,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -978,7 +976,6 @@
             </button>
         </subtab>
         <subtab id="blocked_ips" description="Blocked IPs">
-            <model>settings</model>
             <field>
                 <label>Blocked IPs List</label>
                 <type>header</type>
@@ -1019,7 +1016,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_ips_enabled</id>
+                <id>blocked_ips_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Blocked IPs</label>
                 <help><![CDATA[
@@ -1037,7 +1034,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.blocked_ips_type</id>
+                <id>blocked_ips_type</id>
                 <label>Blocked IPs list type</label>
                 <type>radio</type>
                 <help><![CDATA[
@@ -1068,7 +1065,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.blocked_ips_file_external</id>
+                <id>blocked_ips_file_external</id>
                 <type>text</type>
                 <label>External Blocked IPs list file</label>
                 <help><![CDATA[
@@ -1078,7 +1075,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_ips_file_manual</id>
+                <id>blocked_ips_file_manual</id>
                 <type>managefile</type>
                 <label>Manual Blocked IPs list file management</label>
                 <api>
@@ -1094,7 +1091,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.blocked_ips_logging</id>
+                <id>blocked_ips_logging</id>
                 <type>checkbox</type>
                 <label>Enable Blocked IPs Logging</label>
                 <help><![CDATA[
@@ -1120,20 +1117,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="entries">
                     <label>Edit Entry</label>
                     <field>
-                        <id>entries.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1142,7 +1139,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.expression</id>
+                        <id>expression</id>
                         <label>Expression</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1153,7 +1150,7 @@
                         <hint>*.example.com</hint>
                     </field>
                     <field>
-                        <id>entries.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1169,7 +1166,6 @@
             </button>
         </subtab>
         <subtab id="allowed_names" description="Allowed Names">
-            <model>settings</model>
             <field>
                 <label>Allowed Names List</label>
                 <type>header</type>
@@ -1198,7 +1194,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_names_enabled</id>
+                <id>allowed_names_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Allowed Names</label>
                 <control>
@@ -1215,7 +1211,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_names_type</id>
+                <id>allowed_names_type</id>
                 <label>Allowed Names list type</label>
                 <type>radio</type>
                 <help><![CDATA[
@@ -1238,7 +1234,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.allowed_names_file_manual</id>
+                <id>allowed_names_file_manual</id>
                 <type>managefile</type>
                 <label>Manual Allowed Names file management</label>
                 <api>
@@ -1254,7 +1250,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_names_logging</id>
+                <id>allowed_names_logging</id>
                 <help><![CDATA[
                     Select to enable allow list logging.
                     ]]>
@@ -1281,20 +1277,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="entries">
                     <label>Edit Entry</label>
                     <field>
-                        <id>entries.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1303,7 +1299,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.expression</id>
+                        <id>expression</id>
                         <label>Expression</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1314,7 +1310,7 @@
                         <hint>*.example.com</hint>
                     </field>
                     <field>
-                        <id>entries.schedule</id>
+                        <id>schedule</id>
                         <label>Schedule</label>
                         <type>dropdown</type>
                         <style></style>
@@ -1324,7 +1320,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1340,7 +1336,6 @@
             </button>
         </subtab>
         <subtab id="allowed_ips" description="Allowed IPs">
-            <model>settings</model>
             <field>
                 <label>Allowed IPs List</label>
                 <type>header</type>
@@ -1359,7 +1354,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_ips_enabled</id>
+                <id>allowed_ips_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Allowed IPs</label>
                 <control>
@@ -1376,7 +1371,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_ips_type</id>
+                <id>allowed_ips_type</id>
                 <label>Allowed IPs list type</label>
                 <type>radio</type>
                 <help><![CDATA[
@@ -1399,7 +1394,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.allowed_ips_file_manual</id>
+                <id>allowed_ips_file_manual</id>
                 <type>managefile</type>
                 <label>Manual allow list file management</label>
                 <api>
@@ -1415,7 +1410,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.allowed_ips_logging</id>
+                <id>allowed_ips_logging</id>
                 <help><![CDATA[
                     Select to enable allow list logging.
                     ]]>
@@ -1441,20 +1436,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="entries">
                     <label>Edit Entry</label>
                     <field>
-                        <id>entries.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1463,7 +1458,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.expression</id>
+                        <id>expression</id>
                         <label>Expression</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1474,7 +1469,7 @@
                         <hint>*.example.com</hint>
                     </field>
                     <field>
-                        <id>entries.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1490,7 +1485,6 @@
             </button>
         </subtab>
         <subtab id="schedules" description="Schedules">
-            <model>settings</model>
             <field>
                 <target>schedules.schedule</target>
                 <label>Schedules</label>
@@ -1508,18 +1502,18 @@
                     <column id="name" width="" size="" type="string" visible="true" data-formatter="">Name</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="schedule">
                     <label>Edit Schedule</label>
                     <field>
-                        <id>schedule.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1528,7 +1522,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>schedule.name</id>
+                        <id>name</id>
                         <label>Schedule Name</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1537,7 +1531,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>schedulde.monday</id>
+                        <id>monday</id>
                         <label>Monday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1550,7 +1544,7 @@
                         <stop_min_id>schedule.mon_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.tuesday</id>
+                        <id>tuesday</id>
                         <label>Tuesday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1563,7 +1557,7 @@
                         <stop_min_id>schedule.tue_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.wednesday</id>
+                        <id>wednesday</id>
                         <label>Wednesday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1576,7 +1570,7 @@
                         <stop_min_id>schedule.wed_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.thursday</id>
+                        <id>thursday</id>
                         <label>Thursday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1589,7 +1583,7 @@
                         <stop_min_id>schedule.thu_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.friday</id>
+                        <id>friday</id>
                         <label>Friday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1602,7 +1596,7 @@
                         <stop_min_id>schedule.fri_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.saturday</id>
+                        <id>saturday</id>
                         <label>Saturday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1615,7 +1609,7 @@
                         <stop_min_id>schedule.sat_stop_min</stop_min_id>
                     </field>
                     <field>
-                        <id>schedulde.sunday</id>
+                        <id>sunday</id>
                         <label>Sunday</label>
                         <type>startstoptime</type>
                         <help><![CDATA[
@@ -1635,7 +1629,6 @@
             </button>
         </subtab>
         <subtab id="cloaking" description="Cloaking Rules">
-            <model>settings</model>
             <field>
                 <label>Cloaking Rules</label>
                 <type>header</type>
@@ -1672,7 +1665,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cloaking_enabled</id>
+                <id>cloaking_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Cloaking</label>
                 <help><![CDATA[
@@ -1689,7 +1682,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.cloaking_type</id>
+                <id>cloaking_type</id>
                 <label>Cloaking rules type</label>
                 <type>radio</type>
                 <help><![CDATA[
@@ -1712,7 +1705,7 @@
                 </control>
             </field>
             <field>
-                <id>settings.cloaking_file_manual</id>
+                <id>cloaking_file_manual</id>
                 <type>managefile</type>
                 <label>Manual cloaking file management</label>
                 <api>
@@ -1727,7 +1720,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.cloak_ttl</id>
+                <id>cloak_ttl</id>
                 <label>Cloak TTL</label>
                 <type>text</type>
                 <hint>600</hint>
@@ -1756,20 +1749,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="cloak">
                     <label>Edit Override</label>
                     <field>
-                        <id>cloak.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1778,7 +1771,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>cloak.pattern</id>
+                        <id>pattern</id>
                         <label>Pattern</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1787,7 +1780,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>cloak.destination</id>
+                        <id>destination</id>
                         <label>Destination</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1796,7 +1789,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>cloak.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1812,7 +1805,6 @@
             </button>
         </subtab>
         <subtab id="forwarding" description="Forwarding Rules">
-            <model>settings</model>
             <field>
                 <label>Forwarding Rules</label>
                 <type>header</type>
@@ -1842,7 +1834,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.forwarding_enabled</id>
+                <id>forwarding_enabled</id>
                 <type>checkbox</type>
                 <label>Enable Forwarding</label>
                 <help><![CDATA[
@@ -1870,20 +1862,20 @@
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="forward">
                     <label>Edit Forward</label>
                     <field>
-                        <id>forward.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -1892,7 +1884,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>forward.domain</id>
+                        <id>domain</id>
                         <label>Domain</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1901,7 +1893,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>forward.dns_server</id>
+                        <id>dns_server</id>
                         <label>DNS Server</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1910,7 +1902,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>forward.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -1928,7 +1920,6 @@
     </tab>
     <tab id="doh" description="DoH Server/Client">
         <subtab id="local_doh" description="Local DoH Server">
-            <model>settings</model>
             <field>
                 <label>Local DNS over HTTPS (DoH) Server</label>
                 <type>header</type>
@@ -1941,7 +1932,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.local_doh.enabled</id>
+                <id>local_doh.enabled</id>
                 <label>Enable Local DoH server</label>
                 <type>checkbox</type>
                 <control>
@@ -1967,7 +1958,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.local_doh.listen_addresses</id>
+                <id>local_doh.listen_addresses</id>
                 <label>DoH Listen Addresses</label>
                 <type>select_multiple</type>
                 <style>tokenize</style>
@@ -1981,7 +1972,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.local_doh.path</id>
+                <id>local_doh.path</id>
                 <label>DoH URL Path</label>
                 <type>text</type>
                 <hint>/dns-query</hint>
@@ -1997,7 +1988,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.local_doh.cert</id>
+                <id>local_doh.cert</id>
                 <label>DoH Certifcate (or Certificate Chain)</label>
                 <type>textbox</type>
                 <hint><![CDATA[
@@ -2022,7 +2013,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.local_doh.cert_key</id>
+                <id>local_doh.cert_key</id>
                 <label>DoH Certificate Key</label>
                 <type>textbox</type>
                 <hint><![CDATA[
@@ -2051,7 +2042,6 @@
             </button>
         </subtab>
         <subtab id="doh_client_x509_auth" description="DoH Client x509 Authentication">
-            <model>settings</model>
             <field>
                 <label>DoH Client x509 Authentication</label>
                 <type>header</type>
@@ -2084,21 +2074,21 @@
                     <column id="root_ca" width="" size="" type="string" visible="true" data-formatter="">Root CA Certificate</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
                 <style>white-space: pre; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: x-small;</style>
-                <dialog>
+                <dialog node="creds">
                     <label>Add/Edit Certificates</label>
                     <field>
-                        <id>creds.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <help><![CDATA[
                             This will enable or disable this server and
@@ -2108,7 +2098,7 @@
                         <type>checkbox</type>
                     </field>
                     <field>
-                        <id>creds.server_name</id>
+                        <id>server_name</id>
                         <label>Server Name</label>
                         <help><![CDATA[
                             The server on which to use the certificate.
@@ -2117,7 +2107,7 @@
                         <type>dropdown</type>
                     </field>
                     <field>
-                        <id>creds.client_cert</id>
+                        <id>client_cert</id>
                         <label>Client Certificate</label>
                         <hint><![CDATA[-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----]]></hint>
                         <help><![CDATA[
@@ -2138,7 +2128,7 @@
                         <type>textbox</type>
                     </field>
                     <field>
-                        <id>creds.client_cert_key</id>
+                        <id>client_cert_key</id>
                         <label>Client Certificate Key</label>
                         <hint><![CDATA[-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----]]></hint>
                         <help><![CDATA[
@@ -2158,7 +2148,7 @@
                         <type>textbox</type>
                     </field>
                     <field>
-                        <id>creds.root_ca</id>
+                        <id>root_ca</id>
                         <label>Root CA Certificate</label>
                         <hint><![CDATA[-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----]]></hint>
                         <help><![CDATA[
@@ -2202,7 +2192,7 @@
                 </help>
                 <type>bootgrid</type>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
                 </api>
                 <columns>
                     <select>false</select>
@@ -2218,7 +2208,6 @@
             </field>
         </subtab>
         <subtab id="sources" description="Sources">
-            <model>settings</model>
             <field>
                 <label>Sources</label>
                 <type>header</type>
@@ -2258,20 +2247,20 @@
                     <column id="prefix" width="" size="" type="string" visible="true" data-formatter="">Prefix</column>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="source">
                     <label>Edit Source</label>
                     <field>
-                        <id>source.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -2279,7 +2268,7 @@
                             ]]></help>
                     </field>
                     <field>
-                        <id>source.name</id>
+                        <id>name</id>
                         <label>Source Name</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2289,7 +2278,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>source.urls</id>
+                        <id>urls</id>
                         <label>Source URLs</label>
                         <type>select_multiple</type>
                         <style>tokenize</style>
@@ -2300,7 +2289,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>source.cache_file</id>
+                        <id>cache_file</id>
                         <label>Cache File Name</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2309,7 +2298,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>source.minisign_key</id>
+                        <id>minisign_key</id>
                         <label>Minisign Key</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2319,7 +2308,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>source.refresh_delay</id>
+                        <id>refresh_delay</id>
                         <label>Refresh Delay</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2328,7 +2317,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>source.prefix</id>
+                        <id>prefix</id>
                         <label>Source Prefix</label>
                         <type>text</type>
                         <hint>prefix-</hint>
@@ -2356,7 +2345,6 @@
             </button>
         </subtab>
         <subtab id="static" description="Static">
-            <model>settings</model>
             <field>
                 <target>static.entries</target>
                 <label>Static Servers</label>
@@ -2374,20 +2362,20 @@
                     <select>true</select>
                 </columns>
                 <api>
-                    <search>/api/dnscryptproxy/settings/grid/search</search>
-                    <get>/api/dnscryptproxy/settings/grid/get</get>
-                    <set>/api/dnscryptproxy/settings/grid/set</set>
-                    <add>/api/dnscryptproxy/settings/grid/add</add>
-                    <del>/api/dnscryptproxy/settings/grid/del</del>
-                    <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                    <import>/api/dnscryptproxy/settings/import</import>
-                    <export>/api/dnscryptproxy/settings/export</export>
+                    <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                    <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                    <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                    <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                    <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                    <import>/api/dnscryptproxy/settings/importgrid</import>
+                    <export>/api/dnscryptproxy/settings/exportgrid</export>
                 </api>
                 <row_count>7,14,20,50,100,-1</row_count>
-                <dialog>
+                <dialog node="entries">
                     <label>Add/Edit Server</label>
                     <field>
-                        <id>entries.enabled</id>
+                        <id>enabled</id>
                         <label>Enabled</label>
                         <type>checkbox</type>
                         <help><![CDATA[
@@ -2396,7 +2384,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.name</id>
+                        <id>name</id>
                         <label>Name</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2405,7 +2393,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.stamp</id>
+                        <id>stamp</id>
                         <label>SDNS Stamp</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2414,7 +2402,7 @@
                         </help>
                     </field>
                     <field>
-                        <id>entries.comment</id>
+                        <id>comment</id>
                         <label>Comment</label>
                         <type>text</type>
                         <help><![CDATA[
@@ -2430,7 +2418,6 @@
             </button>
         </subtab>
         <subtab id="broken_implementations" description="Broken Implementations">
-            <model>settings</model>
             <field>
                 <label>Broken Implementations</label>
                 <type>header</type>
@@ -2468,7 +2455,7 @@
                 </help>
             </field>
             <field>
-                <id>settings.broken_implementations.fragments_blocked</id>
+                <id>broken_implementations.fragments_blocked</id>
                 <label>Fragments Blocked</label>
                 <type>select_multiple</type>
                 <style>selectpicker</style>
@@ -2487,7 +2474,6 @@
         </subtab>
     </tab>
     <tab id="captive_portals" description="Captive Portals">
-        <model>settings</model>
         <field>
             <label>Captive Portals</label>
             <type>header</type>
@@ -2503,7 +2489,7 @@
             </help>
         </field>
         <field>
-            <id>settings.captive_portals.enabled</id>
+            <id>captive_portals.enabled</id>
             <label>Enable Captive Portals</label>
             <help><![CDATA[
                 Enable Captive Portals
@@ -2531,19 +2517,19 @@
             <row_count>7,14,20,50,100,-1</row_count>
             <edit>true</edit>
             <api>
-                <search>/api/dnscryptproxy/settings/grid/search</search>
-                <get>/api/dnscryptproxy/settings/grid/get</get>
-                <set>/api/dnscryptproxy/settings/grid/set</set>
-                <add>/api/dnscryptproxy/settings/grid/add</add>
-                <del>/api/dnscryptproxy/settings/grid/del</del>
-                <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
-                <import>/api/dnscryptproxy/settings/import</import>
-                <export>/api/dnscryptproxy/settings/export</export>
+                <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
+                <import>/api/dnscryptproxy/settings/importgrid</import>
+                <export>/api/dnscryptproxy/settings/exportgrid</export>
             </api>
-            <dialog>
+            <dialog node="entries">
                 <label>Edit Portal</label>
                 <field>
-                    <id>entries.enabled</id>
+                    <id>enabled</id>
                     <label>Enabled</label>
                     <type>checkbox</type>
                     <help><![CDATA[
@@ -2552,7 +2538,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>entries.domain_name</id>
+                    <id>domain_name</id>
                     <label>Domain Name</label>
                     <type>text</type>
                     <help><![CDATA[
@@ -2561,7 +2547,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>entries.ips</id>
+                    <id>ips</id>
                     <label>IPs</label>
                     <type>select_multiple</type>
                     <style>tokenize</style>
@@ -2582,7 +2568,6 @@
         </button>
     </tab>
     <tab id="anonymized_dns" description="Anonymized DNS">
-        <model>settings</model>
         <field>
             <label>Anonymized DNS</label>
             <type>header</type>
@@ -2600,7 +2585,7 @@
             </help>
         </field>
         <field>
-            <id>settings.anonymized_dns.skip_incompatible</id>
+            <id>anonymized_dns.skip_incompatible</id>
             <label>Skip Incompatible Servers</label>
             <type>checkbox</type>
             <help><![CDATA[
@@ -2612,7 +2597,7 @@
             </help>
         </field>
         <field>
-            <id>settings.anonymized_dns.direct_cert_fallback</id>
+            <id>anonymized_dns.direct_cert_fallback</id>
             <label>Direct Certificate Fallback</label>
             <type>checkbox</type>
             <help><![CDATA[
@@ -2646,17 +2631,17 @@
             <row_count>7,14,20,50,100,-1</row_count>
             <edit>true</edit>
             <api>
-                <search>/api/dnscryptproxy/settings/grid/search</search>
-                <get>/api/dnscryptproxy/settings/grid/get</get>
-                <set>/api/dnscryptproxy/settings/grid/set</set>
-                <add>/api/dnscryptproxy/settings/grid/add</add>
-                <del>/api/dnscryptproxy/settings/grid/del</del>
-                <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
+                <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
             </api>
-            <dialog>
+            <dialog node="routes">
                 <label>Edit Route</label>
                 <field>
-                    <id>routes.enabled</id>
+                    <id>enabled</id>
                     <label>Enabled</label>
                     <type>checkbox</type>
                     <help><![CDATA[
@@ -2665,7 +2650,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>routes.server_name</id>
+                    <id>server_name</id>
                     <label>Server Name</label>
                     <type>dropdown</type>
                     <help><![CDATA[
@@ -2677,7 +2662,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>routes.via</id>
+                    <id>via</id>
                     <label>via</label>
                     <type>select_multiple</type>
                     <style>selectpicker</style>
@@ -2708,7 +2693,7 @@
                 <select>false</select>
             </columns>
             <api>
-                <search>/api/dnscryptproxy/settings/grid/search</search>
+                <search>/api/dnscryptproxy/settings/bootgrid/search</search>
             </api>
             <row_count>7,14,20,50,100,-1</row_count>
         </field>
@@ -2718,7 +2703,6 @@
         </button>
     </tab>
     <tab id="dns64" description="DNS64">
-        <model>settings</model>
         <field>
             <label>DNS64</label>
             <type>header</type>
@@ -2744,7 +2728,7 @@
             </help>
         </field>
         <field>
-            <id>settings.dns64.enabled</id>
+            <id>dns64.enabled</id>
             <label>Enable DNS64</label>
             <help><![CDATA[
                 Select this to enable the DNS64 settings.<br>
@@ -2774,18 +2758,18 @@
                 <column id="prefix" width="" size="" type="string" visible="true" data-formatter="">Prefix</column>
             </columns>
             <api>
-                <search>/api/dnscryptproxy/settings/grid/search</search>
-                <get>/api/dnscryptproxy/settings/grid/get</get>
-                <set>/api/dnscryptproxy/settings/grid/set</set>
-                <add>/api/dnscryptproxy/settings/grid/add</add>
-                <del>/api/dnscryptproxy/settings/grid/del</del>
-                <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
+                <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
             </api>
             <row_count>7,14,20,50,100,-1</row_count>
-            <dialog>
+            <dialog node="prefixes">
                 <label>Edit Prefix</label>
                 <field>
-                    <id>prefixes.enabled</id>
+                    <id>enabled</id>
                     <label>Enabled</label>
                     <type>checkbox</type>
                     <help><![CDATA[
@@ -2794,7 +2778,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>prefixes.prefix</id>
+                    <id>prefix</id>
                     <label>Prefix</label>
                     <type>text</type>
                     <help><![CDATA[
@@ -2825,18 +2809,18 @@
                 <column id="resolver" width="" size="" type="string" visible="true" data-formatter="">Resolver</column>
             </columns>
             <api>
-                <search>/api/dnscryptproxy/settings/grid/search</search>
-                <get>/api/dnscryptproxy/settings/grid/get</get>
-                <set>/api/dnscryptproxy/settings/grid/set</set>
-                <add>/api/dnscryptproxy/settings/grid/add</add>
-                <del>/api/dnscryptproxy/settings/grid/del</del>
-                <toggle>/api/dnscryptproxy/settings/grid/toggle</toggle>
+                <search>/api/dnscryptproxy/settings/bootgrid/search</search>
+                <get>/api/dnscryptproxy/settings/bootgrid/get</get>
+                <set>/api/dnscryptproxy/settings/bootgrid/set</set>
+                <add>/api/dnscryptproxy/settings/bootgrid/add</add>
+                <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
             </api>
             <row_count>7,14,20,50,100,-1</row_count>
-            <dialog>
+            <dialog node="resolvers">
                 <label>Edit Resolver</label>
                 <field>
-                    <id>resolvers.enabled</id>
+                    <id>enabled</id>
                     <label>Enabled</label>
                     <type>checkbox</type>
                     <help><![CDATA[
@@ -2845,7 +2829,7 @@
                     </help>
                 </field>
                 <field>
-                    <id>resolvers.resolver</id>
+                    <id>resolver</id>
                     <label>Resolver</label>
                     <type>text</type>
                     <help><![CDATA[
@@ -2864,5 +2848,4 @@
         <dropdown action="save_all" icon="fa fa-floppy-o">Save Only</dropdown>
         <dropdown action="save_apply_all" icon="fa fa-floppy-o">Save and Apply</dropdown>
     </button>
-    <activetab>basic_settings</activetab>
 </form>

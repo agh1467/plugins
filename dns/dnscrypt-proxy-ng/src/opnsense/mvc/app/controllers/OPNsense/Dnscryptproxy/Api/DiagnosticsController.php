@@ -32,7 +32,7 @@ namespace OPNsense\Dnscryptproxy\Api;
 
 use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
-use OPNsense\Dnscryptproxy\Settings;
+use OPNsense\Dnscryptproxy\Plugin;
 
 /**
  * An ApiControllerBase class used to perform various diagnostics for
@@ -94,7 +94,7 @@ class DiagnosticsController extends ApiControllerBase
     {
         // Create a Settings class object to get a variable later.
         // (models/OPNsense/Dnscryptproxy/Settings.php)
-        $settings = new Settings();
+        $plugin = new Plugin();
 
         // Create the results array for populating with info.
         $result = array();
@@ -109,28 +109,28 @@ class DiagnosticsController extends ApiControllerBase
                         $result['error'] = 'hostname validation failed';
                     } else {
                         // Only set the command if we have a hostname to use.
-                        $configd_command = $settings->configd_name . ' resolve ' . $hostname;
+                        $configd_command = $plugin->configd_name . ' resolve ' . $hostname;
                     }
                 }
 
                 break;
             case 'show-certs':
-                $configd_command = $settings->configd_name . ' show-certs';
+                $configd_command = $plugin->configd_name . ' show-certs';
 
                 break;
             case 'config-check':
-                $configd_command = $settings->configd_name . ' config-check';
+                $configd_command = $plugin->configd_name . ' config-check';
 
                 break;
             case 'config-view':
                 $filename = $this->request->getPost('command_input', 'striptags');
-                $configd_command = $settings->configd_name . ' config-view ' . $filename;
+                $configd_command = $plugin->configd_name . ' config-view ' . $filename;
 
                 break;
             // Might remove since it was only used by diagnostic, which was replaced
             // by showing the version on the About page.
             case 'version':
-                $configd_command = $settings->configd_name . ' version';
+                $configd_command = $plugin->configd_name . ' version';
 
                 break;
         }

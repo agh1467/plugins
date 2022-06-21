@@ -28,7 +28,7 @@
 
 namespace OPNsense\Dnscryptproxy;
 
-use OPNsense\Core\Backend;
+use OPNsense\Dnscryptproxy\Plugin;
 
 /**
  * An IndexController-based class that creates an endpoint to display the
@@ -36,7 +36,7 @@ use OPNsense\Core\Backend;
  *
  * @package OPNsense\Dnscryptproxy
  */
-class AboutController extends \OPNsense\Base\IndexController
+class AboutController extends PluginIndexController
 {
     /**
      * This function creates an endpoint in the UI for the About Controller.
@@ -48,20 +48,18 @@ class AboutController extends \OPNsense\Base\IndexController
      */
     public function indexAction()
     {
-        // Create a model object to get some variables.
-        $thisModel = new Settings();
 
-        // Create our own instance of a Controller to use getForm().
-        $myController = new ControllerBase();
+        // Pull the name of this api from the Phalcon router to use in getFormXml call.
+        $this_api_name = $this->router->getMatches()[1];            // "about"
 
         $this->view->setVars(
             [
-                'plugin_name' => $thisModel->api_name,
-                'plugin_version' => $this->invokeConfigdRun('plugin_version'),
-                'plugin_label' => $settings->label,
-                'dnscrypt_proxy_version' => $this->invokeConfigdRun('version'),
-                'this_form' => $myController->getForm('about'),
-                // controllers/OPNsense/Dnscryptproxy/forms/about.xml
+                // Derive the API path from the UI path of the view, swapping out the leading "/ui/" for "/api/".
+                // This is crude, but it will work until I discover a more reliable way to do it in the view.
+                'plugin_api_path' => preg_replace("/^\/ui\//", "/api/", $this->router->getMatches()[0]),
+                //'plugin_version' => $this->invokeConfigdRun('plugin_version'),  // "2.0.45.1"
+                //'dnscrypt_proxy_version' => $this->invokeConfigdRun('version'), // "2.0.45"
+                'this_xml' => $this->getFormXml($this_api_name)                 // controllers/OPNsense/Dnscryptproxy/forms/about.xml
             ]
         );
 
@@ -70,24 +68,4 @@ class AboutController extends \OPNsense\Base\IndexController
         // views/OPNsense/Dnscryptproxy/diagnostics.volt
     }
 
-    /**
-     * This function will call configd, using a specific action.
-     *
-     * @param string  $action   The action to call in configd
-     * @return string version of this plugin
-     */
-    private function invokeConfigdRun($action)
-    {
-        if (
-            in_array($action, array(
-                'version',
-                'plugin_version',
-            ))
-        ) { // Check that we only operate on valid actions.
-            $settings = new Settings();
-            $result = trim((new Backend())->configdRun($settings->configd_name . ' ' . $action));
-
-            return $result !== null ? $result : (object) [];
-        }
-    }
 }
