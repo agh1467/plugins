@@ -10,7 +10,16 @@
         <type>info</type>
     </field>
     <field>
-        <label>Resolve Hostname</label>
+        <id>status</id>
+        <label>dnscrypt-proxy status</label>
+        <type>status</type>
+        <!-- <style>label-info</style> -->
+        <labels>
+            <success>clean </success>
+            <danger>dirty</danger>
+        </labels>
+    </field>
+    <field>
         <type>span_content</type>
         <content><![CDATA[
             <div class="col-md-12">

@@ -28,15 +28,33 @@
 
 namespace OPNsense\Dnscryptproxy\FieldTypes;
 
-//use OPNsense\Base\FieldTypes\ArrayField;
-//use OPNsense\Base\FieldTypes\TextField;
-//use OPNsense\Base\FieldTypes\IntegerField;
-//use OPNsense\Core\Backend;
-//use OPNsense\Core\Config;
-use OPNsense\Base\FieldTypes\ModelRelationField;
+use OPNsense\Base\FieldTypes\BaseField;
+use OPNsense\Base\FieldTypes\TextField;
+use OPNsense\Core\Backend;
 
-class PluginModelRelationField extends ModelRelationField
+class PluginStatusField extends BaseField
 {
+
+    /**
+     * @var bool marks if this is a data node or a container
+     */
+    protected $internalIsContainer = false;
+
+    /**
+     * @var string action to send to configd
+     */
+    private $internalConfigdCmd = "";
+
+    /**
+     * This is a setter which gets automatically executed by <<<insert file::function >>>
+     *
+     * @param string $value configd action to run
+     */
+    public function setConfigdCmd($value)
+    {
+        $this->internalConfigdCmd = $value;
+    }
+
     /**
      * This is
      * translate ModelRelationFields to their proper value.
@@ -44,16 +62,23 @@ class PluginModelRelationField extends ModelRelationField
      * This is used instead of the standard BaseField::getNodes() approach.
      * @param $parent_node BaseField node to reverse
      */
-    public function getStrNodes()
+    public function getNodeData()
     {
-        $result = array();
-        foreach ($this->iterateItems() as $key => $node) {
-            if ($node->isContainer()) {
-                $result[$key] = $node->getNodes();
-            } else {
-                $result[$key] = (string)$node;
-            }
+        $result = '';
+        if ($this->internalConfigdCmd) {
+            $result = trim((new Backend())->configdRun($this->internalConfigdCmd));
         }
         return $result;
     }
+
+    /**
+     * update field (if not empty)
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        // Do nothing.
+    }
+
+
 }

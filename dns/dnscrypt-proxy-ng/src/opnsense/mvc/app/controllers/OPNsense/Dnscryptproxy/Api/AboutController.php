@@ -112,7 +112,7 @@ class AboutController extends PluginApiMutableModelControllerBase
      * @return array settings
      * @throws \ReflectionException when not bound to a valid model
      */
-    public function getAction()
+    public function getAction_dis()
     {
         // First, we retrieve the model data to an array.
         $get_model = parent::getAction();

@@ -27,33 +27,55 @@
 
 
 {##
- # This is a resursive macro to build the tab forms utilizing a partial.
+ # This function builds tabs using a different approach than the original.
+ # See in Core: src/opnsense/mvc/app/views/layout_partials/base_tabs_header.volt
  #
- # The recursion happens for tabs and subtabs, and tab is built using the
- # base_tab partial.
+ # Instead of walking the tree, and building each tab or subtab as it goes,
+ # it uses XPath to locate all subtabs, and tabs without subtabs and then
+ # builds them out afterwards. This has the potential to define them out of order
+ # in the HTML depending on the sturcture of the XML, but won't affect functionality.
  #
- # A compromise was made in that the indention depth is the same for both
- # tab types, where normally subtabs are one level further. The templates
- # mess up the indentation for everything though, it functions the same.
+ # I expect this method should be more efficient than the tree walk as it only selects
+ # nodes that we care about, and it doesn't have to evaluate each node individually.
+ #
+ # @xml_data SimpleXMLObject the XML data to look through for tabs
  #}
-{%  macro build_tabs_xml(xml_element, active_tab = null, this_model = null, root_form = null) %}
-{%      for this_element in xml_element %}
-{%          if this_element.subtab %}
-{{              build_tabs_xml(this_element.subtab, active_tab, this_model, root_form) }}
-{%              continue %}
-{%          elseif this_element.tab %}
-{{              build_tabs_xml(this_element.tab, active_tab, this_model, root_form) }}
-{%              continue %}
-{%          endif %}
+{%  macro build_tab_contents(xml_data, active_tab = null, this_model = null, root_form = null) %}
+{%      if xml_data %}
+{%          set subtabs = xml_data.xpath('/*/tab/subtab') %}
+{%          set tabs = xml_data.xpath('/*/tab[not(subtab)]') %}
+<?php $all_tabs = array_merge($subtabs, $tabs) ?>
+{%          for tab in all_tabs %}
 {# Use the name of the element to specify the prefix, this will be 'tab' or 'subtab' #}
-        <div id="{{ this_element.getName() }}_{{ this_element['id'] }}"
-            class="tab-pane fade in{% if active_tab == this_element['id'] %} active{% endif %}">
-{{          partial("OPNsense/Dnscryptproxy/layout_partials/base_form",[
-                'this_part':this_element,
-                'this_model':this_model,
-                'root_form':root_form
-            ]) }}
-        </div>
+<div id="{{ tab.getName() }}_{{ tab['id'] }}"
+     class="tab-pane fade in{% if active_tab == tab['id'] %} active{% endif %}">
+{{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",[
+                    'this_part':tab,
+                    'this_model':this_model,
+                    'root_form':root_form
+                ]) }}
+</div>
+{%          endfor %}
+{%      endif %}
+{%  endmacro %}
+
+
+{##
+ # This function builds box contents for each defined box in the XML. Similar
+ # to tabs. Supports individual model definitions for each box with base_form.
+ #
+ #}
+{%  macro build_box_contents(xml_data, this_model = null, root_form = null) %}
+{%      for box_element in xml_data.box %}
+<section class="col-xs-12">
+  <div class="content-box">
+{{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",[
+                    'this_part':box_element,
+                    'this_model':this_model,
+                    'root_form':root_form
+                ]) }}
+  </div>
+</section>
 {%      endfor %}
 {%  endmacro %}
 
@@ -67,7 +89,7 @@
  # This is to save on having to put all of these commands in the main volt, and
  # to put the div definition in the right place on the page.
  #
- # this_form = SimpleXMLObject
+ # this_form SimpleXMLObject from which to build the page
  #}
 
 {%  macro build_page(this_form, plugin_safe_name = null, plugin_label = null, lang = null) %}
@@ -111,9 +133,9 @@
 {# Draw the page based on the form XML SimpleXMLObject. #}
 {%          for tab_element in this_form.tab %}
 {%              if loop.first %}
-{# Create unordered list for the tabs. #}
+{# Create unordered list for the tabs, and try to pick an active tab, only on the first loop. #}
 <ul class="nav nav-tabs" role="tablist" id="maintabs">
-{# If we have no active_tab defined, if we have no subtabs pick self, else pick first subtab. #}
+{# If we have no active_tab defined, if we have no subtabs, pick self, else pick first subtab. #}
 {%                  if active_tab == '' %}
 {%                      if !(tab_element.subtab) %}
 {%                          set active_tab = tab_element['id']|default() %}
@@ -126,117 +148,105 @@
 {%              if tab_element.subtab %}
 {# We need to look forward to understand if one of our subtabs is the assigned active_tab from the form. #}
 {%                  set active_subtab = false %}
-{# Use some PHP here for in_array(), until I figure out how to add the function to Volt. #}
-{%                      for node in tab_element.xpath('subtab/@id') %}
-{%                          if node.__toString() == active_tab %}
-{%                              set active_subtab = true %}
-{%                          endif %}
-{%                      endfor %}
+{%                  for node in tab_element.xpath('subtab/@id') %}
+{%                      if node.__toString() == active_tab %}
+{%                          set active_subtab = true %}
+{%                      endif %}
+{%                  endfor %}
 {# Since we have a subtab, we need to accommodate it with an appropriate dropdown button to display the menu. #}
 {# If one of our subtabs is active_tab, then we need to set this tab as active also. #}
-  <li role="presentation" class="dropdown{% if active_subtab == true %} active{% endif %}">
-    <a data-toggle="dropdown"
-       href="#"
-       class="dropdown-toggle
-              pull-right
-              visible-lg-inline-block
-              visible-md-inline-block
-              visible-xs-inline-block
-              visible-sm-inline-block"
-       role="button">
-      <b><span class="caret"></span></b>
-    </a>
-{# The onclick sets the default tab to be selected when the tab itself is clicked. #}
-{# Just using the first subtab for now, might change later #}
-{# Maybe with a on_click subtab attribute #}
-    <a data-toggle="tab"
-       onclick="$('#subtab_item_{{ tab_element.subtab[0]['id'] }}').click();"
-       class="visible-lg-inline-block
-              visible-md-inline-block
-              visible-xs-inline-block
-              visible-sm-inline-block"
-       style="border-right:0px;">
+<li role="presentation" class="dropdown{% if active_subtab == true %} active{% endif %}">
+  <a data-toggle="dropdown"
+     href="#"
+     class="dropdown-toggle
+            pull-right
+            visible-lg-inline-block
+            visible-md-inline-block
+            visible-xs-inline-block
+            visible-sm-inline-block"
+     role="button">
+    <b><span class="caret"></span></b>
+  </a>
+{# The onclick sets the tab to be selected when the tab itself is clicked. #}
+{# If one is defined in the XML, then use that, else pick the first subtab. #}
+{%                  set tab_onclick = tab_element['on_click']|default(tab_element.subtab[0]['id']) %}
+  <a data-toggle="tab"
+     onclick="$('#subtab_item_{{ tab_onclick }}').click();"
+     class="visible-lg-inline-block
+            visible-md-inline-block
+            visible-xs-inline-block
+            visible-sm-inline-block"
+     style="border-right:0px;">
 {# This is the parent tab of the subtabs #}
-      <b>{{ tab_element['description'] }}</b>
-    </a>
-    <ul class="dropdown-menu" role="menu">
+     <b>{{ tab_element['description'] }}</b>
+  </a>
+  <ul class="dropdown-menu" role="menu">
 {# Now we specify each subtab, iterate through the subtabs for this tab if present. #}
-{%                      for subtab_element in tab_element.subtab %}
-{%                          if loop.first %}
+{%                  for subtab_element in tab_element.subtab %}
+{%                      if loop.first %}
 {# Assume the first subtab should be active if no active_tab is set. #}
-{%                              if active_tab == '' %}
-{%                                  set active_tab = subtab_element['id']|default() %}
-{%                              endif %}
+{%                          if active_tab == '' %}
+{%                              set active_tab = subtab_element['id']|default() %}
 {%                          endif %}
-      <li class="{% if active_tab == subtab_element['id'] %}active{% endif %}">
-        <a data-toggle="tab"
-           id="subtab_item_{{ subtab_element['id'] }}"
-           href="#subtab_{{ subtab_element['id'] }}"
-{%         if subtab_element.style %}
+{%                      endif %}
+<li class="{% if active_tab == subtab_element['id'] %}active{% endif %}">
+  <a data-toggle="tab"
+     id="subtab_item_{{ subtab_element['id'] }}"
+     href="#subtab_{{ subtab_element['id'] }}"
+{%                      if subtab_element.style %}
            style="{{ subtab_element.style }}"
-{%         endif %}>{{ subtab_element['description'] }}
-        </a>
-      </li>
-{%                      endfor %}
+{%                      endif %}>{{ subtab_element['description'] }}
+  </a>
+</li>
+{%                  endfor %}
     </ul>
   </li>
-{%                  else %}
-{# Standard Tab, no dropdown#}
-  <li {% if active_tab == tab_element['id'] %} class="active" {% endif %}>
-    <a data-toggle="tab"
-       id="tab_header_{{ tab_element['id'] }}"
-       href="#tab_{{ tab_element['id'] }}"
-       {%- if tab_element.style %}
-       style="{{ tab_element.style }}"
-       {% endif %}>
-      <b>{{ tab_element['description'] }}</b>
-    </a>
-  </li>
-{%                  endif %}
+{%              else %} {# No subtabs, standard tab, no dropdown#}
+<li {% if active_tab == tab_element['id'] %} class="active" {% endif %}>
+  <a data-toggle="tab"
+     id="tab_header_{{ tab_element['id'] }}"
+     href="#tab_{{ tab_element['id'] }}"
+{%                  if tab_element.style %}
+     style="{{ tab_element.style }}"
+{%                  endif %}>
+    <b>{{ tab_element['description'] }}</b>
+  </a>
+</li>
+{%              endif %}
 {%              if loop.last %}
+{# Close the unordered list only on the last loop. #}
 </ul>
 {%              endif %}
 {%          endfor %}
 
-{# Build Tab Content #}
+{# Build Tab Contents, if we have tabs. #}
+{%          if this_form.tab %}
 <div class="tab-content content-box tab-content">
-{{          build_tabs_xml(this_form.tab, active_tab, this_model, root_form) }}
+{{              build_tab_contents(this_form, active_tab, this_model, root_form) }}
 </div>
-{# All done building all of the tabs and their content. #}
-{# {%          endif %} #}
-{# {%         endfor %} #}
+{%          endif %}
 
-{# Build any boxes #}
-{# {%          if xml_element.getName() == 'box' %} #}
-{# {%              for box_element in xml_element %} #}
-{%          for box_element in this_form.box %}
-<section class="col-xs-12">
-  <div class="content-box">
-{{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",[
-                    'this_part':box_element,
-                    'this_model':this_model,
-                    'root_form':root_form
-                ]) }}
-  </div>
-</section>
-{%          endfor %}
-{# {%          endif %} #}
+{%          if this_form.box %}
+{# Build any boxes, if we have any. #}
+{{              build_box_contents(this_form, this_model, root_form) }}
+{%          endif %}
 
 {# Build any fields #}
 {%          if this_form.field %}
 {#  Since we have only fields, call the partial directly,
-    we can only build one box, and put all of the fields in it. #}
+    we'll just put them in one box for now. It looks OK.
+    Supports model definition via the room XML element. #}
+<div class="content-box">
 {{              partial("OPNsense/Dnscryptproxy/layout_partials/base_form",[
                     'this_part':this_form,
                     'this_model':this_model,
                     'root_form':root_form
                 ]) }}
-{# {%          endif %} #}
-
+</div>
 {%          endif %}
 {%          if root_form == true %}
-{# Close out the form from above so we can draw our dialogs,
-   they have their own forms and can't be nested. #}
+{# Close out the form if one was opened due to a model defiition at the XML root node.
+   We need to draw our dialogs, they have their own forms and can't be nested. #}
 </form>
 {%          endif %}
 
@@ -248,52 +258,56 @@
 {%          endfor %}
 
 {#  # Conditionally display buttons at the bottom of the page. #}
-{%      if this_form.button %}
+{%          if this_form.button %}
 <section class="page-content-main">
 {# Alert class used to get padding to look good.
-  Maybe there is another class that can be used. #}
-    <div class="alert alert-info" role="alert">
-{%          for button_element in this_form.button %}
-{%              if button_element['type']|default('primary') in ['primary', 'group' ] %} {# Assume primary if not defined #}
-{%                  if button_element['type']|default('') == 'primary' and
-                       button_element['action'] %}
-                    <button class="btn btn-primary"
-                            id="btn_{{ plugin_safe_name }}_{{ button_element['action'] }}"
-                            type="button">
-                        <i class="{{ button_element['icon']|default('') }}"></i>
-                        &nbsp<b>{{ lang._('%s') | format(button_element.__toString()) }}</b>
-                        <i id="btn_{{ plugin_safe_name }}_progress"></i>
-                    </button>
-{%                  elseif button_element['type'] == 'group' %}
-{#              # We set our own style here to put the button in the right place. #}
-                    <div class="btn-group"
-                        {{ (button_element['id']|default('') != '') ?
-                            'id="'~button_element['id']~'"' : '' }}>
-                        <button type="button"
-                                class="btn btn-default dropdown-toggle"
-                                data-toggle="dropdown">
-                                <i class="{{ button_element['icon'] }}"></i>
-                                &nbsp<b>{{ lang._('%s') | format(button_element['label']) }}</b>
-                                <i id="btn_{{ plugin_safe_name }}_progress"></i>
-                                &nbsp<i class="caret"></i>
-                        </button>
-{%                      if button_element.dropdown %}
-                        <ul class="dropdown-menu" role="menu">
-{%                          for dropdown_element in button_element.dropdown %}
-                            <li>
-                                <a id="drp_{{ plugin_safe_name }}_{{ dropdown_element['action'] }}">
-                                    <i class="{{ button_element['icon'] }}"></i>
-                                    &nbsp{{ lang._('%s') | format(dropdown_element.__toString()) }}
-                                </a>
-                            </li>
-{%                          endfor %}
-                        </ul>
-{%                      endif %}
-                    </div>
-{%                  endif %}
-{%              endif %}
-{%          endfor %}
+   Maybe there is another class that can be used. #}
+  <div class="alert alert-info" role="alert">
+{%              for button_element in this_form.button %}
+{%                  if button_element['type']|default('primary') in ['primary', 'group' ] %} {# Assume primary if not defined #}
+{%                      if button_element['type']|default('') == 'primary' and
+                           button_element['action'] %}
+    <button class="btn btn-primary"
+            id="btn_{{ plugin_safe_name }}_{{ button_element['action'] }}"
+            type="button">
+      <i class="{{ button_element['icon']|default('') }}"></i>
+      &nbsp
+      <b>{{ lang._('%s') | format(button_element.__toString()) }}</b>
+      <i id="btn_{{ plugin_safe_name }}_progress"></i>
+    </button>
+{%                      elseif button_element['type'] == 'group' %}
+{#  We set our own style here to put the button in the right place. #}
+    <div class="btn-group"
+         {{ (button_element['id']|default('') != '') ?
+             'id="'~button_element['id']~'"' : '' }}>
+      <button type="button"
+              class="btn btn-default dropdown-toggle"
+              data-toggle="dropdown">
+        <i class="{{ button_element['icon'] }}"></i>
+        &nbsp
+        <b>{{ lang._('%s') | format(button_element['label']) }}</b>
+        <i id="btn_{{ plugin_safe_name }}_progress"></i>
+        &nbsp
+        <i class="caret"></i>
+      </button>
+{%                          if button_element.dropdown %}
+      <ul class="dropdown-menu" role="menu">
+{%                              for dropdown_element in button_element.dropdown %}
+        <li>
+          <a id="drp_{{ plugin_safe_name }}_{{ dropdown_element['action'] }}">
+            <i class="{{ button_element['icon'] }}"></i>
+            &nbsp
+            {{ lang._('%s') | format(dropdown_element.__toString()) }}
+          </a>
+        </li>
+{%                              endfor %}
+      </ul>
+{%                          endif %}
     </div>
+{%                      endif %}
+{%                  endif %}
+{%              endfor %}
+  </div>
 </section>
 {%      endif %}
 {%    endif %}
@@ -613,6 +627,7 @@
  #}
 {%          if ((field.type == "checkbox" or
                  field.type == "radio" or
+                 field.type == "onoff" or
                  field.type == "dropdown") and
                  field.id) and
                  field.control %}
@@ -637,6 +652,7 @@
 {%                      if field.type == "checkbox" %}
             if ($(this).prop("checked") == {{ on_set }} ) {
 {%                      elseif field.type == "radio" or
+                               field.type == "onoff" or
                                field.type == "dropdown" %}
             if ($(this).val() == "{{ on_set }}") {
 {%                      endif %}
@@ -658,10 +674,12 @@
  # =============================================================================
  # Click event for radio type objects
  #}
-{%          if field.type == "radio" and field.id %}
+{%          if ((field.type == "radio" or
+                 field.type == "onoff") and
+                 field.id) %}
 {# XXX having to manually write this PHP becuase the Volt doesn't pick up the {% else %} #}
 {# It's something to do with being inside the above if statement. #}
-<?php if ($field->builtin == 'button-group') { ?>
+<?php if ($field->builtin == 'button-group' || $field->type == 'onoff') { ?>
     $('input[name=rdo_' + $.escapeSelector("{{ field_id }}") + ']').parent('label').click(function () {
 <?php } elseif ($field->builtin == "legacy" || !$field->builtin) { ?>
     $('input[name=rdo_' + $.escapeSelector("{{ field_id }}") + ']').click(function () {
@@ -675,7 +693,7 @@
         # same as the value of the radio button that was selected.
         # Then we trigger a change event to set any enable/disabled fields. #}
 {# XXX having to manually write this PHP becuase the Volt doesn't pick up the {% else %} #}
-<?php if ($field->builtin == 'button-group') { ?>
+<?php if ($field->builtin == 'button-group' || $field->type == 'onoff') { ?>
         $('#' + $.escapeSelector("{{ field_id }}")).val($(this).children('input').val());
 <?php } elseif ($field->builtin == "legacy" || !$field->builtin) { ?>
         $('#' + $.escapeSelector("{{ field_id }}")).val($(this).val());
@@ -688,7 +706,8 @@
  # =============================================================================
  # Change function which updates the values of the approprite radio button.
  #}
-{%          if field.type == "radio" %}
+{%          if (field.type == "radio" or
+                field.type == "onoff") %}
     $('#' + $.escapeSelector("{{ field_id }}")).change(function(e){
 {#      # Set whichever radiobutton accordingly, may already be selected.
         # This covers the initial page load situation. #}
@@ -697,7 +716,7 @@
            value of the target field is set by mapDataToFormUI() #}
         if (field_value != "") {
 {# XXX having to manually write this PHP becuase the Volt doesn't pick up the {% else %} #}
-<?php if ($field->builtin == 'button-group') { ?>
+<?php if ($field->builtin == 'button-group' || $field->type == 'onoff') { ?>
             $('input[name=rdo_' + $.escapeSelector("{{ field_id }}") + '][value=' + field_value + ']').parent('label').addClass("active");
 <?php } elseif ($field->builtin == "legacy" || !$field->builtin) { ?>
             $('input[name=rdo_' + $.escapeSelector("{{ field_id }}") + '][value=' + field_value + ']').prop("checked", true);
@@ -877,5 +896,23 @@
         });
 
 {%          endif %}
+{%          if field.type == "status" and
+               field.id %}
+    $('span[id=' + $.escapeSelector("{{ field_id }}") + ']').change(function(e){
+{#      # This covers the initial page load situation. #}
+        var field_value = $(this).text();
+        {# This catches the first pass, if change event is initiated before the
+           value of the target field is set by mapDataToFormUI() #}
+        if (field_value != "") {
+{# XXX Having to use .children() here, not sure why it doesn't iterate.
+   Maybe something to do with the XML structure? #}
+{%              for this_label in field.labels.children() %}
+             if (field_value == "{{ this_label.__toString() }}") {
+                $(this).addClass("label-{{ this_label.getName() }}")
+            }
+{%              endfor %}
+        }
+    });
+{%           endif %}
 {%      endfor %}
 {%  endmacro %}

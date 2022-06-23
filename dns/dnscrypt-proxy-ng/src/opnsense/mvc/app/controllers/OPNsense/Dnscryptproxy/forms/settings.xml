@@ -1,5 +1,5 @@
 <form active_tab="basic_settings" model="settings">
-    <tab id="global" description="Global">
+    <tab id="global" description="Global" on_click="basic_settings">
         <subtab id="basic_settings" description="Basic Settings">
             <field>
                 <id>first_time_setup</id>
@@ -13,7 +13,7 @@
                     This will enable the dnscrypt-proxy service.
                     ]]>
                 </help>
-                <type>checkbox</type>
+                <type>onoff</type>
             </field>
             <field>
                 <id>listen_addresses</id>

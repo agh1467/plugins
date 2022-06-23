@@ -68,12 +68,13 @@
  # this_field['buttons']['button'] : array of buttons for radio button field
  #}
 
-{# Set up the help, and advanced text settings for this field's row. #}
+{# XXX Need to make sure that lang() is used in all the proper places. #}
 
+{# Set up the help, and advanced text settings for this field's row. #}
 {% set field_id = this_model~'.'~this_field.id %}
 <tr id="row_{{ field_id }}"
-    {{ this_field.advanced|default(false) ? 'data-advanced="true"' : '' }}
-    {{ this_field.hidden|default(false) ? 'style="display: none;"' : '' }}>
+    {{ this_field.advanced ? 'data-advanced="true"' : '' }}
+    {{ this_field.hidden ? 'style="display: none;"' : '' }}>
 {# ----------------------- Column 1 - Item label ---------------------------- #}
     <td>
         <div class="control-label" id="control_label_{{ field_id }}">
@@ -88,23 +89,20 @@
 {# Add a "muted" help icon which does nothing. #}
                 <i class="fa fa-info-circle text-muted"></i>
 {%  endif %}
-{# {%  if this_field.label %} #}
                 <b>{{ this_field.label }}</b>
-{# {%  endif %} #}
         </div>
     </td>
 {# ------------------- Column 2 - Item field + help message. ---------------- #}
     <td>
-{# {%  if this_field.type is defined %} #}
 {%  if this_field.type == "text" %}
         <input
             type="text"
             class="form-control {{ this_field.style }}"
             size="{{ this_field.size|default("50") }}"
             id="{{ field_id }}"
-            {{ this_field.readonly|default(false) ?
+            {{ this_field.readonly ?
                 'readonly="readonly"' : '' }}
-            {{ (this_field.hint is defined) ?
+            {{ (this_field.hint) ?
                 'placeholder="'~this_field.hint~'"' : '' }}
         >
 {%  elseif this_field.type == "hidden" %}
@@ -285,6 +283,7 @@
 {%  elseif this_field.type == "radio" %}
 {# We define a hidden input to hold the
    value of the setting from the config #}
+{# XXX Size shouldn't matter for this hidden field. #}
         <input
             type="text"
             class="form-control hidden"
@@ -420,12 +419,10 @@
                 </tr>
             </table>
 {%      endif %}
-{%  elseif this_field.type == "variable" %}
-{#      This type allows to reference string variables within the environment. #}
-            <span
-                class="{{ this_field.style|default('') }}">
-                <code><?php echo ${$this_field->variable}; ?></code>
-            </span>
+{%  elseif this_field.type == "onoff" %}
+{{      partial("OPNsense/Dnscryptproxy/layout_partials/fields/onoff",['this_field':this_field, 'field_id':field_id]) }}
+{%  elseif this_field.type == "status" %}
+{{      partial("OPNsense/Dnscryptproxy/layout_partials/fields/status",['this_field':this_field, 'field_id':field_id]) }}
 {%  endif %}
 {# {%  endif %} #}
 {%  if this_field.help %}

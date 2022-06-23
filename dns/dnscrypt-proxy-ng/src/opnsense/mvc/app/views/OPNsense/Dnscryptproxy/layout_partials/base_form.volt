@@ -29,8 +29,9 @@
  # by other volt scipts and to build tabs, and boxes. The array 'this_part'
  # should be the tab, or box (or possibly other structure) being drawn.
  #
- # The 'this_part' array is built by ControllerBase, and is derived from
- # the form XML being drawn.
+ # This is called by the following functions:
+ # _macros::build_tabs()
+ # _macros::
  #
  # The array named "this_part" should contain:
  #
@@ -43,7 +44,6 @@
 
 {# Find if there are help supported or advanced field on this page #}
 {%  set base_form_id = this_part['id']|default('none') %}
-{# {%  set fields = get_elements(this_part[2]|default({}), 'field') %} #}
 {# This evaluates if there are any elements which require help or advanced #}
 {%  set help = false %}
 {%  set advanced = false %}
