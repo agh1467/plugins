@@ -230,4 +230,28 @@ class SettingsController extends PluginApiMutableModelControllerBase
 
         return $result;
     }
+
+    /**
+     * This function
+     *
+     *
+     *
+     *
+     *
+     * API endpoint:
+     *   /api/dnscryptproxy/settings/info
+     *
+     *
+     * @return array setAction() result or error message from configd.
+     */
+    public function infoAction($target, $uuid)
+    {
+        $result = array(
+            "title" => gettext('Info Box Title'),
+            "message" => 'Infobox message for ' . $target . 'UUID: ' . $uuid,
+            "close" => 'Close'
+        );
+        return $result;
+    }
+
 }

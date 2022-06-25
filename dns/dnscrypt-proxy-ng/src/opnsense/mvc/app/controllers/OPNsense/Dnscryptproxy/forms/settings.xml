@@ -922,6 +922,7 @@
                     <set>/api/dnscryptproxy/settings/bootgrid/set</set>
                     <add>/api/dnscryptproxy/settings/bootgrid/add</add>
                     <del>/api/dnscryptproxy/settings/bootgrid/del</del>
+                    <info>/api/dnscryptproxy/settings/info</info>
                     <toggle>/api/dnscryptproxy/settings/bootgrid/toggle</toggle>
                     <import>/api/dnscryptproxy/settings/importgrid</import>
                     <export>/api/dnscryptproxy/settings/exportgrid</export>

@@ -566,6 +566,9 @@
 {%-             if field.api.del %}
             'del':'{{ field.api.del }}/{{ field.target }}/',
 {%              endif %}
+{%-             if field.api.info %}
+            'info':'{{ field.api.info }}/{{ field.target }}/',
+{%              endif %}
 {%-             if field.api.toggle %}
             'toggle':'{{ field.api.toggle }}/{{ field.target }}/',
 {%              endif %}

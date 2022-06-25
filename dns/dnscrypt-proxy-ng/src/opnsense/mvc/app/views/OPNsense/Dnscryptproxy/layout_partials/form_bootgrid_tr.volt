@@ -99,9 +99,6 @@
                data-editDialog="{{ this_field.dialog|default(false) ? 'bootgrid_dialog_'~safe_id : '' }}">
             <thead>
                 <tr>
-{#  # There are four formatters defined in opnsense_bootgrid_plugin.js,
-    # two of them are already used here, another is commandsWithInfo
-    # Need to add visibleInSelection #}
 {%      if this_field.api.toggle %}
                     <th data-column-id="enabled"
                         data-width="0em"
@@ -110,18 +107,12 @@
                         {{ lang._('%s')|format('Enabled') }}
                     </th>
 {%      endif %}
-{#
-{%      if this_field['columns']['column'][0] is not iterable %}
-{%          set columns_var = [this_field['columns']['column']] %}
-{%      elseif this_field['columns']['column'][0] is iterable %}
-{%          set columns_var = this_field['columns']['column'] %}
-{%      endif %}
-#}
 {%      for column in this_field.columns.column %}
 {%          set data_formatter = "" %}
                     <th
                         data-type="{{ column['type']|default('string') }}"
                         data-visible="{{ column['visible']|default('true') }}"
+                        data-visible-in-selection="{{ column['visible-in-selection']|default('true') }}"
                         data-sortable="{{ column['sortable']|default('true') }}"
                         {{ (column['id']|default('') != '') ?
                             'data-column-id="'~column['id']~'"' : '' }}
@@ -133,33 +124,33 @@
                             'data-width="'~column['width']~'"' : '' }}
                         {{ (column['width']|default('') != '') ?
                             'width="'~column['width']~'"' : '' }}>
-{# {%          if column is type('array') %} #}
                         {{ lang._('%s')|format(column|default('')) }}
-{# {%          endif %} #}
                     </th>
 {%          if loop.last %}
                 {% set last_row_index = loop.index0 %}
 {%          endif %}
 {%      endfor %}
+{# Automatically add command column if all APIs are defined, use commandsWithInfo if info API is defined. #}
 {%      if this_field.api.del and
            this_field.api.set and
            this_field.api.get and
            this_field.api.add %}
                     <th
                         data-column-id="commands"
-                        data-formatter="commands"
+                        data-formatter="{{ (this_field.api.info) ? 'commandsWithInfo' : 'commands' }}"
                         data-sortable="false"
-                        data-width="7em">
+                        data-width="{{ (this_field.api.info) ? '9em' : '7em' }}">
                         {{ lang._('%s')|format('Commands') }}
                     </th>
 {%      endif %}
-{#  Column to house the UUID of each row in the table. Hidden form the user. #}
+{# Column to house the UUID of each row in the table.
+   Hidden from the user by default, but can be made visible in the column select box in the top right. #}
                     <th
                         data-column-id="uuid"
                         data-type="string"
                         data-identifier="true"
                         data-visible="false"
-                        visibleInSelection="false">
+                        data-visible-in-selection="true">
                         {{ lang._('%s')|format('ID') }}
                     </th>
                 </tr>
@@ -206,11 +197,11 @@
 {%      if this_field.api.import or
            this_field.api.export %}
                 </tr>
-{#  # Close the previous row, and start a new one.
-    # This still looks good even when there isn't an add/del button. #}
+{# Close the previous row, and start a new one.
+   This still looks good even when there isn't an add/del button. #}
                 <tr>
-{#  # We use the index from the foreach loop above
-    # to put the commands one column after the last field. #}
+{# We use the index from the foreach loop above
+   to put the commands one column after the last field. #}
                     <td colspan="{{ (last_row_index + 1) }}"></td>
                     <td>
 {%          if this_field.api.export %}
