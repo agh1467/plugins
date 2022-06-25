@@ -6,6 +6,7 @@
             <Diagnostics url="/ui/dnscryptproxy/diagnostics" order="15" />
             <Logs url="/ui/dnscryptproxy/logs" order="20" />
             <About url="/ui/dnscryptproxy/about" order="25" />
+            <Test url="/ui/dnscryptproxy/test" order="30" />
         </DNSCrypt-Proxy>
     </Services>
 </menu>

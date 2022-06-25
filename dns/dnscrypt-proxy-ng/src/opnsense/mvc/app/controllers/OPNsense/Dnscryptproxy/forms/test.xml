@@ -1,0 +1,68 @@
+<form model="test">
+    <field>
+        <target>test1</target>
+        <label>Test Bootgrid</label>
+        <type>bootgrid</type>
+        <columns selection='false'>
+            <column id="col1" width="" size="" type="string" visible="true" data-formatter="">Column1</column>
+            <column id="col2" width="" size="" type="string" visible="true" data-formatter="status">Column2</column>
+            <column id="col3" width="" size="" type="string" visible="true" data-formatter="">Column3</column>
+        </columns>
+        <api>
+            <search>/api/dnscryptproxy/test/search</search>
+        </api>
+        <grid_options><![CDATA[
+            formatters: {
+                "status": function (column, row) {
+                    // For some reason this needs to be a string return, and not a DOM object.
+                    let span = "<span class='label-default label label-"
+                    span += row[column['id']]['label']
+                    span += "'>"
+                    span += row[column['id']]['text']
+                    span += "</span>"
+
+                    return span;
+                    }
+            }
+            ]]>
+        </grid_options>
+    </field>
+    <field>
+        <target>test2</target>
+        <label>Test Bootgrid2</label>
+        <type>bootgrid</type>
+        <columns selection='false'>
+            <column id="col1" width="" size="" type="string" visible="true" data-formatter="">Column1</column>
+            <column id="col2" width="" size="" type="string" visible="true" data-formatter="boolean">Column2</column>
+            <column id="col3" width="" size="" type="string" visible="true" data-formatter="">Column3</column>
+        </columns>
+        <api>
+            <search>/api/dnscryptproxy/test/search</search>
+        </api>
+        <grid_options><![CDATA[
+            formatters: {
+                "boolean": function (column, row) {
+                    // For some reason this needs to be a string return, and not a DOM object.
+                    let span = "<span class='label-default label label-"
+                    span += row[column['id']]['label']
+                    span += "'>"
+                    span += "LOL"
+                    span += "</span>"
+
+                    return span;
+                    },
+                "status": function (column, row) {
+                    // For some reason this needs to be a string return, and not a DOM object.
+                    let span = "<span class='label-default label label-"
+                    span += row[column['id']]['label']
+                    span += "'>"
+                    span += row[column['id']]['text']
+                    span += "</span>"
+
+                    return span;
+                    }
+            }
+            ]]>
+        </grid_options>
+    </field>
+</form>

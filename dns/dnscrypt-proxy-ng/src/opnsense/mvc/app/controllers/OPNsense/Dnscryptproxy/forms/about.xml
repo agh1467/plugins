@@ -15,7 +15,7 @@
         <type>status</type>
         <!-- <style>label-info</style> -->
         <labels>
-            <success>clean </success>
+            <success>clean</success>
             <danger>dirty</danger>
         </labels>
     </field>

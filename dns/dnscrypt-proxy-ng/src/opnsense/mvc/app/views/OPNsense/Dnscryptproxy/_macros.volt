@@ -386,7 +386,7 @@
         $table.append(
           $("<tfoot/>").append(
             $("<tr/>").append($("<td colspan='2'/>").text(
-              '{{ lang._("Errors were encountered, no records were imported.") }}'
+              '{{ lang._('Errors were encountered, no records were imported.') }}'
             ))
           )
         );
@@ -570,11 +570,11 @@
             'toggle':'{{ field.api.toggle }}/{{ field.target }}/',
 {%              endif %}
             'options':{ 'selection':
-{%-             if (field.class == 'logs' or
-                        field.columns.select == 'false') -%}
+{# XXX needs to be changed to builtin instead of class #}
+{%-             if (field.class == 'logs') -%}
                             false
-{%-             elseif field.columns.select == 'true' -%}
-                            true
+{%-             else -%}
+                            {{- field.columns['selection']|default('false') }}
 {%-             endif %}
 {%              if field.row_count %},
                         'rowCount':[{{ field.row_count }}]
@@ -904,8 +904,6 @@
         {# This catches the first pass, if change event is initiated before the
            value of the target field is set by mapDataToFormUI() #}
         if (field_value != "") {
-{# XXX Having to use .children() here, not sure why it doesn't iterate.
-   Maybe something to do with the XML structure? #}
 {%              for this_label in field.labels.children() %}
              if (field_value == "{{ this_label.__toString() }}") {
                 $(this).addClass("label-{{ this_label.getName() }}")

@@ -911,8 +911,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="expression" width="" size="" type="string" visible="true" data-formatter="">Expression</column>
                     <column id="schedule" width="" size="" type="string" visible="true" data-formatter="">Schedule</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
@@ -1111,8 +1110,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="expression" width="" size="" type="string" visible="true" data-formatter="">Expression</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
@@ -1270,8 +1268,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="expression" width="" size="" type="string" visible="true" data-formatter="">Expression</column>
                     <column id="schedule" width="" size="" type="string" visible="true" data-formatter="">Schedule</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
@@ -1430,8 +1427,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="expression" width="" size="" type="string" visible="true" data-formatter="">Expression</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
                 </columns>
@@ -1497,8 +1493,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="name" width="" size="" type="string" visible="true" data-formatter="">Name</column>
                 </columns>
                 <api>
@@ -1742,8 +1737,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="pattern" width="" size="" type="string" visible="true" data-formatter="">Pattern</column>
                     <column id="destination" width="" size="" type="string" visible="true" data-formatter="">Destination</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
@@ -1855,8 +1849,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="domain" width="" size="" type="string" visible="true" data-formatter="">Domain</column>
                     <column id="dns_server" width="" size="" type="string" visible="true" data-formatter="">DNS Server</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
@@ -2066,8 +2059,7 @@
                     ]]>
                 </help>
                 <type>bootgrid</type>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="server_name" width="" size="" type="string" visible="true" data-formatter="">Server Name</column>
                     <column id="client_cert" width="" size="" type="string" visible="true" data-formatter="">Client Certificate</column>
                     <column id="client_cert_key" width="" size="" type="string" visible="true" data-formatter="">Client Certificate Key</column>
@@ -2237,8 +2229,7 @@
                 </help>
                 <type>bootgrid</type>
                 <edit>true</edit>
-                <columns>
-                    <select>true</select>
+                <columns selection="true">
                     <column id="name" width="" size="" type="string" visible="true" data-formatter="">Name</column>
                     <column id="urls" width="" size="" type="string" visible="true" data-formatter="">URLs</column>
                     <column id="cache_file" width="" size="" type="string" visible="true" data-formatter="">Cache File</column>
@@ -2355,11 +2346,10 @@
                     ]]>
                 </help>
                 <type>bootgrid</type>
-                <columns>
+                <columns selection="true">
                     <column id="name" width="" size="" type="string" visible="true" data-formatter="">Name</column>
                     <column id="stamp" width="" size="" type="string" visible="true" data-formatter="">Stamp</column>
                     <column id="comment" width="" size="" type="string" visible="true" data-formatter="">Comment</column>
-                    <select>true</select>
                 </columns>
                 <api>
                     <search>/api/dnscryptproxy/settings/bootgrid/search</search>
@@ -2509,10 +2499,9 @@
                 ]]>
             </help>
             <type>bootgrid</type>
-            <columns>
+            <columns selection="true">
                 <column id="domain_name" width="" size="" type="string" visible="true" data-formatter="">Domain Name</column>
                 <column id="ips" width="" size="" type="string" visible="true" data-formatter="">IPs</column>
-                <select>true</select>
             </columns>
             <row_count>7,14,20,50,100,-1</row_count>
             <edit>true</edit>
@@ -2623,10 +2612,9 @@
                 ]]>
             </help>
             <type>bootgrid</type>
-            <columns>
+            <columns selection="true">
                 <column id="server_name" width="" size="" type="string" visible="true" data-formatter="">Server Name</column>
                 <column id="via" width="" size="" type="string" visible="true" data-formatter="">Via</column>
-                <select>true</select>
             </columns>
             <row_count>7,14,20,50,100,-1</row_count>
             <edit>true</edit>
@@ -2753,8 +2741,7 @@
                 ]]>
             </help>
             <type>bootgrid</type>
-            <columns>
-                <select>true</select>
+            <columns selection="true">
                 <column id="prefix" width="" size="" type="string" visible="true" data-formatter="">Prefix</column>
             </columns>
             <api>
@@ -2804,8 +2791,7 @@
                 ]]>
             </help>
             <type>bootgrid</type>
-            <columns>
-                <select>true</select>
+            <columns selection="true">
                 <column id="resolver" width="" size="" type="string" visible="true" data-formatter="">Resolver</column>
             </columns>
             <api>
