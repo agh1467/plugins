@@ -1,0 +1,8 @@
+<menu>
+    <VPN>
+        <!-- Using capitals since menu is ASCII sorted, and puts lower case alphas after uppers. -->
+        <MullvadVPN VisibleName="Mullvad VPN" cssClass="fa fa-lock fa-fw">
+            <Settings url="/ui/mullvad/settings" order="10"/>
+        </MullvadVPN>
+    </VPN>
+</menu>

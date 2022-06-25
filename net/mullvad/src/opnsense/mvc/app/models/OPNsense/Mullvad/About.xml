@@ -1,0 +1,8 @@
+<model>
+    <!-- <mount>//OPNsense/dnscrypt-proxy/about</mount> -->
+    <items>
+        <connection_status_about type=".\PluginStatusField">
+            <configdcmd>mullvad state</configdcmd>
+        </connection_status_about>
+    </items>
+</model>

@@ -1,0 +1,9 @@
+<acl>
+   <page-mullvad>
+      <name>VPN: Mullvad VPN</name>
+      <patterns>
+         <pattern>ui/mullvad/*</pattern>
+         <pattern>api/mullvad/*</pattern>
+      </patterns>
+  </page-mullvad>
+</acl>

@@ -1,0 +1,182 @@
+<form active_tab="account" model="settings">
+    <tab id="locations" description="Locations">
+        <field>
+            <id>connection_status</id>
+            <label>Status</label>
+            <type>status</type>
+        </field>
+        <field>
+            <id>location_entry</id>
+            <label>Entry Location</label>
+            <type>info</type>
+        </field>
+        <field>
+            <id>location_exit</id>
+            <label>Exit Location</label>
+            <type>info</type>
+        </field>
+        <field>
+            <id>location</id>
+            <label>Location</label>
+            <type>info</type>
+        </field>
+        <field>
+            <id>location_entry_selector</id>
+            <label>Entry Locations</label>
+            <type>bootgrid</type>
+        </field>
+        <field>
+            <id>location_exit_selector</id>
+            <label>Exit Lcoations</label>
+            <type>bootgrid</type>
+        </field>
+        <field>
+            <id>location_selector</id>
+            <label>Locations</label>
+            <type>bootgrid</type>
+        </field>
+        <button icon="" label="Login" id="login_action"/>
+        <button icon="" label="Logout" id="logout_action"/>
+    </tab>
+    <tab id="account" description="Account">
+        <field>
+            <id>account_number_pretty</id>
+            <type>text</type>
+        </field>
+        <field>
+            <id>account_number_plain</id>
+            <label>Account Number</label>
+            <type>hidden</type>
+        </field>
+        <field>
+            <id>account_configured</id>
+            <type>hidden</type>
+        </field>
+        <field>
+            <type>separator</type>
+        </field>
+        <field>
+            <id>account_status</id>
+            <label>Account Status</label>
+            <type>status</type>
+        </field>
+        <field>
+            <id>device_name</id>
+            <label>Device Name</label>
+            <type>info</type>
+        </field>
+        <field>
+            <id>account_paid_until</id>
+            <label>Paid Until</label>
+            <type>info</type>
+        </field>
+        <field>
+            <id>buy_more_credit</id>
+            <label>Buy More Credit</label>
+            <type>button</type>
+        </field>
+        <button icon="" label="Login" id="login_action"/>
+        <button icon="" label="Logout" id="logout_action"/>
+    </tab>
+    <tab id="preferences" description="Preferences">
+        <field>
+            <id>block_ads</id>
+            <label>Block Ads</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>block_trackers</id>
+            <label>Block Trackers</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>block_malware</id>
+            <label>Block Malware</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>block_adult_content</id>
+            <label>Block Adult Conent</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>block_gambling</id>
+            <label>Block Gambling</label>
+            <type>onoff</type>
+        </field>
+    </tab>
+    <tab id="Advanced" description="Advanced">
+        <field>
+            <id>enable_ipv6</id>
+            <label>Enable IPv6</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>tunnel_protocol</id>
+            <label>Tunnel Protocol</label>
+            <type>dropdown</type>
+        </field>
+        <field>
+            <label>WireGuard Settings</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>wireguard_port</id>
+            <label>Port</label>
+            <type>dropdown</type>
+        </field>
+        <field>
+            <id>wireguard_enable_multihop</id>
+            <label>Enable Multi-hop</label>
+            <type>onoff</type>
+        </field>
+        <field>
+            <id>wireguard_ip_version</id>
+            <label>IP Version</label>
+            <type>dropdown</type>
+        </field>
+        <field>
+            <id>wireguard_mtu</id>
+            <label>MTU</label>
+            <type>text</type>
+        </field>
+        <field>
+            <label>OpenVPN Settings</label>
+            <type>header</type>
+        </field>
+        <field>
+            <id>openvpn_transport_protocol</id>
+            <label>Transport Protocol</label>
+            <type>dropdown</type>
+        </field>
+        <field>
+            <id>openvpn_bridge_mode</id>
+            <label>Bridge Mode</label>
+            <type>dropdown</type>
+        </field>
+        <field>
+            <id>openvpn_mssfix</id>
+            <label>Mssfix</label>
+            <type>text</type>
+        </field>
+        <field>
+            <type>separator</type>
+        </field>
+        <field>
+            <id>custom_dns</id>
+            <label>Custom DNS</label>
+            <type>bootgrid</type>
+        </field>
+    </tab>
+    <tab id="About" description="About">
+        <field>
+            <id></id>
+            <label></label>
+            <type></type>
+        </field>
+    </tab>
+    <button type="group" icon="fa fa-floppy-o" label="Save Settings" id="save_actions">
+        <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
+        <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
+    </button>
+</form>

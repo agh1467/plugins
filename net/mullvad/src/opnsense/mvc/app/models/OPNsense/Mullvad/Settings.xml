@@ -1,0 +1,88 @@
+<model>
+    <!-- <mount>//OPNsense/dnscrypt-proxy/about</mount> -->
+    <items>
+        <connection_status type=".\PluginStatusField">
+            <configdcmd>mullvad state</configdcmd>
+        </connection_status>
+        <location_entry type="TextField"/>
+        <location_exit type="TextField"/>
+        <location type="TextField"/>
+        <account_number_pretty type="TextField"/>
+        <account_number_plain type="TextField"/>
+        <account_configured type="BooleanField"/>
+        <device_name type="BooleanField"/><!--might not need-->
+        <block_ads type="BooleanField"/>
+        <block_trackers type="BooleanField"/>
+        <block_malware type="BooleanField"/>
+        <block_adult_content type="BooleanField"/>
+        <block_gambling type="BooleanField"/>
+        <enable_ipv6 type="BooleanField"/>
+        <tunnel_protocol type="OptionField">
+            <required>Y</required>
+            <default>auto</default>
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="auto">Automatic</option>
+                <option value="wireguard">WireGuard</option>
+                <option value="openvpn">OpenVPN</option>
+            </OptionValues>
+        </tunnel_protocol>
+        <wireguard_port type="OptionField">
+            <required>Y</required>
+            <default>auto</default>
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="auto">Automatic</option>
+                <option value="51820">51820</option>
+                <option value="53">53</option>
+            </OptionValues>
+        </wireguard_port>
+        <wireguard_enable_multihop type="BooleanField"/>
+        <wireguard_ip_version type="OptionField">
+            <required>Y</required>
+            <default>auto</default>
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="auto">Automatic</option>
+                <option value="ipv4">IPv4</option>
+                <option value="ipv6">IPv6</option>
+            </OptionValues>
+        </wireguard_ip_version>
+        <wireguard_mtu type="IntegerField">
+            <MinimumValue>1280</MinimumValue>
+            <MaximumValue>1420</MaximumValue>
+        </wireguard_mtu>
+        <openvpn_transport_protocol type="OptionField">
+            <required>Y</required>
+            <default>auto</default>
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="auto">Automatic</option>
+                <option value="tcp">TCP</option>
+                <option value="udp">UDP</option>
+            </OptionValues>
+        </openvpn_transport_protocol>
+        <openvpn_bridge_mode type="OptionField">
+            <required>Y</required>
+            <default>auto</default>
+            <Multiple>N</Multiple>
+            <OptionValues>
+                <option value="auto">Automatic</option>
+                <option value="on">On</option>
+                <option value="off">Off</option>
+            </OptionValues>
+        </openvpn_bridge_mode>
+        <openvpn_mssfix type="IntegerField">
+            <MinimumValue>1000</MinimumValue>
+            <MaximumValue>1450</MaximumValue>
+        </openvpn_mssfix>
+        <custom_dns type="ArrayField">
+            <enabled type="BooleanField">
+                <required>Y</required>
+            </enabled>
+            <server type="TextField">
+                <required>Y</required>
+            </server>
+        </custom_dns>
+    </items>
+</model>
