@@ -60,7 +60,7 @@ def error_out(message):
     """
     result['error'] = message
     result['status'] = "failed"
-    print(json.dumps(result, indent=4))
+    sys.stderr.write(json.dumps(result, indent=4))
     sys.exit()
 
 
