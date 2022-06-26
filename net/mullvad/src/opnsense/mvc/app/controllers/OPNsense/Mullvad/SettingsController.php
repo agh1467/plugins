@@ -36,35 +36,35 @@ use OPNsense\Mullvad\Plugin;
  *
  * @package OPNsense\Mullvad
  */
- class SettingsController extends PluginIndexController
- {
-     /**
-      * This function creates an endpoint in the UI for the Settings Controller.
-      *
-      * UI endpoint:
-      * `/ui/mullvad/settings`
-      *
-      * indexAction() analogous to index.html, it's the default if no action is provided.
-      */
-     public function indexAction()
-     {
-         // Pull the name of this api from the Phalcon router to use in getFormXml call.
-         //$this_api_name = $this->view->getNamespaceName();            // "about"
+class SettingsController extends PluginIndexController
+{
+    /**
+     * This function creates an endpoint in the UI for the Settings Controller.
+     *
+     * UI endpoint:
+     * `/ui/mullvad/settings`
+     *
+     * indexAction() analogous to index.html, it's the default if no action is provided.
+     */
+    public function indexAction()
+    {
+        // Pull the name of this api from the Phalcon router to use in getFormXml call.
+        //$this_api_name = $this->view->getNamespaceName();            // "about"
 
-         $plugin = new Plugin;
+        $plugin = new Plugin;
 
-         $this->view->setVars(
-             [
-                 // Derive the API path from the UI path of the view, swapping out the leading "/ui/" for "/api/".
-                 // This is crude, but it will work until I discover a more reliable way to do it in the view.
-                 'plugin_api_path' => preg_replace("/^\/ui\//", "/api/", $this->router->getMatches()[0]),
-                 'this_xml' => $plugin->getFormXml('settings'),
-                 // controllers/OPNsense/Mullvad/forms/settings.xml
-             ]
-         );
-         // Since the directory structure of OPNsense's plugins isn't conducive to automatically loading the template,
-         // pick the specific template we want to load. Relative to /usr/local/opnsense/mvc/app/views, no file extension
-         $this->view->pick('OPNsense/Mullvad/settings');
-         // views/OPNsense/Mullvad/settings.volt
-     }
- }
+        $this->view->setVars(
+            [
+                // Derive the API path from the UI path of the view, swapping out the leading "/ui/" for "/api/".
+                // This is crude, but it will work until I discover a more reliable way to do it in the view.
+                'plugin_api_path' => preg_replace("/^\/ui\//", "/api/", $this->router->getMatches()[0]),
+                'this_xml' => $plugin->getFormXml('settings'),
+                // controllers/OPNsense/Mullvad/forms/settings.xml
+            ]
+        );
+        // Since the directory structure of OPNsense's plugins isn't conducive to automatically loading the template,
+        // pick the specific template we want to load. Relative to /usr/local/opnsense/mvc/app/views, no file extension
+        $this->view->pick('OPNsense/Mullvad/settings');
+        // views/OPNsense/Mullvad/settings.volt
+    }
+}

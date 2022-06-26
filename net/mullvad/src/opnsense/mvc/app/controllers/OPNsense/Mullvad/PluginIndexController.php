@@ -28,9 +28,10 @@
  */
 
 namespace OPNsense\Mullvad;
+
 use OPNsense\Core\Backend;
 use OPNsense\Mullvad\Plugin;
-
+//use OPNsense\Base\IndexController;
 
 /**
  * Class PluginIndexController extends Core's OPNsense\Base\IndexController.

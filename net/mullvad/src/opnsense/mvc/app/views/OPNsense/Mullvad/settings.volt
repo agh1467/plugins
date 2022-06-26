@@ -36,3 +36,66 @@
  ##}
 
 {% extends 'OPNsense/Mullvad/plugin_main.volt' %}
+
+
+{% block script %}
+    $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_login_command"]').click(
+        function(){
+{#/*        create a button object for use throughout this function. */#}
+            const this_button = $(this);
+            busyButton(this_button);
+            saveFormToEndpoint(
+                url="/api/mullvad/settings/set",
+                formid=this_button.closest('form').attr("id"),
+                callback_ok=
+                    function(){
+                        ajaxCall(
+                            url="/api/mullvad/account/login",
+                            sendData={},
+                            callback=
+                                function(data,status) {
+                                    if (
+                                        (status != "success" || data['status'].toLowerCase().trim() != 'ok') &&
+                                        data['status']
+                                        ) {
+                                        BootstrapDialog.show({
+                                            type: BootstrapDialog.TYPE_WARNING,
+                                            title: this_button.data('error-title'),
+                                            message: data['status_msg'] ? data['status_msg'] : data['status'],
+                                            draggable: true
+                                        });
+                                    } else {
+                                        // XXX can this just be put into a function?
+                                        mapDataToFormUI(data_get_map).done(function(){
+                                            formatTokenizersUI();
+                                            $('.selectpicker').selectpicker('refresh');
+                                            $('div[class^="modal bootstrap-dialog"]').modal('toggle');
+                                        });
+                                    }
+                                    clearButton(this_button);
+                                }
+                        );
+                    },
+                false,
+                callback_fail=
+                    function() {
+                        clearButton(this_button);
+                    }
+            );
+        }
+    );
+
+{#/*
+    This function will generally be used but can be overriden with a block statement. */#}
+    mapDataToFormUI(data_get_map).done(function(){
+{#/*
+    Update the fields using the tokenizer style. */#}
+        formatTokenizersUI();
+{#/*
+    Refresh the data for the select picker fields. */#}
+        $('.selectpicker').selectpicker('refresh');
+{#/*
+    Dismiss our loading dialog */#}
+        $('div[class^="modal bootstrap-dialog"]').modal('toggle');
+    });
+{% endblock %}

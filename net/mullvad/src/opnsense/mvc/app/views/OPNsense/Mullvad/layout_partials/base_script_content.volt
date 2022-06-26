@@ -109,6 +109,12 @@
 {#              # Use a fadeIn instead of show() for a nice effect. #}
                 $("#" + efield).fadeIn();
             }
+        } else if (["button"].includes(type)) {
+            if (toggle == "hidden") {
+                $("button[id=" + efield).hide();
+            } else if (toggle == "visible") {
+                $("button[id=" + efield).show();
+            }
         }
     }
 
@@ -189,7 +195,7 @@
         return dfObj;
     }
 
-    function saveForm(form, dfObj, callback_after, params){
+    function saveForm(form, dfObj, this_callback_ok, this_callback_fail){
         var this_frm = form;
         var frm_id = this_frm.attr("id");
         var frm_title = this_frm.attr("data-title");
@@ -198,20 +204,25 @@
 {#/*    # It's possible for a form to exist without a data-model, exclude them. */#}
         if (frm_model) {
             var api_url="/api/{{ plugin_api_name }}/" + frm_model + "/set";
-            saveFormToEndpoint(url=api_url, formid=frm_id, callback_ok=function(data, status){
-                if (data['result'] != 'saved' ) {
-                    ajaxDataDialog(data, frm_title);
-                } else {
-                    if (callback_after !== undefined) {
-                        callback_after.apply(this, params);
+            saveFormToEndpoint(
+                url=api_url,
+                formid=frm_id,
+                callback_ok=
+                    function(data, status){
+                        dfObj.resolve();
+                        this_callback_ok();
+                    },
+                false,
+                callback_fail=
+                    function(data, status){
+                        dfObj.reject();
+                        this_callback_fail();
                     }
-                    dfObj.resolve();
-                }
-            });
+            );
         } else {
-                dfObj.resolve();
+                dfObj.reject();
+                this_callback_fail();
         }
-        return dfObj;
     }
 
 
@@ -290,7 +301,9 @@
 
             busyButton(this_btn);
 
-            saveForm(this_frm, dfObj, clearButtonAndToggle, [this_btn]);
+            saveForm(this_frm, dfObj);
+
+            clearButtonAndToggle(this_btn)
 
             return dfObj;
         });
@@ -321,9 +334,8 @@
         } else {
             var this_btn = $(this).closest('div').find('button').first();
         }
-
+{#/*    # Turn on the spinner animation for the button to indicate activity. */#}
         busyButton(this_btn);
-
         var models = $('form[id^="frm_"][data-model]').map(function() {
 {#          # Create a deferred object to pass to the function and wait on. #}
             const model_dfObj = new $.Deferred();
@@ -331,11 +343,11 @@
             return model_dfObj
         });
         $.when(...models.get()).then(function() {
-{#/*        # when done, disable progress animation. */#}
-            clearButton(this_btn);
-            toggleApplyChanges();
             dfObj.resolve();
         });
+{#/*    # Clear the button state, and trigger an Apply toggle check. */#}
+        clearButtonAndToggle(this_btn)
+
         return dfObj;
     });
 

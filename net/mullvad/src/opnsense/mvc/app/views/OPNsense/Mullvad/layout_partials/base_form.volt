@@ -105,8 +105,6 @@
 {%  for field in this_part.field %}
 {%      if field.type == 'header' %}
 {#              close table and start new one with header #}
-
-{# macro base_dialog_header(field) #}
         </tbody>
     </table>
 </div>
@@ -146,12 +144,12 @@
             </tr>
         </thead>
         <tbody>
-{# endmacro #}
 {%      elseif field.type == 'separator' %}
 {# close the table that was started earlier, start a new table, and put an empty row #}
         </tbody>
     </table>
 </div>
+<!-- Table Separator -->
 <div class="table-responsive {{field.style|default('')}}">
     <table class="table table-striped table-condensed table-responsive">
         <colgroup>  {# We need to define again the column groups #}
@@ -173,10 +171,10 @@
    Technically doesn't have to be a separate partial, but just
    keeping it separate for now since it's so large.
    Load in our bootgrid partial #}
-{{          partial("OPNsense/Dnscryptproxy/layout_partials/form_bootgrid_tr",['this_field':field]) }}
+{{          partial("OPNsense/Mullvad/layout_partials/form_bootgrid_tr",['this_field':field]) }}
 {%      elseif field.type == 'button' %}
 {#  We hijack the type field again for injecting a button
-    Validate that the necessary fields are set #}
+    this button intends to be attached to by SimpleActionButton() #}
             <tr>
                 <td colspan="3">
                     <button
@@ -214,13 +212,11 @@
             </tr>
 {%      else %}
 {# Draw all of the regular field types which can be drawn in the 3 column style. #}
-{{          partial("OPNsense/Dnscryptproxy/layout_partials/form_input_tr",[
+{{          partial("OPNsense/Mullvad/layout_partials/form_input_tr",[
                 'this_field':field,
                 'this_model':this_model
             ]) }}
 {%      endif %}
-{# {%          endif %} #}
-{# {%      endif %} #}
 {%  endfor %}
 {# Draw any buttons as defined. #}
 {%  if this_part.button %}

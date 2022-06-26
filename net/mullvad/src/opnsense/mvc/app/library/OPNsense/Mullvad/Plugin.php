@@ -29,6 +29,7 @@
 
 namespace OPNsense\Mullvad;
 
+use Exception;
 use ReflectionClass;
 
 /**
@@ -117,6 +118,7 @@ class Plugin
         }
         $formXml = simplexml_load_file($filename);
         if ($formXml === false) {
+            //$formXml = '<pre>XML file ' . $filename . ' is invalid.</pre>';
             throw new \Exception('form xml ' . $filename . ' not valid');
         }
 

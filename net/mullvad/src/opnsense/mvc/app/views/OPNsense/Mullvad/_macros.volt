@@ -907,13 +907,31 @@
         {# This catches the first pass, if change event is initiated before the
            value of the target field is set by mapDataToFormUI() #}
         if (field_value != "") {
-{%              for this_label in field.labels.children() %}
+{%              if field.labels %}
+{%                  for this_label in field.labels.children() %}
              if (field_value == "{{ this_label.__toString() }}") {
                 $(this).addClass("label-{{ this_label.getName() }}")
             }
-{%              endfor %}
+{%                  endfor %}
+{%              endif %}
         }
     });
-{%           endif %}
+{%          endif %}
+{# =============================================================================
+ # buttons: process any buttons accordingly for this field.
+ # =============================================================================
+ # Mainly for attaching SimpleActionButton function/event.
+ #
+ #}
+{%          if field.buttons %}
+{%              for button in field.buttons.children() %}
+{%                  if button['type'] == 'SimpleActionButton' and button['id']%}
+    $('button[id="btn_' + $.escapeSelector("{{ field_id }}") + '_' + $.escapeSelector("{{ button['id'] }}") +  '_command"]').SimpleActionButton({
+        onPreAction: {{ button.onpreaction|default('undefined') }},
+        onAction: {{ button.onaction|default('undefined') }}
+    });
+{%                  endif %}
+{%              endfor %}
+{%          endif %}
 {%      endfor %}
 {%  endmacro %}

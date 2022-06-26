@@ -495,12 +495,32 @@ class PluginApiMutableModelControllerBase extends ApiMutableModelControllerBase
         $response = $this->markConfig('dirty');
 
         // Add the message to set_result prefixed with where the message came from for clarity.
-        $set_result['message'] = 'Configd returned: ' . $response;
+        $msg = 'Configd returned: ' . $response;
 
         if ($response != 'OK') {
             // Set the error status so API will display message to user.
-            $set_result['status'] = "error";
+            $set_result['result'] = "failed";
+            if (!array_key_exists('validations', $set_result)) {
+                $set_result['validations'] = array();
+            }
+            array_push($set_result['validations'], array('setAction' => $msg));
         }
+
+        /* XXX Gotta figure out what to do with these messages. They're returning in the result set
+           if no action is configured for configctl mullvad make dirty.
+           {
+                "result":"saved",
+                "message":"Configd returned: Action not found",
+                "status":"error"
+            }
+            I'm thinking probably should override this result, and say failed...
+            Looks like the only dialog catch is the validations message box. So if we want to show
+            then we'll have to inject a validations message into the result set.
+            That doesn't really make much sense though, and the user has to click the bug in order
+            to see the validation messages. It won't show otherwise.
+
+            I've configured it to ride the validations train for now. We'll see how that feels.
+        */
 
         return $set_result;
     }

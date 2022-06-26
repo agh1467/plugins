@@ -41,16 +41,60 @@
     <tab id="account" description="Account">
         <field>
             <id>account_number_pretty</id>
-            <type>text</type>
-        </field>
-        <field>
-            <id>account_number_plain</id>
             <label>Account Number</label>
-            <type>hidden</type>
+            <type>command</type>
+            <builtin>field</builtin>
+            <buttons>
+                <button id="login">
+                    <label>Login</label>
+                    <endpoint>/api/mullvad/account/login</endpoint>
+                    <error-title>Login error occurred</error-title>
+                    <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
+                    <onpreaction><![CDATA[
+                        function (this_button) {
+                            const dfObj = new $.Deferred();
+                            // XXX This is a janky way to do this, can't reference $(this) object since it is the global object in the context in which this function is called.
+                            //console.log(this_button);
+                            //var this_button = $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_' + $.escapeSelector("login") +  '_command"]');
+                            saveForm(
+                                this_button.closest('form'),
+                                dfObj,
+                                this_callback_ok=
+                                    function() {
+                                        return dfObj;
+                                    },
+                                this_callback_fail=
+                                    function(dfObj) {
+                                        this_button.find('.reload_progress').removeClass("fa fa-spinner fa-pulse");
+                                        return dfObj;
+                                    }
+                            );
+                            return dfObj;
+                        }
+                    ]]></onpreaction>
+                </button>
+                <button id="logout" type="SimpleActionButton">
+                    <label>Logout</label>
+                    <endpoint>/api/mullvad/account/logout</endpoint>
+                    <error-title>Logout error occurred</error-title>
+                    <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
+                </button>
+            </buttons>
         </field>
         <field>
             <id>account_configured</id>
-            <type>hidden</type>
+            <label>Account Configured</label>
+            <!-- <readonly>true</readonly> -->
+            <!-- <hidden>true</hidden> -->
+            <type>checkbox</type>
+            <control>
+                <action on_set="1" type="button" do_state="visible">btn_settings.account_number_pretty_logout_command</action>
+                <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_pretty_login_command</action>
+                <action on_set="0" type="button" do_state="visible">btn_settings.account_number_pretty_login_command</action>
+                <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_pretty_logout_command</action>
+                <action on_set="1" type="button" do_state="disable">settings.account_number_pretty</action>
+                <action on_set="0" type="button" do_state="enable">settings.account_number_pretty</action>
+            </control>
         </field>
         <field>
             <type>separator</type>
@@ -71,9 +115,12 @@
             <type>info</type>
         </field>
         <field>
+            <type>button</type>
+            <api>/api/mullvad/account/login</api>
             <id>buy_more_credit</id>
             <label>Buy More Credit</label>
-            <type>button</type>
+            <error>Error occurred executing API</error>
+            <widget>dnscryptproxy</widget>
         </field>
         <button icon="" label="Login" id="login_action"/>
         <button icon="" label="Logout" id="logout_action"/>
