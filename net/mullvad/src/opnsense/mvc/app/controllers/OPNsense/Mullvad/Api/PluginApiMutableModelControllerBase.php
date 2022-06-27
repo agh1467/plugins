@@ -500,10 +500,11 @@ class PluginApiMutableModelControllerBase extends ApiMutableModelControllerBase
         if ($response != 'OK') {
             // Set the error status so API will display message to user.
             $set_result['result'] = "failed";
-            if (!array_key_exists('validations', $set_result)) {
-                $set_result['validations'] = array();
-            }
-            array_push($set_result['validations'], array('setAction' => $msg));
+            $set_result['status'] = 'setAction(): markConfig("dirty"): ' . $msg;
+            //if (!array_key_exists('validations', $set_result)) {
+            //    $set_result['validations'] = array();
+            //}
+            //array_push($set_result['validations'], array('setAction' => $msg));
         }
 
         /* XXX Gotta figure out what to do with these messages. They're returning in the result set

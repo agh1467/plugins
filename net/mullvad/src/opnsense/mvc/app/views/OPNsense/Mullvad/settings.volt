@@ -39,6 +39,15 @@
 
 
 {% block script %}
+{#/* This attachment does the following:
+     1. Run saveFormToEntpoint for the nearest form.
+     1a. Check if save returns anything but result = saved,
+     1b. If not, display a message box, clear the button, end there.
+     1c. If there are ny validation errors, callback_fail is executed, clear the button, end there.
+     2a. Run the login API
+     2b. Check if the response is OK,
+     2c. if not display a message box.
+     2d. Clear the button status. */#}
     $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_login_command"]').click(
         function(){
 {#/*        create a button object for use throughout this function. */#}
@@ -48,33 +57,47 @@
                 url="/api/mullvad/settings/set",
                 formid=this_button.closest('form').attr("id"),
                 callback_ok=
-                    function(){
-                        ajaxCall(
-                            url="/api/mullvad/account/login",
-                            sendData={},
-                            callback=
-                                function(data,status) {
-                                    if (
-                                        (status != "success" || data['status'].toLowerCase().trim() != 'ok') &&
-                                        data['status']
-                                        ) {
-                                        BootstrapDialog.show({
-                                            type: BootstrapDialog.TYPE_WARNING,
-                                            title: this_button.data('error-title'),
-                                            message: data['status_msg'] ? data['status_msg'] : data['status'],
-                                            draggable: true
-                                        });
-                                    } else {
-                                        // XXX can this just be put into a function?
-                                        mapDataToFormUI(data_get_map).done(function(){
-                                            formatTokenizersUI();
-                                            $('.selectpicker').selectpicker('refresh');
-                                            $('div[class^="modal bootstrap-dialog"]').modal('toggle');
-                                        });
+                    function(data){
+                        if (
+                            (data['result'].toLowerCase().trim() != 'saved') &&
+                            data['status']
+                            ) {
+                            BootstrapDialog.show({
+                                type: BootstrapDialog.TYPE_WARNING,
+                                title: this_button.data('error-title'),
+                                message: data['status'],
+                                draggable: true
+                            });
+                            clearButton(this_button);
+                        } else {
+                            ajaxCall(
+                                url="/api/mullvad/account/login",
+                                sendData={},
+                                callback=
+{#/* These callbacks can probably be moved into named functions. */#}
+                                    function(data,status) {
+                                        if (
+                                            (status != "success" || data['status'].toLowerCase().trim() != 'ok') &&
+                                            data['status']
+                                            ) {
+                                            BootstrapDialog.show({
+                                                type: BootstrapDialog.TYPE_WARNING,
+                                                title: this_button.data('error-title'),
+                                                message: data['status_msg'] ? data['status_msg'] : data['status'],
+                                                draggable: true
+                                            });
+                                        } else {
+                                            // XXX can this just be put into a function?
+                                            mapDataToFormUI(data_get_map).done(function(){
+                                                formatTokenizersUI();
+                                                $('.selectpicker').selectpicker('refresh');
+                                                $('div[class^="modal bootstrap-dialog"]').modal('toggle');
+                                            });
+                                        }
+                                        clearButton(this_button);
                                     }
-                                    clearButton(this_button);
-                                }
-                        );
+                            );
+                        }
                     },
                 false,
                 callback_fail=
