@@ -40,7 +40,7 @@
     </tab>
     <tab id="account" description="Account">
         <field>
-            <id>account_number_pretty</id>
+            <id>account_number</id>
             <label>Account Number</label>
             <type>command</type>
             <builtin>field</builtin>
@@ -88,12 +88,12 @@
             <!-- <hidden>true</hidden> -->
             <type>checkbox</type>
             <control>
-                <action on_set="1" type="button" do_state="visible">btn_settings.account_number_pretty_logout_command</action>
-                <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_pretty_login_command</action>
-                <action on_set="0" type="button" do_state="visible">btn_settings.account_number_pretty_login_command</action>
-                <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_pretty_logout_command</action>
-                <action on_set="1" type="button" do_state="disable">settings.account_number_pretty</action>
-                <action on_set="0" type="button" do_state="enable">settings.account_number_pretty</action>
+                <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action>
+                <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action>
+                <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action>
+                <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action>
+                <action on_set="1" type="button" do_state="disable">settings.account_number</action>
+                <action on_set="0" type="button" do_state="enable">settings.account_number</action>
             </control>
         </field>
         <field>

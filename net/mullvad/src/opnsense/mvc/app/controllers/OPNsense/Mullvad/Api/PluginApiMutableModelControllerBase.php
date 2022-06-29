@@ -492,8 +492,11 @@ class PluginApiMutableModelControllerBase extends ApiMutableModelControllerBase
         // Call the reconfigure action to save our settings.
         $set_result = parent::setAction();
 
-        $response = $this->markConfig('dirty');
+        if ($set_result['result'] == 'saved') {
+            $this->getModel()->configDirty();
+        }
 
+        /*
         // Add the message to set_result prefixed with where the message came from for clarity.
         $msg = 'Configd returned: ' . $response;
 

@@ -41,6 +41,7 @@ import subprocess
 result = {}
 MULLVAD_API = 'https://api.mullvad.net'
 MULLVAD_API_ACCOUNTS = MULLVAD_API + '/www/accounts'
+MULLVAD_API_ME = MULLVAD_API + '/www/me'
 MULLVAD_API_RELAYS_WG = MULLVAD_API + '/www/relays/wireguard'
 
 """
@@ -184,7 +185,27 @@ Response:
    }
 }
 
-
+Revoke wg device:
+curl 'https://api.mullvad.net/www/wg-pubkeys/revoke/'
+    -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0'
+    -H 'Accept: application/json, text/plain, */*'
+    -H 'Accept-Language: en-US'
+    -H 'Accept-Encoding: gzip, deflate, br'
+    -H 'Content-Type: application/json'
+    -H 'Authorization: Token 91e08d969b20da8026b31a2571bf10b97ed22d34a92b38b1ea7fad91f5e72738'
+    -H 'Origin: https://mullvad.net' -H 'DNT: 1'
+    -H 'Connection: keep-alive'
+    -H 'Sec-Fetch-Dest: empty'
+    -H 'Sec-Fetch-Mode: cors'
+    -H 'Sec-Fetch-Site: same-site'
+    -H 'Sec-GPC: 1'
+    -H 'Pragma: no-cache'
+    -H 'Cache-Control: no-cache'
+    -H 'TE: trailers'
+    --data-raw '{"pubkey":"zLVnO6DYynxeaSc0qECNJSnAqwkOvMU0xE82KqniugI="}'
+Reponse:
+204 No content
+^ HTTP response code.
 
 """
 
@@ -197,11 +218,25 @@ def error_out(message):
     sys.exit()
 
 
+def wg(cmd, stdin=''):
+    """
+    Wrapper for calling wg, with arguments
+    """
+    result = subprocess.run(
+        [
+            '/usr/local/bin/wg',
+            cmd
+        ],
+        input=stdin,
+        capture_output=True, text=True).stdout.strip("\n")
+    return result
+
+
 def jq(json, query):
     """
     Wrapper for calling jq, takes json as string, and query to be used.
     """
-    jq_result = subprocess.run(
+    result = subprocess.run(
         [
             '/usr/local/bin/jq',
             '-Mcr',
@@ -209,7 +244,7 @@ def jq(json, query):
         ],
         input=json,
         capture_output=True, text=True).stdout.strip("\n")
-    return jq_result
+    return result
 
 
 def api(endpoint, argument="", token=None, data=None):
@@ -243,13 +278,34 @@ def mullvad_get_wireguard_relays(token):
     """
     Function to get a list of wireguard relays
 
-    Returns json
+    Returns json in string format
     """
     result = api(MULLVAD_API_RELAYS_WG, token=token)
     if result:
         return result
     else:
         error_out('Unable to get wireguard list')
+
+
+def wg_genkey():
+    """
+    Function to get a private key from wireguard.
+
+    Returns json
+    """
+    return wg('genkey')
+
+
+def wg_pubkey(privkey):
+    """
+    Function to get a private key from wireguard.
+
+    Returns json
+    """
+    if len(privkey) != 0:
+        return wg('pubkey', privkey)
+    else:
+        error_out('Public key generation failed.')
 
 
 def main():
@@ -263,14 +319,35 @@ def main():
 
     Login:
         This is going to be basically adding a device to the account.
-            Maybe check that the key limit hasn't been reached first.
-            Need to create a private key, and store it in the config.
+            Maybe check that the key limit hasn't been reached first. (account info, max_wg_peers)
+            Compare with the number of configured wg_peers.
+                Error out it we can't add a peer.
+                return json array:
+                "action" : 'login' # is this useful?
+                "result" : 'failed'
+                "status" : '[KEY_LIMIT_REACHED] You have reached the maximum number of WireGuard keys. Go to https://mullvad.net/account/#/ports to revoke one of your keys.'
+                I think I got this message from the API... So might be able to just pass that through.
+            Need to create a private key.
+            Need to generate a pubkey with the private key.
+            Add the device using the pubkey.
             When the device is created it will appear in wg_peers array.
+            Re-get account info, and grab the device name (using the pubkey as reference).
+            Needs to return an array (json) with:
+                "device_id" : "0f8c65c1-9df4-4db5-9c4d-7a8e86dad149",
+                "device_name" : "alert pup",
+                "ipv4_address" : "10.66.141.99/32",
+                "ipv6_address" : "fc00:bbbb:bbbb:bb01::3:8d62/128",
+                "private_key" : "",
+                "public_key" : "zLVnO6DYynxeaSc0qECNJSnAqwkOvMU0xE82KqniugI="
+                "action" : 'login' # is this useful?
+                "result" : 'success'
+                "status" : ?????
     Logout:
         This is going to be basically removing the device from the account.
             This will use the public key.
             The private key that was use to login should be deleted.
             The device name should be cleared.
+
     """
 
 

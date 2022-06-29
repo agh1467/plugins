@@ -42,4 +42,30 @@ use OPNsense\Base\BaseModel;
  */
 class Settings extends BaseModel
 {
+    /**
+     * get configuration state
+     * @return bool
+     */
+    public function configChanged()
+    {
+        return file_exists("/tmp/mullvad.dirty");
+    }
+
+    /**
+     * mark configuration as changed
+     * @return bool
+     */
+    public function configDirty()
+    {
+        return @touch("/tmp/mullvad.dirty");
+    }
+
+    /**
+     * mark configuration as consistent with the running config
+     * @return bool
+     */
+    public function configClean()
+    {
+        return @unlink("/tmp/mullvad.dirty");
+    }
 }

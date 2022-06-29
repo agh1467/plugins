@@ -31,6 +31,7 @@ namespace OPNsense\Mullvad\Api;
 use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
 use OPNsense\Dnscryptproxy\Plugin;
+use OPNsense\Base\ApiMutableModelControllerBase;
 
 /**
  * This Controller extends ApiControllerBase to create API endpoints
@@ -50,8 +51,64 @@ use OPNsense\Dnscryptproxy\Plugin;
  *
  * @package OPNsense\Dnscryptproxy
  */
-class AccountController extends ApiControllerBase
+class AccountController extends ApiMutableModelControllerBase
 {
+
+    /**
+     * This variable defines what to call the <model> that is defined for this
+     * Class by Phalcon. That is to say the model XML that has the same name as
+     * this controller's name, "Settings".
+     * In this case, it is the model XML file:
+     *
+     * `model/OPNsense/Mullvad/Settings.xml`
+     *
+     * The model name is then used as the name of the array returned by setBase()
+     * and getBase(). In the form XMLs, the prefix used on the field IDs must
+     * match this name as API actions use the same name in their transactions.
+     * For example, the key_name in an API JSON response, will be this model
+     * name. This name is also used as the API endpoint for this Controller.
+     *
+     * `/api/mullvad/settings`
+     *
+     * This locks activies of this Class to this specific model, so it won't
+     * save to other models, even within the same plugin.
+     *
+     * @var string $internalModelName
+     */
+    protected static $internalModelName = 'settings';
+
+    /**
+     * Base model class to reference.
+     *
+     * This variable defines which class to call for getMode(). It is used in a
+     * ReflectionClass call to establish the model object. This class is defined
+     * in the models directory alongside the model XML, and has the same name
+     * as this Controller. This class extends BaseModel which reads the model
+     * XML that has the same name as the class.
+     *
+     * In this case, these are the model XML file, and class definition file:
+     *
+     * `model/OPNsense/Mullvad/Settings.xml`
+     *
+     * `model/OPNsense/Mullvad/Settings.php`
+     *
+     * These together will establish several API endpoints on this Controller's
+     * endpoint including:
+     *
+     * `/api/mullvad/settings/get`
+     *
+     * `/api/mullvad/settings/set`
+     *
+     * These are both defined in the ApiMutableModelControllerBase Class:
+     *
+     * `function getAction()`
+     *
+     * `function setAction()`
+     *
+     * @var string $internalModelClass
+     */
+    protected static $internalModelClass = 'OPNsense\Mullvad\Settings';
+
     /**
      * Allows uploading a file using a specific pre-defined list of destination
      * files within the file system.
@@ -87,8 +144,10 @@ class AccountController extends ApiControllerBase
      */
     public function LoginAction()
     {
-        // Retrieve the account number from the model.
         // Use the account in a configctl call to perform the "login" procedure.
+        // We'll need to get back from the call:
+        // Device Name
+        // Private Key
         // Login is going to be something like register the device, get the device name in return.
         // This is probably something like create wireguard private key, and then add that private
         //   key to the account.
@@ -98,9 +157,58 @@ class AccountController extends ApiControllerBase
         // return status to API
         // Somehow call mapDataToFormUI(), or force a page refresh.
         //
+        $result = array();
+        if ($this->request->isPost()) {
 
+            // Retrieve the account number from the model. This should be known good, but check that it's not empty anyway.
+            $account_number = $this->getModel()->account_number->getNodeData('clean');
+            // We won't be able to do anything without an account number.
+            if (!empty($account_number)) {
+                $backend = new Backend();
+                $result = json_decode($backend->configdRun($plugin->configd_name . ' login ' . $account_number));
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    // JSON is valid
+                    if ($result['result'] == 'success') {
 
-        return array ("status" => 'ok');
+                    } else {
+                        // Do nothing?
+                    }
+                }
+            // Need to check that the result is good, look for 'result' == 'success'
+            // If failed, then reflect hat in a return.
+            // Might be able to pass the result array through as long as the format is consistent.
+            //        $result = array('result' => 'failed', 'status' => gettext('No valid account number in config.'));
+            /*
+            Expecting to see something like this in json:
+            "device_id" : "0f8c65c1-9df4-4db5-9c4d-7a8e86dad149",
+            "device_name" : "alert pup",
+            "ipv4_address" : "10.66.141.99/32",
+            "ipv6_address" : "fc00:bbbb:bbbb:bb01::3:8d62/128",
+            "private_key" : "",
+            "public_key" : "zLVnO6DYynxeaSc0qECNJSnAqwkOvMU0xE82KqniugI="
+            "action" : 'login' # is this useful?
+            "result" : 'success'
+            "status" : ?????
+
+            $arr = json_decode($jsonobj, true);
+            echo $arr["Peter"];
+            echo $arr["Ben"];
+            echo $arr["Joe"];
+            // ^^^^^^^^^^^^ Interesting approach, probably do that.
+            Convert json -> array: $device_data = json_decode($result);
+            Transfer values out of the array into another array that's the same structure as the model.
+            We need to take this data, and then save it to the config.
+            Something like: setData(device_data)
+            */
+
+            } else {
+                $result = array('result' => 'failed', 'status' => gettext('No valid account number in config.'));
+            }
+        } else {
+            $result = array("status" => 'failed', 'status' => gettext('Function must be called via HTTP POST.'));
+        }
+        //array ("status" => 'ok', 'account_number' => $account_number);
+        return $result;
         //return array("status" => 'failed');
         //--------------------------------------------------------------------------//
         $plugin = new Plugin();

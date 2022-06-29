@@ -7,7 +7,7 @@
         <location_entry type="TextField"/>
         <location_exit type="TextField"/>
         <location type="TextField"/>
-        <account_number_pretty type=".\MullvadAccountField"/>
+        <account_number type=".\MullvadAccountField"/>
         <account_configured type="BooleanField"/>
         <device_name type="BooleanField"/><!--might not need-->
         <block_ads type="BooleanField"/>

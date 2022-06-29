@@ -48,7 +48,7 @@
      2b. Check if the response is OK,
      2c. if not display a message box.
      2d. Clear the button status. */#}
-    $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_login_command"]').click(
+    $('button[id="btn_' + $.escapeSelector("settings.account_number") + '_login_command"]').click(
         function(){
 {#/*        create a button object for use throughout this function. */#}
             const this_button = $(this);
@@ -87,12 +87,7 @@
                                                 draggable: true
                                             });
                                         } else {
-                                            // XXX can this just be put into a function?
-                                            mapDataToFormUI(data_get_map).done(function(){
-                                                formatTokenizersUI();
-                                                $('.selectpicker').selectpicker('refresh');
-                                                $('div[class^="modal bootstrap-dialog"]').modal('toggle');
-                                            });
+                                            refreshFields();
                                         }
                                         clearButton(this_button);
                                     }

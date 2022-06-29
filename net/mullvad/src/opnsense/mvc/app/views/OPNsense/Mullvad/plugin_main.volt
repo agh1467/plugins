@@ -85,19 +85,7 @@ $( document ).ready(function() {
     }
 
 {% block script %}
-{#/*
-    This function will generally be used but can be overriden with a block statement. */#}
-    mapDataToFormUI(data_get_map).done(function(){
-{#/*
-    Update the fields using the tokenizer style. */#}
-        formatTokenizersUI();
-{#/*
-    Refresh the data for the select picker fields. */#}
-        $('.selectpicker').selectpicker('refresh');
-{#/*
-    Dismiss our loading dialog */#}
-        $('div[class^="modal bootstrap-dialog"]').modal('toggle');
-    });
+    refreshFields();
 {% endblock %}
 
 

@@ -52,10 +52,14 @@ class MullvadAccountField extends TextField
      * This is used instead of the standard BaseField::getNodes() approach.
      * @param $parent_node BaseField node to reverse
      */
-    public function getNodeData()
+    public function getNodeData($output = 'pretty')
     {
         // Return our data, but with our pretty filter.
-        return $this->applyFilterPretty();
+        if ($output == 'pretty') {
+            return $this->applyFilterPretty();
+        } else {
+            return (string)$this;
+        }
     }
 
     /**

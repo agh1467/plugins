@@ -285,6 +285,22 @@
         });
     }
 
+    function refreshFields(){
+{#/*
+    Perform an update and map the data to the form. */#}
+        mapDataToFormUI(data_get_map).done(function(){
+{#/*
+    Update the fields using the tokenizer style. */#}
+            formatTokenizersUI();
+{#/*
+    Refresh the data for the select picker fields. */#}
+            $('.selectpicker').selectpicker('refresh');
+{#/*
+    Dismiss our loading dialog */#}
+            $('div[class^="modal bootstrap-dialog"]').modal('toggle');
+        });
+    }
+
 
 {#/*
     # Save event handlers for all defined forms
