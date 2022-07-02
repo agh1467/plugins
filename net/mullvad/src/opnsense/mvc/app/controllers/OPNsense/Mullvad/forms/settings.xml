@@ -1,227 +1,236 @@
-<form active_tab="account" model="settings">
-    <tab id="locations" description="Locations">
-        <field>
-            <id>connection_status</id>
-            <label>Status</label>
-            <type>status</type>
-        </field>
-        <field>
-            <id>location_entry</id>
-            <label>Entry Location</label>
-            <type>info</type>
-        </field>
-        <field>
-            <id>location_exit</id>
-            <label>Exit Location</label>
-            <type>info</type>
-        </field>
-        <field>
-            <id>location</id>
-            <label>Location</label>
-            <type>info</type>
-        </field>
-        <field>
-            <id>location_entry_selector</id>
-            <label>Entry Locations</label>
-            <type>bootgrid</type>
-        </field>
-        <field>
-            <id>location_exit_selector</id>
-            <label>Exit Lcoations</label>
-            <type>bootgrid</type>
-        </field>
-        <field>
-            <id>location_selector</id>
-            <label>Locations</label>
-            <type>bootgrid</type>
-        </field>
-        <button icon="" label="Login" id="login_action"/>
-        <button icon="" label="Logout" id="logout_action"/>
-    </tab>
-    <tab id="account" description="Account">
-        <field>
-            <id>account_number</id>
-            <label>Account Number</label>
-            <type>command</type>
-            <builtin>field</builtin>
-            <buttons>
-                <button id="login">
-                    <label>Login</label>
-                    <endpoint>/api/mullvad/account/login</endpoint>
-                    <error-title>Login error occurred</error-title>
-                    <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
-                    <onpreaction><![CDATA[
-                        function (this_button) {
-                            const dfObj = new $.Deferred();
-                            // XXX This is a janky way to do this, can't reference $(this) object since it is the global object in the context in which this function is called.
-                            //console.log(this_button);
-                            //var this_button = $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_' + $.escapeSelector("login") +  '_command"]');
-                            saveForm(
-                                this_button.closest('form'),
-                                dfObj,
-                                this_callback_ok=
-                                    function() {
-                                        return dfObj;
-                                    },
-                                this_callback_fail=
-                                    function(dfObj) {
-                                        this_button.find('.reload_progress').removeClass("fa fa-spinner fa-pulse");
-                                        return dfObj;
-                                    }
-                            );
-                            return dfObj;
-                        }
-                    ]]></onpreaction>
-                </button>
-                <button id="logout" type="SimpleActionButton">
-                    <label>Logout</label>
-                    <endpoint>/api/mullvad/account/logout</endpoint>
-                    <error-title>Logout error occurred</error-title>
-                    <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
-                </button>
-            </buttons>
-        </field>
-        <field>
-            <id>account_configured</id>
-            <label>Account Configured</label>
-            <!-- <readonly>true</readonly> -->
-            <!-- <hidden>true</hidden> -->
-            <type>checkbox</type>
-            <control>
-                <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action>
-                <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action>
-                <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action>
-                <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action>
-                <action on_set="1" type="button" do_state="disable">settings.account_number</action>
-                <action on_set="0" type="button" do_state="enable">settings.account_number</action>
-            </control>
-        </field>
-        <field>
-            <type>separator</type>
-        </field>
-        <field>
-            <id>account_status</id>
-            <label>Account Status</label>
-            <type>status</type>
-        </field>
-        <field>
-            <id>device_name</id>
-            <label>Device Name</label>
-            <type>info</type>
-        </field>
-        <field>
-            <id>account_paid_until</id>
-            <label>Paid Until</label>
-            <type>info</type>
-        </field>
-        <field>
-            <type>button</type>
-            <api>/api/mullvad/account/login</api>
-            <id>buy_more_credit</id>
-            <label>Buy More Credit</label>
-            <error>Error occurred executing API</error>
-            <widget>dnscryptproxy</widget>
-        </field>
-        <button icon="" label="Login" id="login_action"/>
-        <button icon="" label="Logout" id="logout_action"/>
-    </tab>
-    <tab id="preferences" description="Preferences">
-        <field>
-            <id>block_ads</id>
-            <label>Block Ads</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>block_trackers</id>
-            <label>Block Trackers</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>block_malware</id>
-            <label>Block Malware</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>block_adult_content</id>
-            <label>Block Adult Conent</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>block_gambling</id>
-            <label>Block Gambling</label>
-            <type>onoff</type>
-        </field>
-    </tab>
-    <tab id="Advanced" description="Advanced">
-        <field>
-            <id>enable_ipv6</id>
-            <label>Enable IPv6</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>tunnel_protocol</id>
-            <label>Tunnel Protocol</label>
-            <type>dropdown</type>
-        </field>
-        <field>
-            <label>WireGuard Settings</label>
-            <type>header</type>
-        </field>
-        <field>
-            <id>wireguard_port</id>
-            <label>Port</label>
-            <type>dropdown</type>
-        </field>
-        <field>
-            <id>wireguard_enable_multihop</id>
-            <label>Enable Multi-hop</label>
-            <type>onoff</type>
-        </field>
-        <field>
-            <id>wireguard_ip_version</id>
-            <label>IP Version</label>
-            <type>dropdown</type>
-        </field>
-        <field>
-            <id>wireguard_mtu</id>
-            <label>MTU</label>
-            <type>text</type>
-        </field>
-        <field>
-            <label>OpenVPN Settings</label>
-            <type>header</type>
-        </field>
-        <field>
-            <id>openvpn_transport_protocol</id>
-            <label>Transport Protocol</label>
-            <type>dropdown</type>
-        </field>
-        <field>
-            <id>openvpn_bridge_mode</id>
-            <label>Bridge Mode</label>
-            <type>dropdown</type>
-        </field>
-        <field>
-            <id>openvpn_mssfix</id>
-            <label>Mssfix</label>
-            <type>text</type>
-        </field>
-        <field>
-            <type>separator</type>
-        </field>
-        <field>
-            <id>custom_dns</id>
-            <label>Custom DNS</label>
-            <type>bootgrid</type>
-        </field>
-    </tab>
-    <tab id="About" description="About">
-        <field>
-            <id></id>
-            <label></label>
-            <type></type>
-        </field>
-    </tab>
+<form active_tab="account">
+    <model name="settings" endpoint="settings/get">          <!-- first call designates a form -->
+        <tab id="locations" description="Locations">
+            <field>
+                <id>connection_status</id>
+                <label>Status</label>
+                <type>status</type>
+            </field>
+            <field>
+                <id>location_entry</id>
+                <label>Entry Location</label>
+                <type>info</type>
+            </field>
+            <field>
+                <id>location_exit</id>
+                <label>Exit Location</label>
+                <type>info</type>
+            </field>
+            <field>
+                <id>location</id>
+                <label>Location</label>
+                <type>info</type>
+            </field>
+            <field>
+                <id>location_entry_selector</id>
+                <label>Entry Locations</label>
+                <type>bootgrid</type>
+            </field>
+            <field>
+                <id>location_exit_selector</id>
+                <label>Exit Lcoations</label>
+                <type>bootgrid</type>
+            </field>
+            <field>
+                <id>location_selector</id>
+                <label>Locations</label>
+                <type>bootgrid</type>
+            </field>
+            <button icon="" label="Login" id="login_action"/>
+            <button icon="" label="Logout" id="logout_action"/>
+        </tab>
+        <tab id="account" description="Account">
+            <field>
+                <id>account_number</id>
+                <label>Account Number</label>
+                <type>command</type>
+                <builtin>field</builtin>
+                <buttons>
+                    <button id="login">
+                        <label>Login</label>
+                        <endpoint>/api/mullvad/account/login</endpoint>
+                        <error-title>Login error occurred</error-title>
+                        <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
+                        <onpreaction><![CDATA[
+                            function (this_button) {
+                                const dfObj = new $.Deferred();
+                                // XXX This is a janky way to do this, can't reference $(this) object since it is the global object in the context in which this function is called.
+                                //console.log(this_button);
+                                //var this_button = $('button[id="btn_' + $.escapeSelector("settings.account_number_pretty") + '_' + $.escapeSelector("login") +  '_command"]');
+                                saveForm(
+                                    this_button.closest('form'),
+                                    dfObj,
+                                    this_callback_ok=
+                                        function() {
+                                            return dfObj;
+                                        },
+                                    this_callback_fail=
+                                        function(dfObj) {
+                                            this_button.find('.reload_progress').removeClass("fa fa-spinner fa-pulse");
+                                            return dfObj;
+                                        }
+                                );
+                                return dfObj;
+                            }
+                        ]]></onpreaction>
+                    </button>
+                    <button id="logout" type="SimpleActionButton">
+                        <label>Logout</label>
+                        <endpoint>/api/mullvad/account/logout</endpoint>
+                        <error-title>Logout error occurred</error-title>
+                        <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
+                    </button>
+                </buttons>
+            </field>
+            <field>
+                <id>account_configured</id>
+                <label>Account Configured</label>
+                <!-- <readonly>true</readonly> -->
+                <!-- <hidden>true</hidden> -->
+                <type>checkbox</type>
+                <control>
+                    <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action>
+                    <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action>
+                    <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action>
+                    <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action>
+                    <action on_set="1" type="button" do_state="disable">settings.account_number</action>
+                    <action on_set="0" type="button" do_state="enable">settings.account_number</action>
+                </control>
+            </field>
+            <field>
+                <type>separator</type>
+            </field>
+            <model id="account_status" name="status" endpoint="status/get">          <!-- second call (nested) designates a div within the form -->
+                <field>
+                    <id>account_status</id>
+                    <label>Account Status</label>
+                    <type>status</type>
+                </field>
+                <field>
+                    <id>device_name</id>
+                    <label>Device Name</label>
+                    <type>info</type>
+                </field>
+                <field>
+                    <id>max_wg_peers</id>
+                    <label>Max WG Peers</label>
+                    <type>info</type>
+                </field>
+                <field>
+                    <id>account_paid_until</id>
+                    <label>Paid Until</label>
+                    <type>info</type>
+                </field>
+                <field>
+                    <type>button</type>
+                    <api>/api/mullvad/account/login</api>
+                    <id>buy_more_credit</id>
+                    <label>Buy More Credit</label>
+                    <error>Error occurred executing API</error>
+                    <widget>dnscryptproxy</widget>
+                </field>
+            </model>
+            <button icon="" label="Login" id="login_action"/>
+            <button icon="" label="Logout" id="logout_action"/>
+        </tab>
+        <tab id="preferences" description="Preferences">
+            <field>
+                <id>block_ads</id>
+                <label>Block Ads</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>block_trackers</id>
+                <label>Block Trackers</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>block_malware</id>
+                <label>Block Malware</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>block_adult_content</id>
+                <label>Block Adult Conent</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>block_gambling</id>
+                <label>Block Gambling</label>
+                <type>onoff</type>
+            </field>
+        </tab>
+        <tab id="Advanced" description="Advanced">
+            <field>
+                <id>enable_ipv6</id>
+                <label>Enable IPv6</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>tunnel_protocol</id>
+                <label>Tunnel Protocol</label>
+                <type>dropdown</type>
+            </field>
+            <field>
+                <label>WireGuard Settings</label>
+                <type>header</type>
+            </field>
+            <field>
+                <id>wireguard_port</id>
+                <label>Port</label>
+                <type>dropdown</type>
+            </field>
+            <field>
+                <id>wireguard_enable_multihop</id>
+                <label>Enable Multi-hop</label>
+                <type>onoff</type>
+            </field>
+            <field>
+                <id>wireguard_ip_version</id>
+                <label>IP Version</label>
+                <type>dropdown</type>
+            </field>
+            <field>
+                <id>wireguard_mtu</id>
+                <label>MTU</label>
+                <type>text</type>
+            </field>
+            <field>
+                <label>OpenVPN Settings</label>
+                <type>header</type>
+            </field>
+            <field>
+                <id>openvpn_transport_protocol</id>
+                <label>Transport Protocol</label>
+                <type>dropdown</type>
+            </field>
+            <field>
+                <id>openvpn_bridge_mode</id>
+                <label>Bridge Mode</label>
+                <type>dropdown</type>
+            </field>
+            <field>
+                <id>openvpn_mssfix</id>
+                <label>Mssfix</label>
+                <type>text</type>
+            </field>
+            <field>
+                <type>separator</type>
+            </field>
+            <field>
+                <id>custom_dns</id>
+                <label>Custom DNS</label>
+                <type>bootgrid</type>
+            </field>
+        </tab>
+        <tab id="About" description="About">
+            <field>
+                <id></id>
+                <label></label>
+                <type></type>
+            </field>
+        </tab>
+    </model>
     <button type="group" icon="fa fa-floppy-o" label="Save Settings" id="save_actions">
         <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
         <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>

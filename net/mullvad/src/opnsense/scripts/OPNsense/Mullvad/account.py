@@ -39,6 +39,7 @@ import requests
 import subprocess
 
 result = {}
+DEBUG = False
 MULLVAD_API = 'https://api.mullvad.net'
 MULLVAD_API_ACCOUNTS = MULLVAD_API + '/www/accounts'
 MULLVAD_API_ME = MULLVAD_API + '/www/me'
@@ -51,6 +52,11 @@ https://api.mullvad.net/www/accounts/
 {
     "detail": "Method \"GET\" not allowed.",
     "code": "METHOD_NOT_ALLOWED"
+}
+
+https://api.mullvad.net/www/me/868e075e36f8b05f00aaee2e370b326d2109303165ca4a1ec413c3f2b32f6750
+{
+    "code": "NOT_FOUND"
 }
 
 https://api.mullvad.net/www/accounts/0824998250016939
@@ -210,6 +216,22 @@ Reponse:
 """
 
 
+def eprint(*args, **kwargs):
+    """
+    Function to print to stderr.
+    """
+    print(*args, file=sys.stderr, **kwargs)
+
+
+def enable_debug():
+    """
+    Function to turn on debug messaging.
+    """
+    eprint("Debugging Enabled")
+    global DEBUG
+    DEBUG = True
+
+
 def error_out(message):
     """ Error handling function.
     """
@@ -250,26 +272,47 @@ def jq(json, query):
 def api(endpoint, argument="", token=None, data=None):
     """
     This function is a wrapper for API calls.
+
+    Returns: ????
     """
     if token:
-        response = requests.get(endpoint + '/' + argument,
-                                headers={'Authorization': 'Token ' + token})
+        if DEBUG:
+            eprint('api() Token passed, setting headers.')
+        headers = {'Authorization': 'Token ' + token}
     else:
-        response = requests.get(endpoint + '/' + argument)
+        headers = None
+
+    if DEBUG:
+        eprint('api() Making API call for "%s/%s" and headers: %s' %
+               (endpoint, argument, token))
+    response = requests.get(endpoint + '/' + argument,
+                            headers=headers)
 
     if response:
-        return response.text
+        return response
     else:
-        error_out('Response from API "' + endpoint + '" was: ' + response)
+        error_out('Response from API "' + endpoint + '" was: ' + response.text)
 
 
 def mullvad_get_token(account_number):
     """
     Function to get a session token for the provided account number.
+
+    Returns string
     """
     result = api(MULLVAD_API_ACCOUNTS, account_number)
     if result:
-        return jq(result, '.auth_token')
+        #token = jq(result.text, '.auth_token')
+        if 'auth_token' in result.json():
+            token = result.json()['auth_token']
+        if DEBUG:
+            eprint('mullvad_get_token(): Token get for account number %s: %s' %
+                   (account_number, token))
+        if len(token) != 0:
+            return token
+        else:
+            error_out('No token was found in the API response: %s' %
+                      result.text)
     else:
         error_out('API result was empty')
 
@@ -278,13 +321,32 @@ def mullvad_get_wireguard_relays(token):
     """
     Function to get a list of wireguard relays
 
-    Returns json in string format
+    Returns json dict
     """
     result = api(MULLVAD_API_RELAYS_WG, token=token)
     if result:
+        if DEBUG:
+            eprint('mullvad_get_wireguard_relays(): Relays get using token: %s' %
+                   (token))
         return result
     else:
         error_out('Unable to get wireguard list')
+
+
+def mullvad_get_status(token):
+    """
+    Function to get the current account status from Mullvad.
+
+    Returns json in string format
+    """
+    result = api(MULLVAD_API_ME, token=token)
+    if result:
+        if DEBUG:
+            eprint('mullvad_get_status(): Status get using token: %s' %
+                   (token))
+        return result.json()
+    else:
+        error_out('Unable to get status from Mullvad')
 
 
 def wg_genkey():
@@ -308,19 +370,38 @@ def wg_pubkey(privkey):
         error_out('Public key generation failed.')
 
 
+def do_status():
+    """
+    This is a primary function which will return a json formated output for consumption.
+    """
+
+
+def do_login():
+    """
+    This is a primary function which will return a json formated output for consumption.
+    """
+
+
+def do_logoout():
+    """
+    This is a primary function which will return a json formated output for consumption.
+    """
+
+
 def main():
     """
     This main function will retrieve command line parameters,
     begin activies, and the print the output to stderr.
 
-    Needs to take command line arguments, two primary modes:
+    Needs to take command line arguments, three modes:
     login
     logout
+    status
 
     Login:
         This is going to be basically adding a device to the account.
-            Maybe check that the key limit hasn't been reached first. (account info, max_wg_peers)
-            Compare with the number of configured wg_peers.
+            Maybe check that the key limit hasn't been reached first. (can_add_wg_peers)
+                (Use the status function.)
                 Error out it we can't add a peer.
                 return json array:
                 "action" : 'login' # is this useful?
@@ -332,6 +413,7 @@ def main():
             Add the device using the pubkey.
             When the device is created it will appear in wg_peers array.
             Re-get account info, and grab the device name (using the pubkey as reference).
+                (Use the status function.)
             Needs to return an array (json) with:
                 "device_id" : "0f8c65c1-9df4-4db5-9c4d-7a8e86dad149",
                 "device_name" : "alert pup",
@@ -347,8 +429,38 @@ def main():
             This will use the public key.
             The private key that was use to login should be deleted.
             The device name should be cleared.
+    Status:
+        This will query the account info API given an account number, and return:
+        account_status = Paid Until <insert date>| Expired <insert date>
 
     """
+    output = {}
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--status', help='provide a status for a given account number',
+                        default='')
+    # parser.add_argument('--filter', help='filter results',
+    #                    default='')
+    # parser.add_argument('--limit', help='limit number of results',
+    #                     default='')
+    # parser.add_argument('--offset', help='begin at row number',
+    #                     default='')
+    parser.add_argument('--debug', help='enable debug logging',
+                        default=None)
+    inputargs = parser.parse_args()
+    if inputargs.debug:
+        enable_debug()
+
+    # Get the status of the account.
+    if inputargs.status != "":
+        this_account_number = inputargs.status
+        this_token = mullvad_get_token(this_account_number)
+        mullvad_status = mullvad_get_status(this_token)
+
+    if 'account' in mullvad_status:
+        output = mullvad_status['account']
+
+    # Print out the json, nicely formated.
+    print(json.dumps(output, indent=4))
 
 
 if __name__ == '__main__':

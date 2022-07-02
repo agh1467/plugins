@@ -105,7 +105,7 @@
 
 {#/*
     This function will generally be used but can be overriden with a block statement. */#}
-    mapDataToFormUI(data_get_map).done(function(){
+    mapDataToUI().done(function(){
 {#/*
     Update the fields using the tokenizer style. */#}
         formatTokenizersUI();

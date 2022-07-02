@@ -25,134 +25,35 @@
  # POSSIBILITY OF SUCH DAMAGE.
  #}
 
-
 {##
- # This function builds tabs using a different approach than the original.
- # See in Core: src/opnsense/mvc/app/views/layout_partials/base_tabs_header.volt
  #
- # Instead of walking the tree, and building each tab or subtab as it goes,
- # it uses XPath to locate all subtabs, and tabs without subtabs and then
- # builds them out afterwards. This has the potential to define them out of order
- # in the HTML depending on the sturcture of the XML, but won't affect functionality.
  #
- # I expect this method should be more efficient than the tree walk as it only selects
- # nodes that we care about, and it doesn't have to evaluate each node individually.
  #
  # @xml_data SimpleXMLObject the XML data to look through for tabs
  #}
-{%  macro build_tab_contents(xml_data, active_tab = null, this_model = null, root_form = null) %}
-{%      if xml_data %}
-{%          set subtabs = xml_data.xpath('/*/tab/subtab') %}
-{%          set tabs = xml_data.xpath('/*/tab[not(subtab)]') %}
-<?php $all_tabs = array_merge($subtabs, $tabs) ?>
-{%          for tab in all_tabs %}
-{# Use the name of the element to specify the prefix, this will be 'tab' or 'subtab' #}
-<div id="{{ tab.getName() }}_{{ tab['id'] }}"
-     class="tab-pane fade in{% if active_tab == tab['id'] %} active{% endif %}">
-{{              partial("OPNsense/Mullvad/layout_partials/base_form",[
-                    'this_part':tab,
-                    'this_model':this_model,
-                    'root_form':root_form
-                ]) }}
-</div>
-{%          endfor %}
-{%      endif %}
-{%  endmacro %}
-
-
-{##
- # This function builds box contents for each defined box in the XML. Similar
- # to tabs. Supports individual model definitions for each box with base_form.
- #
- #}
-{%  macro build_box_contents(xml_data, this_model = null, root_form = null) %}
-{%      for box_element in xml_data.box %}
-<section class="col-xs-12">
-  <div class="content-box">
-{{              partial("OPNsense/Mullvad/layout_partials/base_form",[
-                    'this_part':box_element,
-                    'this_model':this_model,
-                    'root_form':root_form
-                ]) }}
-  </div>
-</section>
-{%      endfor %}
-{%  endmacro %}
-
-
-{##
- # This macro builds a page using the form data as input.
- #
- # This is a super macro that builds pages with or without tabs, the tab
- # headers, tab contents, and the bootgrid_dialogs all at once.
- #
- # This is to save on having to put all of these commands in the main volt, and
- # to put the div definition in the right place on the page.
- #
- # this_form SimpleXMLObject from which to build the page
- #}
-
-{%  macro build_page(this_form, plugin_safe_name = null, plugin_label = null, lang = null) %}
-{%      if this_form %}
-{# Add hidden apply changes box, shown when configuration changed, but unsaved. #}
-<div class="col-xs-12" id="alt_{{ plugin_safe_name }}_apply_changes" style="display: none;">
-  <div class="alert alert-info"
-       id="alt_{{ plugin_safe_name }}_apply_changes_info"
-       style="min-height: 65px;">
-    <form method="post">
-        <button type="button"
-                id="btn_{{ plugin_safe_name }}_apply_changes"
-                class="btn btn-primary pull-right">
-            <b>Apply changes</b>
-{#          # Progress spinner to activate when applying changes. #}
-            <i id="btn_{{ plugin_safe_name }}_apply_changes_progress" class=""></i>
-        </button>
-    </form>
-    <div style="margin-top: 8px;">
-        {{ lang._('The %s configuration has been changed. You must apply the changes in order for them to take effect.')|format(plugin_label) }}
-    </div>
-  </div>
-</div>
-{# Grab the model specification now. #}
-{%      if this_form['model'] %}
-{%          set this_model = this_form['model'].__toString() %}
-{%          set root_form = true %}
-{# Set up our form DOM to house all of the settings for this form. #}
-<form id="frm_root_{{ plugin_safe_name }}"
-    data-model="{{ this_form['model']|default('') }}">
-{%      else %}
-{%          set root_form = false %}
-{%          set this_model = '' %}
-{%      endif %}
-{# Grab the active_tab specification if it exists. #}
-{%      if this_form['active_tab'] %}
-{%          set active_tab = this_form['active_tab'].__toString() %}
-{%      else %}
-{%          set active_tab = '' %}
-{%      endif %}
-{# Draw the page based on the form XML SimpleXMLObject. #}
-{%          for tab_element in this_form.tab %}
-{%              if loop.first %}
+{%  macro build_tabs_headers(xml_data, active_tab = null) %}
+{%      for tab_element in xml_data.tab %}
+{%          if loop.first %}
 {# Create unordered list for the tabs, and try to pick an active tab, only on the first loop. #}
 <ul class="nav nav-tabs" role="tablist" id="maintabs">
 {# If we have no active_tab defined, if we have no subtabs, pick self, else pick first subtab. #}
-{%                  if active_tab == '' %}
-{%                      if !(tab_element.subtab) %}
-{%                          set active_tab = tab_element['id']|default() %}
-{%                      else %}
-{%                          set active_tab = tab_element.subtab[0]['id']|default() %}
-{%                      endif %}
+{%              if active_tab == '' %}
+{%                  if !(tab_element.subtab) %}
+{%                      set active_tab = tab_element['id']|default() %}
+{%                  else %}
+{%                      set active_tab = tab_element.subtab[0]['id']|default() %}
 {%                  endif %}
 {%              endif %}
+{%          endif %}
 {# If we have subtabs, then let's accommodate them. #}
-{%              if tab_element.subtab %}
+{%          if tab_element.subtab %}
 {# We need to look forward to understand if one of our subtabs is the assigned active_tab from the form. #}
-{%                  set active_subtab = false %}
-{%                  for node in tab_element.xpath('subtab/@id') %}
-{%                      if node.__toString() == active_tab %}
-{%                          set active_subtab = true %}
-{%                      endif %}
-{%                  endfor %}
+{%              set active_subtab = false %}
+{%              for node in tab_element.xpath('subtab/@id') %}
+{%                  if node.__toString() == active_tab %}
+{%                      set active_subtab = true %}
+{%                  endif %}
+{%              endfor %}
 {# Since we have a subtab, we need to accommodate it with an appropriate dropdown button to display the menu. #}
 {# If one of our subtabs is active_tab, then we need to set this tab as active also. #}
 <li role="presentation" class="dropdown{% if active_subtab == true %} active{% endif %}">
@@ -169,7 +70,7 @@
   </a>
 {# The onclick sets the tab to be selected when the tab itself is clicked. #}
 {# If one is defined in the XML, then use that, else pick the first subtab. #}
-{%                  set tab_onclick = tab_element['on_click']|default(tab_element.subtab[0]['id']) %}
+{%              set tab_onclick = tab_element['on_click']|default(tab_element.subtab[0]['id']) %}
   <a data-toggle="tab"
      onclick="$('#subtab_item_{{ tab_onclick }}').click();"
      class="visible-lg-inline-block
@@ -182,13 +83,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 {# Now we specify each subtab, iterate through the subtabs for this tab if present. #}
-{%                  for subtab_element in tab_element.subtab %}
-{%                      if loop.first %}
+{%              for subtab_element in tab_element.subtab %}
+{%                  if loop.first %}
 {# Assume the first subtab should be active if no active_tab is set. #}
-{%                          if active_tab == '' %}
-{%                              set active_tab = subtab_element['id']|default() %}
-{%                          endif %}
+{%                      if active_tab == '' %}
+{%                          set active_tab = subtab_element['id']|default() %}
 {%                      endif %}
+{%                  endif %}
 <li class="{% if active_tab == subtab_element['id'] %}active{% endif %}">
   <a data-toggle="tab"
      id="subtab_item_{{ subtab_element['id'] }}"
@@ -198,10 +99,10 @@
 {%                      endif %}>{{ subtab_element['description'] }}
   </a>
 </li>
-{%                  endfor %}
+{%              endfor %}
     </ul>
   </li>
-{%              else %} {# No subtabs, standard tab, no dropdown#}
+{%          else %} {# No subtabs, standard tab, no dropdown#}
 <li {% if active_tab == tab_element['id'] %} class="active" {% endif %}>
   <a data-toggle="tab"
      id="tab_header_{{ tab_element['id'] }}"
@@ -212,58 +113,172 @@
     <b>{{ tab_element['description'] }}</b>
   </a>
 </li>
-{%              endif %}
-{%              if loop.last %}
+{%          endif %}
+{%          if loop.last %}
 {# Close the unordered list only on the last loop. #}
 </ul>
-{%              endif %}
-{%          endfor %}
+{%          endif %}
+{%      endfor %}
+{% endmacro %}
 
-{# Build Tab Contents, if we have tabs. #}
-{%          if this_form.tab %}
+
+{##
+ # This function builds tabs using a different approach than the original.
+ # See in Core: src/opnsense/mvc/app/views/layout_partials/base_tabs_header.volt
+ #
+ # Instead of walking the tree, and building each tab or subtab as it goes,
+ # it uses XPath to locate all subtabs, and tabs without subtabs and then
+ # builds them out afterwards. This has the potential to define them out of order
+ # in the HTML depending on the sturcture of the XML, but won't affect functionality.
+ #
+ # I expect this method should be more efficient than the tree walk as it only selects
+ # nodes that we care about, and it doesn't have to evaluate each node individually.
+ #
+ # @xml_data SimpleXMLObject the XML data to look through for tabs
+ #}
+{%  macro build_tab_contents(xml_data, active_tab = null, this_model_name = null, this_model_endpoint = null, root_form = null) %}
 <div class="tab-content content-box tab-content">
-{{              build_tab_contents(this_form, active_tab, this_model, root_form) }}
-</div>
-{%          endif %}
-
-{%          if this_form.box %}
-{# Build any boxes, if we have any. #}
-{{              build_box_contents(this_form, this_model, root_form) }}
-{%          endif %}
-
-{# Build any fields #}
-{%          if this_form.field %}
-{#  Since we have only fields, call the partial directly,
-    we'll just put them in one box for now. It looks OK.
-    Supports model definition via the room XML element. #}
-<div class="content-box">
+{%      if xml_data %}
+{%          set subtabs = xml_data.xpath('tab/subtab') %}
+{%          set tabs = xml_data.xpath('tab[not(subtab)]') %}
+<?php $all_tabs = array_merge($subtabs, $tabs) ?>
+{%          for tab in all_tabs %}
+{# Use the name of the element to specify the prefix, this will be 'tab' or 'subtab' #}
+<div id="{{ tab.getName() }}_{{ tab['id'] }}"
+     class="tab-pane fade in{% if active_tab == tab['id'] %} active{% endif %}">
 {{              partial("OPNsense/Mullvad/layout_partials/base_form",[
-                    'this_part':this_form,
-                    'this_model':this_model,
+                    'this_part':tab,
+                    'this_model_name':this_model_name,
+                    'this_model_endpoint':this_model_endpoint,
                     'root_form':root_form
                 ]) }}
 </div>
+{%          endfor %}
+{%      endif %}
+</div>
+{%  endmacro %}
+
+
+{##
+ # This function builds box contents for each defined box in the XML. Similar
+ # to tabs. Supports individual model definitions for each box with base_form.
+ #
+ #}
+{%  macro build_box_contents(xml_data, this_model_name = null, this_model_endpoint = null, root_form = null) %}
+{%      for box_element in xml_data.box %}
+<section class="col-xs-12">
+  <div class="content-box">
+{{              partial("OPNsense/Mullvad/layout_partials/base_form",[
+                    'this_part':box_element,
+                    'this_model_name':this_model_name,
+                    'this_model_endpoint':this_model_endpoint,
+                    'root_form':root_form
+                ]) }}
+  </div>
+</section>
+{%      endfor %}
+{%  endmacro %}
+
+{##
+ # This function builds box contents for each defined box in the XML. Similar
+ # to tabs. Supports individual model definitions for each box with base_form.
+ #
+ #}
+{%  macro build_field_contents(xml_data, this_model_name = null, this_model_endpoint = null, root_form = null) %}
+{%      if xml_node.field %}
+{#  Since we have only fields, call the partial directly,
+    we'll just put them in one box for now. It looks OK.
+    Supports model definition via the root XML element. #}
+<div class="content-box">
+{{              partial("OPNsense/Mullvad/layout_partials/base_form",[
+                    'this_part':xml_data,
+                    'this_model_name':this_model_name,
+                    'this_model_endpoint':this_model_endpoint,
+                    'root_form':root_form
+                ]) }}
+</div>
+{%      endif %}
+{%  endmacro %}
+
+
+{##
+ # This macro builds a page using the form data as input.
+ #
+ # This is a super macro that builds pages with or without tabs, the tab
+ # headers, tab contents, and the bootgrid_dialogs all at once.
+ #
+ # This is to save on having to put all of these commands in the main volt, and
+ # to put the div definition in the right place on the page.
+ #
+ # this_page SimpleXMLObject from which to build the page
+ #}
+
+{%  macro build_page(this_page, plugin_safe_name = null, plugin_label = null, lang = null) %}
+{%      if this_page %}
+{# Include a hidden apply changes field which becomes visible when the configuration changes without applying. #}
+{% include "OPNsense/Mullvad/layout_partials/headers/apply_changes.volt" %}
+{# If we're dealing with only a single root model, then we only need one form, else multiple forms. #}
+{# If there is no model definition, then it will fall through to the for loop where it will not execute any loops. #}
+{# The expectation here is that there should be at least one model definition, and no definitions will produce nothing. #}
+{# XXX Maybe it's acceptible to build without a model? Not all fields technically require model definitions, or are input fields. #}
+{%      set model_count = this_page.xpath('model')|length %}
+{%      if model_count == 1 %}
+{# Set up a root form DOM to house all of the fields for this root model. #}
+{%          if this_page.model['name'] and this_page.model['endpoint'] %}
+<form id="frm_root_{{ plugin_safe_name }}"
+    data-model-name="{{ this_page.model['name']|default('') }}"
+    data-model-endpoint="{{ this_page.model['endpoint']|default('') }}">
+{%              set xml_nodes = this_page.model %}
+{%              set root_form = true %}
 {%          endif %}
-{%          if root_form == true %}
-{# Close out the form if one was opened due to a model defiition at the XML root node.
-   We need to draw our dialogs, they have their own forms and can't be nested. #}
+{%      else %}
+{# We have multiple or no models defined, so we can't have a root form. #}
+{# Assume no model specification at this time. #}
+{%          set xml_nodes = this_page %}
+{%          set root_form = false %}
+{%      endif %}
+{# Grab the active_tab specification if it exists. #}
+{%      if this_page['active_tab'] %}
+{%          set active_tab = this_page['active_tab'].__toString() %}
+{%      else %}
+{%          set active_tab = '' %}
+{%      endif %}
+
+{%      for xml_node in xml_nodes %}
+{# If we're a model, then go ahead and set the model for this model node. #}
+{%          if xml_node.getName() == 'model' %}
+{%              set this_model_name = xml_node['name']|default('') %}
+{%              set this_model_endpoint = xml_node['endpoint']|default('') %}
+{%          endif %}
+{# Build tab headers for tabs and subtabs #}
+{{          build_tabs_headers(xml_node, active_tab) }}
+{# Build Tab Contents, if we have tabs. #}
+{{          build_tab_contents(xml_node, active_tab, this_model_name, this_model_endpoint, root_form) }}
+{# Build any boxes, if we have any. #}
+{{          build_box_contents(xml_node, this_model_name, this_model_endpoint, root_form) }}
+{# Build any fields, if we just have fields. #}
+{{          build_field_contents(xml_node, this_model_name, this_model_endpoint, root_form) }}
+{%      endfor %}
+{# Close out the form if root model was defined..
+s   We need to draw our dialogs, they have their own forms and can't be nested. #}
+{%      if root_form == true %}
 </form>
-{%          endif %}
+{%      endif %}
 
 {# Build our dialogs for any bootgrids now. #}
-{%          for bootgrid_field in this_form.xpath('//*/field[type="bootgrid"][dialog]') %}
-{{              partial("OPNsense/Mullvad/layout_partials/base_dialog",[
+{%      for bootgrid_field in this_page.xpath('//*/field[type="bootgrid"][dialog]') %}
+{{          partial("OPNsense/Mullvad/layout_partials/base_dialog",[
                     'this_grid':bootgrid_field
                 ]) }}
-{%          endfor %}
+{%      endfor %}
 
 {#  # Conditionally display buttons at the bottom of the page. #}
-{%          if this_form.button %}
+{%          if this_page.button %}
 <section class="page-content-main">
 {# Alert class used to get padding to look good.
    Maybe there is another class that can be used. #}
   <div class="alert alert-info" role="alert">
-{%              for button_element in this_form.button %}
+{%              for button_element in this_page.button %}
 {%                  if button_element['type']|default('primary') in ['primary', 'group' ] %} {# Assume primary if not defined #}
 {%                      if button_element['type']|default('') == 'primary' and
                            button_element['action'] %}

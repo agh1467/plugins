@@ -302,6 +302,44 @@
     }
 
 
+    /**
+     * standard data mapper to map json request data to forms on this page
+     * @param data_get_map named array containing form names and source url's to get data from {'frm_example':"/api/example/settings/get"};
+     * @param server_params parameters to send to server
+     * @return promise object, resolves when all are loaded
+     */
+    function mapDataToUI(server_params) {
+        const dfObj = new $.Deferred();
+
+        // calculate number of items for deferred object to resolve
+        let elements = $('[data-model-name][data-model-endpoint]');
+
+        if (server_params === undefined) {
+            server_params = {};
+        }
+
+        const collected_data = {};
+        elements.each(function(index) {
+            let model_name = $( this ).data('model-name');
+            let model_endpoint = "/api/{{ plugin_api_name }}/" + $( this ).data('model-endpoint');
+            let element = $(this);
+            ajaxGet(model_endpoint,server_params , function(data, status) {
+                if (status === "success") {
+                        // related form found, load data
+                        setFormData(element.attr('id'), data);
+                        collected_data[element.attr('id')] = data;
+                }
+                if (index === elements.length - 1) {
+                    dfObj.resolve(collected_data);
+                }
+            });
+        });
+
+        return dfObj;
+    }
+
+
+
 {#/*
     # Save event handlers for all defined forms
     # This uses jquery selector to match all button elements with id starting with "save_frm_" */#}
