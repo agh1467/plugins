@@ -1,5 +1,5 @@
 <form active_tab="account">
-    <model name="settings" endpoint="settings/get">          <!-- first call designates a form -->
+    <model name="settings" endpoint="settings/get" type="input">          <!-- first call designates a form -->
         <tab id="locations" description="Locations">
             <field>
                 <id>connection_status</id>
@@ -89,47 +89,43 @@
                 <!-- <hidden>true</hidden> -->
                 <type>checkbox</type>
                 <control>
-                    <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action>
-                    <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action>
-                    <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action>
-                    <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action>
-                    <action on_set="1" type="button" do_state="disable">settings.account_number</action>
-                    <action on_set="0" type="button" do_state="enable">settings.account_number</action>
+                    <!-- <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action> -->
+                    <!-- <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action> -->
+                    <!-- <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action> -->
+                    <!-- <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action> -->
+                    <!-- <action on_set="1" type="button" do_state="disable">settings.account_number</action> -->
+                    <!-- <action on_set="0" type="button" do_state="enable">settings.account_number</action> -->
                 </control>
+            </field>
+            <field>
+                <id>device_name</id>
+                <label>Device Name</label>
+                <type>info</type>
             </field>
             <field>
                 <type>separator</type>
             </field>
-            <model id="account_status" name="status" endpoint="status/get">          <!-- second call (nested) designates a div within the form -->
+            <model id="account_status" name="status" endpoint="status/get" type="output">          <!-- second call (nested) designates a div within the form -->
                 <field>
                     <id>account_status</id>
                     <label>Account Status</label>
                     <type>status</type>
-                </field>
-                <field>
-                    <id>device_name</id>
-                    <label>Device Name</label>
-                    <type>info</type>
-                </field>
-                <field>
-                    <id>max_wg_peers</id>
-                    <label>Max WG Peers</label>
-                    <type>info</type>
-                </field>
-                <field>
-                    <id>account_paid_until</id>
-                    <label>Paid Until</label>
-                    <type>info</type>
-                </field>
-                <field>
-                    <type>button</type>
-                    <api>/api/mullvad/account/login</api>
-                    <id>buy_more_credit</id>
-                    <label>Buy More Credit</label>
-                    <error>Error occurred executing API</error>
-                    <widget>dnscryptproxy</widget>
+                    <style>label-opnsense</style>
+                    <labels>
+                        <success match='regex'>^Paid.*</success>
+                        <danger match='regex'>^Expired.*</danger>
+                        <primary match='regex'>^Unknown.*</primary>
+                    </labels>
                 </field>
             </model>
+            <field>
+                <type>button</type>
+                <api>/api/mullvad/account/login</api>
+                <id>buy_more_credit</id>
+                <label>Buy More Credit</label>
+                <error>Error occurred executing API</error>
+                <widget>dnscryptproxy</widget>
+            </field>
             <button icon="" label="Login" id="login_action"/>
             <button icon="" label="Logout" id="logout_action"/>
         </tab>

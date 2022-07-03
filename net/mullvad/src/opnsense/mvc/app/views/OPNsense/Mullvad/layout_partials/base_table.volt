@@ -101,11 +101,13 @@
             <col class="col-md-4"/>
             <col class="col-md-5"/>
         </colgroup>
+        <thead>
             <tr>
                 <th colspan="3"> {# This header should span all three columns #}
                     <br> {# This is just an empty header to create a visual space #}
                 </th>
             </tr>
+        </thead>
         <tbody>
 {%          elseif child_node.type == 'bootgrid' %}
 {# We hijack the type field for the bootgrid so we can inject it
@@ -168,10 +170,17 @@
         </tbody>
     </table>
 </div>
+{%          if child_node['type']|default('input') == 'input' and
+               root_form|default(true) != true %}
+<form id="frm_root_{{ plugin_safe_name }}"
+    data-model-name="{{ child_node['name']|default('') }}"
+    data-model-endpoint="{{ child_node['endpoint']|default('') }}">
+{%          elseif child_node['type'] == 'output' %}
 <div id="mdl_{{ child_node['id'] }}"
      class="table-responsive"
      data-model-name="{{ child_node['name'] }}"
      data-model-endpoint="{{ child_node['endpoint'] }}">
+{%          endif %}
     <table class="table table-striped table-condensed">
         <colgroup>
             <col class="col-md-3"/>
@@ -184,7 +193,12 @@
                     'this_model_endpoint':child_node['endpoint']
                 ]) }}
     </table>
+{%          if child_node['type']|default('input') == 'input' and
+               root_form|default(true) != true %}
+</form>
+{%          elseif child_node['type'] == 'output' %}
 </div>
+{%          endif %}
 <div class="table-responsive">
     <table class="table table-striped table-condensed">
         <colgroup>

@@ -73,11 +73,12 @@
     <tbody>
 {# Draw the help row if we have to draw the help or advanced switch. #}
 {%  if advanced or help %}
-{% include "OPNsense/Mullvad/layout_partials/rows/help_or_advanced.volt" %}
+{%      include "OPNsense/Mullvad/layout_partials/rows/help_or_advanced.volt" %}
 {%  endif %}
 {# Draw the field table with fields for this node. #}
 {{              partial("OPNsense/Mullvad/layout_partials/base_table",[
                     'this_part':this_part,
+                    'root_form':root_form,
                     'this_model_name':this_model_name,
                     'this_model_endpoint':this_model_endpoint
                 ]) }}

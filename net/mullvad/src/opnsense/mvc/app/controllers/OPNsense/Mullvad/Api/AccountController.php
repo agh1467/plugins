@@ -31,8 +31,10 @@ namespace OPNsense\Mullvad\Api;
 
 use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
-use OPNsense\Dnscryptproxy\Plugin;
+use OPNsense\Core\Config;
+use OPNsense\Mullvad\Plugin;
 use OPNsense\Base\ApiMutableModelControllerBase;
+use OPNsense\Mullvad\Settings;
 
 /**
  * This Controller extends ApiControllerBase to create API endpoints
@@ -165,15 +167,79 @@ class AccountController extends ApiMutableModelControllerBase
             $account_number = $this->getModel()->account_number->getNodeData('clean');
             // We won't be able to do anything without an account number.
             if (!empty($account_number)) {
+                $plugin = new Plugin();
                 $backend = new Backend();
-                $result = json_decode($backend->configdRun($plugin->configd_name . ' login ' . $account_number));
+                $login_result = trim($backend->configdRun($plugin->getConfigdName() . ' login ' . $account_number));
+                ///
+                ob_start();
+                var_dump($login_result);
+                $ob_var_dump = ob_get_clean();
+                file_put_contents("/tmp/php_debug.txt", strip_tags(str_replace("=>\n", "=>", $ob_var_dump)));
+                ///
+                $login_result = json_decode($login_result, true);
+
                 if (json_last_error() === JSON_ERROR_NONE) {
                     // JSON is valid
-                    if ($result['result'] == 'success') {
-
-                    } else {
-                        // Do nothing?
+                    /*
+                    {
+                        'device_name': 'winged buffalo',
+                        'ipv4_address': '10.67.122.255/32',
+                        'ipv6_address': 'fc00:bbbb:bbbb:bb01::4:7afe/128',
+                        'private_key': 'SDd3s/22ixkhCMNjewibkPUE/Rj17JoS8dmfxsx9Y0o=',
+                        'public_key': 'ccHOGyAuDW7sgaNa8o6UyiLFr2M52RjkZWwnMLUqFi4=',
+                        'result': 'login'
                     }
+                    */
+                    if (array_key_exists('result', $login_result)) {
+                        if ($login_result['result'] == 'success') {
+                            /// XXX save to model procedure, see if this can be safely functionalized.
+                            // Need to pass in the model
+                            // The array
+
+                            // Create an array for the settings that we want to save.
+                            $data = array();
+                            $data['device_name'] = $login_result['device_name'];
+                            $data['ipv4_address'] = $login_result['ipv4_address'];
+                            $data['ipv6_address'] = $login_result['ipv6_address'];
+                            $data['private_key'] = $login_result['private_key'];
+                            $data['public_key'] = $login_result['public_key'];
+                            $data['account_configured'] = "1";
+
+                            $mdl = new Settings();
+                            $mdl->setNodes($data);
+
+                            // perform validation
+                            $valMsgs = $mdl->performValidation();
+                            foreach ($valMsgs as $field => $msg) {
+                                if (!array_key_exists("validations", $result)) {
+                                    $result["validations"] = array();
+                                }
+                                $result["validations"]["settings.".$msg->getField()] = $msg->getMessage();
+                            }
+
+                            // serialize model to config and save
+                            if ($valMsgs->count() == 0) {
+                                $mdl->serializeToConfig();
+                                Config::getInstance()->save();
+                                $result['result'] = "saved";
+                            }
+                            // Don't need this, as it forces a popup.
+                            //if (array_key_exists('result', $result)) {
+                            //    if ($result['result'] == 'saved') {
+                            //        $result['status'] = gettext('Login successful, and configured.');
+                            //    }
+                            //}
+                        } else {
+                            $result['status'] = gettext('Failure performing login.');
+                            $result['result'] = 'failed';
+                        }
+                    } else {
+                        $result['status'] = gettext('Failure performing login.');
+                        $result['result'] = 'failed';
+                    }
+                } else {
+                    $result['status'] = gettext('Error encountered reading JSON from backend.');
+                    $result['result'] = 'failed';
                 }
             // Need to check that the result is good, look for 'result' == 'success'
             // If failed, then reflect hat in a return.
@@ -203,10 +269,12 @@ class AccountController extends ApiMutableModelControllerBase
             */
 
             } else {
-                $result = array('result' => 'failed', 'status' => gettext('No valid account number in config.'));
+                $result['status'] = gettext('No valid account number in config.');
+                $result['result'] = 'failed';
             }
         } else {
-            $result = array("status" => 'failed', 'status' => gettext('Function must be called via HTTP POST.'));
+            $result['status'] = gettext('Function must be called via HTTP POST.');
+            $result['result'] = 'failed';
         }
         //array ("status" => 'ok', 'account_number' => $account_number);
         return $result;

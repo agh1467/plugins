@@ -185,7 +185,7 @@
  #
  #}
 {%  macro build_field_contents(xml_data, this_model_name = null, this_model_endpoint = null, root_form = null) %}
-{%      if xml_node.field %}
+{%      if xml_data.field %}
 {#  Since we have only fields, call the partial directly,
     we'll just put them in one box for now. It looks OK.
     Supports model definition via the root XML element. #}
@@ -224,12 +224,20 @@
 {%      set model_count = this_page.xpath('model')|length %}
 {%      if model_count == 1 %}
 {# Set up a root form DOM to house all of the fields for this root model. #}
-{%          if this_page.model['name'] and this_page.model['endpoint'] %}
+{%          if this_page.model['name'] and
+               this_page.model['endpoint'] %}
+{%              if this_page.model['type']|default('input') == 'input' %}
 <form id="frm_root_{{ plugin_safe_name }}"
     data-model-name="{{ this_page.model['name']|default('') }}"
     data-model-endpoint="{{ this_page.model['endpoint']|default('') }}">
+{%                  set root_form = true %}
+{%              elseif this_page.model['type'] == 'output' %}
+<div id="mdl_{{ child_node['id'] }}"
+     data-model-name="{{ child_node['name'] }}"
+     data-model-endpoint="{{ child_node['endpoint'] }}">
+{%                  set root_div = true %}
+{%              endif %}
 {%              set xml_nodes = this_page.model %}
-{%              set root_form = true %}
 {%          endif %}
 {%      else %}
 {# We have multiple or no models defined, so we can't have a root form. #}
@@ -263,6 +271,8 @@
 s   We need to draw our dialogs, they have their own forms and can't be nested. #}
 {%      if root_form == true %}
 </form>
+{%      elseif root_div|default(false) == true %}
+</div>
 {%      endif %}
 
 {# Build our dialogs for any bootgrids now. #}
@@ -350,18 +360,17 @@ s   We need to draw our dialogs, they have their own forms and can't be nested. 
 {#      This whole structure is designed to arbitrate between input
         being the form data with all the tabs/subtabs/boxes, and just
         tabs/subtabs/boxes. It's a very roundabout approach. #}
-{# Need to figure out the model specifications,
-   it's crude, but it's a way to keep model/field relationship intact. #}
 {# I'd much rather just xpath the fields. #}
-{%      if this_node['model'] %}
-{%          set this_model = this_node['model'].__toString() %}
+{%      if this_node.getName() == 'model' %}
+{# This _should_ be locally scoped to the functino. #}
+{%          set this_model = this_node['name'].__toString() %}
 {%      endif %}
 {# If we're not looking at fields, then we need to recurse. #}
-{%      if not this_node.field %}
-{%          for node in this_node %}
-{{              build_attachments(node, lang, plugin_api_name, this_model) }}
-{%          endfor %}
-{%      endif %}
+{%      for node in this_node.children() %}
+{%          if node.getName() in ['model', 'tab', 'subtab'] %}
+{{                  build_attachments(node, lang, plugin_api_name, this_model) }}
+{%          endif %}
+{%      endfor %}
 {# Getting here means that this_node has a field node.
    Now we're really to loop through fields. #}
 {%      for field in this_node.field %}
@@ -924,7 +933,11 @@ s   We need to draw our dialogs, they have their own forms and can't be nested. 
         if (field_value != "") {
 {%              if field.labels %}
 {%                  for this_label in field.labels.children() %}
-             if (field_value == "{{ this_label.__toString() }}") {
+{%                      if this_label['match'] == 'regex' %}
+            if (field_value.match(new RegExp('{{ this_label.__toString() }}'))) {
+{%                      else %}
+            if (field_value == "{{ this_label.__toString() }}") {
+{%                      endif %}
                 $(this).addClass("label-{{ this_label.getName() }}")
             }
 {%                  endfor %}

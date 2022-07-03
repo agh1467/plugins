@@ -9,7 +9,11 @@
         <location type="TextField"/>
         <account_number type=".\MullvadAccountField"/>
         <account_configured type="BooleanField"/>
-        <device_name type="BooleanField"/><!--might not need-->
+        <device_name type="TextField"/>
+        <ipv4_address type="NetworkField"/>
+        <ipv6_address type="NetworkField"/>
+        <private_key type="TextField"/>
+        <public_key type="TextField"/>
         <block_ads type="BooleanField"/>
         <block_trackers type="BooleanField"/>
         <block_malware type="BooleanField"/>

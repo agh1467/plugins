@@ -58,40 +58,44 @@
                 formid=this_button.closest('form').attr("id"),
                 callback_ok=
                     function(data){
-                        if (
-                            (data['result'].toLowerCase().trim() != 'saved') &&
-                            data['status']
-                            ) {
-                            BootstrapDialog.show({
-                                type: BootstrapDialog.TYPE_WARNING,
-                                title: this_button.data('error-title'),
-                                message: data['status'],
-                                draggable: true
-                            });
-                            clearButton(this_button);
-                        } else {
-                            ajaxCall(
-                                url="/api/mullvad/account/login",
-                                sendData={},
-                                callback=
-{#/* These callbacks can probably be moved into named functions. */#}
-                                    function(data,status) {
-                                        if (
-                                            (status != "success" || data['status'].toLowerCase().trim() != 'ok') &&
-                                            data['status']
-                                            ) {
-                                            BootstrapDialog.show({
-                                                type: BootstrapDialog.TYPE_WARNING,
-                                                title: this_button.data('error-title'),
-                                                message: data['status_msg'] ? data['status_msg'] : data['status'],
-                                                draggable: true
-                                            });
-                                        } else {
-                                            refreshFields();
+                        if (data != undefined) {
+                            if (
+                                (data['result'].toLowerCase().trim() != 'saved') &&
+                                data['status']
+                                ) {
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_WARNING,
+                                    title: this_button.data('error-title'),
+                                    message: data['status'],
+                                    draggable: true
+                                });
+                                clearButton(this_button);
+                            } else {
+                                ajaxCall(
+                                    url="/api/mullvad/account/login",
+                                    sendData={},
+                                    callback=
+    {#/* These callbacks can probably be moved into named functions. */#}
+                                        function(data,status) {
+                                            if (data != undefined) {
+                                                if (
+                                                    (status != "success" || ('status' in data && data['status'].toLowerCase().trim() != 'ok')) &&
+                                                    data['status']
+                                                    ) {
+                                                    BootstrapDialog.show({
+                                                        type: BootstrapDialog.TYPE_WARNING,
+                                                        title: this_button.data('error-title'),
+                                                        message: data['status_msg'] ? data['status_msg'] : data['status'],
+                                                        draggable: true
+                                                    });
+                                                } else {
+                                                    refreshFields();
+                                                }
+                                                clearButton(this_button);
+                                            }
                                         }
-                                        clearButton(this_button);
-                                    }
-                            );
+                                );
+                            }
                         }
                     },
                 false,

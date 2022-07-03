@@ -62,7 +62,7 @@ class Status
     /**
      * @var int execute configd command only when file is older then TTL (seconds)
      */
-    private $internalConfigdPopulateTTL = 60;
+    private $internalConfigdPopulateTTL = 600;
 
 
     /**

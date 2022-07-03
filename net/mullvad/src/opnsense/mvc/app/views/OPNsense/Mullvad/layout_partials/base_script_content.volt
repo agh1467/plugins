@@ -288,7 +288,7 @@
     function refreshFields(){
 {#/*
     Perform an update and map the data to the form. */#}
-        mapDataToFormUI(data_get_map).done(function(){
+        mapDataToUI().done(function(){
 {#/*
     Update the fields using the tokenizer style. */#}
             formatTokenizersUI();
