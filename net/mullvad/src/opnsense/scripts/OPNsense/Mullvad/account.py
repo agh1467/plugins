@@ -45,7 +45,8 @@ MULLVAD_API = 'https://api.mullvad.net'
 MULLVAD_API_ACCOUNTS = MULLVAD_API + '/www/accounts'
 MULLVAD_API_ME = MULLVAD_API + '/www/me'
 MULLVAD_API_RELAYS_WG = MULLVAD_API + '/www/relays/wireguard'
-MULLVAD_API_WG_PEERS_ADD = MULLVAD_API + '/www/wg-pubkeys/add'
+MULLVAD_API_WG_PEER_ADD = MULLVAD_API + '/www/wg-pubkeys/add'
+MULLVAD_API_WG_PEER_REVOKE = MULLVAD_API + '/www/wg-pubkeys/revoke'
 
 """
 API Samples
@@ -197,13 +198,15 @@ Response:
 
 Revoke wg device:
 curl 'https://api.mullvad.net/www/wg-pubkeys/revoke/'
-    -X POST -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0'
+    -X POST
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0'
     -H 'Accept: application/json, text/plain, */*'
     -H 'Accept-Language: en-US'
     -H 'Accept-Encoding: gzip, deflate, br'
     -H 'Content-Type: application/json'
     -H 'Authorization: Token 91e08d969b20da8026b31a2571bf10b97ed22d34a92b38b1ea7fad91f5e72738'
-    -H 'Origin: https://mullvad.net' -H 'DNT: 1'
+    -H 'Origin: https://mullvad.net'
+    -H 'DNT: 1'
     -H 'Connection: keep-alive'
     -H 'Sec-Fetch-Dest: empty'
     -H 'Sec-Fetch-Mode: cors'
@@ -239,7 +242,7 @@ def enable_debug():
 def error_out(message):
     """ Error handling function.
     """
-    result = [{'status': message, 'result': "failed"}]
+    result = {'status': message, 'result': "failed"}
     print(json.dumps(result, indent=4))
     sys.exit()
 
@@ -260,9 +263,9 @@ def wg(cmd, stdin=''):
         error_out('Error occurred during execution: %s' %
                   e)
     if DEBUG:
-        eprint('stdout: %s' % result.stdout)
-        eprint('stderr: %s' % result.stderr)
-        eprint('wg() Output from jq: %s' % result)
+        eprint('wg(): stdout: %s' % result.stdout)
+        eprint('wg(): stderr: %s' % result.stderr)
+        eprint('wg(): Output from wg: %s' % result)
     return result.stdout.strip("\n")
 
 
@@ -409,7 +412,7 @@ def mullvad_add_wg_peer(pubkey, token):
         error_out('Public key is required, but not provided in API call.')
 
     headers = {'Content-type': 'application/json'}
-    result = api(method='POST', endpoint=MULLVAD_API_WG_PEERS_ADD,
+    result = api(method='POST', endpoint=MULLVAD_API_WG_PEER_ADD,
                  token=token, headers=headers, data=data)
 
     if 'key' in result.json():
@@ -422,6 +425,61 @@ def mullvad_add_wg_peer(pubkey, token):
             error_out('Unable to add WireGuard peer: %s' % result.text)
     else:
         error_out('Unable to add WireGuard peer: %s' % result.text)
+
+
+def mullvad_exist_wg_peer(json_status, pubkey):
+    """
+    Function to check if a wg peer exists in a given json (string).
+    """
+    if DEBUG:
+        eprint('mullvad_exist_wg_peer(): Checking if wg peer exists with public key: %s' % pubkey)
+    jq_get_peer = '.wg_peers | .[] | select( .key.public=="%s")' % pubkey
+    wg_peer = json.loads(
+        jq(json.dumps(json_status), jq_get_peer))
+    if len(wg_peer) != 0:
+        if DEBUG:
+            eprint('mullvad_exist_wg_peer(): Matching peer found for: %s' % pubkey)
+        return True
+    else:
+        if DEBUG:
+            eprint('mullvad_exist_wg_peer(): No matching peer found for: %s' % pubkey)
+        return False
+
+
+def mullvad_revoke_wg_peer(token, pubkey):
+    """
+    Function to revoke a wireguard peer.
+    """
+    if pubkey:
+        data = '{"pubkey": "%s"}' % pubkey
+        if DEBUG:
+            eprint('mullvad_add_wg_peer(): Public key provided, data set to: %s' %
+                   data)
+    else:
+        error_out('mullvad_add_wg_peer(): Public key is required, but not provided in API call.')
+
+    headers = {'Content-type': 'application/json'}
+    result = api(method='POST', endpoint=MULLVAD_API_WG_PEER_REVOKE,
+                 token=token, headers=headers, data=data)
+
+    if result.status_code != 204:
+        error_out('Unable to confirm peer revoke: %s' % result.text)
+
+
+def mullvad_get_wg_peer(json_status, pubkey):
+    """
+    Function to get wireguard peer info given a json (string), and public key.
+    """
+    if DEBUG:
+        eprint('mullvad_get_wg_peer(): Checking for peer with pubkey %s in : %s' %
+               (pubkey, json_status))
+    jq_get_peer = '.wg_peers | .[] | select( .key.public=="%s")' % pubkey
+    jq_output = jq(json.dumps(json_status), jq_get_peer)
+    wg_peer = json.loads(jq_output)
+    if len(wg_peer) > 0:
+        return wg_peer
+    else:
+        error_out('mullvad_get_wg_peer(): peer not found in jq output: %s' % jq_output)
 
 
 def wg_genkey():
@@ -489,7 +547,7 @@ def do_status(account_number):
         return result
 
 
-def do_login(account_number):
+def do_login(account_number, pubkey=''):
     """
     This is a primary function which will return a json formated output for consumption.
         This is going to be basically adding a device to the account.
@@ -508,39 +566,53 @@ def do_login(account_number):
     """
     result = {}
     token = mullvad_get_token(account_number)
-    status_output1 = mullvad_get_status(token)
-    if ('can_add_wg_peers' in status_output1):
-        if status_output1['can_add_wg_peers'] == True:
+    status_output_pre = mullvad_get_status(token)
+    if ('can_add_wg_peers' in status_output_pre):
+        # Check that the pubkey isn't in use first, if so error out.
+        if pubkey != '':
+            if mullvad_exist_wg_peer(status_output_pre, pubkey):
+                error_out(
+                    'Matching wireguard peer found using public key: %s' % pubkey)
+
+        # Cehck that we able to add peers.
+        if status_output_pre['can_add_wg_peers'] == True:
             # We're good to add a peer, so let's prep for that.
             privkey = wg_genkey()
             pubkey = wg_pubkey(privkey)
             add_wg_peer = mullvad_add_wg_peer(pubkey, token)
             if add_wg_peer:
-                status_output2 = mullvad_get_status(token)
-                jq_get_peer = '.wg_peers | .[] | select( .key.public=="%s")' % pubkey
-                wg_peer = json.loads(
-                    jq(json.dumps(status_output2), jq_get_peer))
-                if len(wg_peer) == 0:
-                    error_out('No output from jq.')
+                status_output_post = mullvad_get_status(token)
+                if mullvad_exist_wg_peer(status_output_post, pubkey):
+                    wg_peer = mullvad_get_wg_peer(
+                        status_output_post, pubkey)
+                    if wg_peer:
+                        result['device_name'] = wg_peer['device_name']
+                        result['ipv4_address'] = wg_peer['ipv4_address']
+                        result['ipv6_address'] = wg_peer['ipv6_address']
+                        result['private_key'] = privkey
+                        result['public_key'] = pubkey
+                        result['result'] = 'success'
+                        return result
+                    else:
+                        error_out('No matching wg peer found.')
                 else:
-                    result['device_name'] = wg_peer['device_name']
-                    result['ipv4_address'] = wg_peer['ipv4_address']
-                    result['ipv6_address'] = wg_peer['ipv6_address']
-                    result['private_key'] = privkey
-                    result['public_key'] = pubkey
-                    result['result'] = 'success'
-                    return result
-        elif status_output1['can_add_wg_peers'] == False:
+                    # XXX should this error out?
+                    error_out(
+                        'WireGuard peer not found after add procedure.')
+        elif status_output_pre['can_add_wg_peers'] == False:
             error_out('[KEY_LIMIT_REACHED] You have reached the maximum number of WireGuard keys. Go to https://mullvad.net/account/#/ports to revoke one of your keys.')
         else:
             error_out('can_add_wg_peers in unknown state in response: %s' %
                       json.dumps(status_output1))
 
 
-def do_logoout():
+def do_logout(account_number, pubkey):
     """
     This is a primary function which will return a json formated output for consumption.
     """
+    token = mullvad_get_token(account_number)
+    mullvad_revoke_wg_peer(token, pubkey)
+    return {'result': 'revoked'}
 
 
 def main():
@@ -562,31 +634,57 @@ def main():
     """
     output = {}
     parser = argparse.ArgumentParser()
-    parser.add_argument('--status', help='provide a status for a given account number',
-                        default='')
-    parser.add_argument('--login', help='perform login procedure for a given account number',
-                        default='')
-    # parser.add_argument('--limit', help='limit number of results',
-    #                     default='')
-    # parser.add_argument('--offset', help='begin at row number',
-    #                     default='')
+    subparsers = parser.add_subparsers(dest='subparser') # give a name for a place to put the name of the parser being executed.
+    parser_status = subparsers.add_parser('status', description='status parser description')
+    parser_status.add_argument('--account', help='account number to pass',
+                               default='', nargs=1, required=True)
+    parser_login = subparsers.add_parser('login', description='login parser description')
+    parser_login.add_argument('--account', help='account number to pass',
+                               default='', nargs=1, required=True)
+    parser_login.add_argument('--pubkey', help='public key to pass',
+                               default='', nargs=1)
+    parser_logout = subparsers.add_parser('logout', description='logout parser description')
+    parser_logout.add_argument('--account', help='account number to pass',
+                               default='', nargs=1, required=True)
+    parser_logout.add_argument('--pubkey', help='public key to pass',
+                               default='', nargs=1, required=True)
     parser.add_argument('--debug', help='enable debug logging',
                         action='store_true')
     inputargs = parser.parse_args()
     if inputargs.debug:
         enable_debug()
 
+    if DEBUG:
+        eprint('main(): args: %s' % inputargs)
+
+    # need to make this required with argparse
+    this_account_number = inputargs.account[0]
+    if 'pubkey' in inputargs:
+        this_pubkey = inputargs.pubkey[0]
+        if DEBUG:
+            eprint('main(): set public key to: %s' % this_pubkey)
+
     # Get the status of the account.
-    if inputargs.status != "":
-        this_account_number = inputargs.status
+    if inputargs.subparser == 'status':
+        if DEBUG:
+            eprint('main(): command status')
         mullvad_status = do_status(this_account_number)
         if 'account_status' in mullvad_status:
             output = mullvad_status
 
     # Login to the account.
-    if inputargs.login != "":
-        this_account_number = inputargs.login
-        mullvad_login = do_login(this_account_number)
+    if inputargs.subparser == 'login':
+        if DEBUG:
+            eprint('main(): command login')
+        mullvad_login = do_login(this_account_number, this_pubkey)
+        if 'result' in mullvad_login:
+            output = mullvad_login
+
+   # Log out of the account.
+    if inputargs.subparser == 'logout':
+        if DEBUG:
+            eprint('main(): command logout')
+        mullvad_login = do_logout(this_account_number, this_pubkey)
         if 'result' in mullvad_login:
             output = mullvad_login
 

@@ -106,6 +106,45 @@
             );
         }
     );
+{#/* This attachment does the following:
+     1. Run saveFormToEntpoint for the nearest form.
+     1a. Check if save returns anything but result = saved,
+     1b. If not, display a message box, clear the button, end there.
+     1c. If there are ny validation errors, callback_fail is executed, clear the button, end there.
+     2a. Run the login API
+     2b. Check if the response is OK,
+     2c. if not display a message box.
+     2d. Clear the button status. */#}
+    $('button[id="btn_' + $.escapeSelector("settings.account_number") + '_logout_command"]').click(
+        function(){
+{#/*        create a button object for use throughout this function. */#}
+            const this_button = $(this);
+            busyButton(this_button);
+            ajaxCall(
+                url="/api/mullvad/account/logout",
+                sendData={},
+                callback=
+                    function(data,status) {
+                        if (data != undefined) {
+                            if (
+                                (status != "success" || ('status' in data && data['status'].toLowerCase().trim() != 'ok')) &&
+                                data['status']
+                                ) {
+                                BootstrapDialog.show({
+                                    type: BootstrapDialog.TYPE_WARNING,
+                                    title: this_button.data('error-title'),
+                                    message: data['status_msg'] ? data['status_msg'] : data['status'],
+                                    draggable: true
+                                });
+                            } else {
+                                refreshFields();
+                            }
+                            clearButton(this_button);
+                        }
+                    }
+            );
+        }
+    );
 
 {#/*
     This function will generally be used but can be overriden with a block statement. */#}

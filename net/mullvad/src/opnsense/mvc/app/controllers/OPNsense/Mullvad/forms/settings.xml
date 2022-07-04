@@ -72,13 +72,16 @@
                                 );
                                 return dfObj;
                             }
-                        ]]></onpreaction>
+                        ]]>
+                        </onpreaction>
                     </button>
-                    <button id="logout" type="SimpleActionButton">
+                    <button id="logout">
                         <label>Logout</label>
                         <endpoint>/api/mullvad/account/logout</endpoint>
                         <error-title>Logout error occurred</error-title>
                         <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
+                        <onpreaction>
+                        </onpreaction>
                     </button>
                 </buttons>
             </field>
@@ -89,12 +92,12 @@
                 <!-- <hidden>true</hidden> -->
                 <type>checkbox</type>
                 <control>
-                    <!-- <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action> -->
-                    <!-- <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action> -->
-                    <!-- <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action> -->
-                    <!-- <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action> -->
-                    <!-- <action on_set="1" type="button" do_state="disable">settings.account_number</action> -->
-                    <!-- <action on_set="0" type="button" do_state="enable">settings.account_number</action> -->
+                    <action on_set="1" type="button" do_state="visible">btn_settings.account_number_logout_command</action>
+                    <action on_set="1" type="button" do_state="hidden">btn_settings.account_number_login_command</action>
+                    <action on_set="0" type="button" do_state="visible">btn_settings.account_number_login_command</action>
+                    <action on_set="0" type="button" do_state="hidden">btn_settings.account_number_logout_command</action>
+                    <action on_set="1" type="input" do_state="enabled">settings.account_number</action>
+                    <action on_set="0" type="input" do_state="disabled">settings.account_number</action>
                 </control>
             </field>
             <field>

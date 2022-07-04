@@ -33,7 +33,6 @@ use OPNsense\Base\ApiControllerBase;
 use OPNsense\Core\Backend;
 use OPNsense\Core\Config;
 use OPNsense\Mullvad\Plugin;
-use OPNsense\Base\ApiMutableModelControllerBase;
 use OPNsense\Mullvad\Settings;
 
 /**
@@ -54,7 +53,7 @@ use OPNsense\Mullvad\Settings;
  *
  * @package OPNsense\Dnscryptproxy
  */
-class AccountController extends ApiMutableModelControllerBase
+class AccountController extends PluginApiMutableModelControllerBase
 {
 
     /**
@@ -145,7 +144,7 @@ class AccountController extends ApiMutableModelControllerBase
      * @throws \ReflectionException when binding to the model class fails
      * @throws UserException when denied write access
      */
-    public function LoginAction()
+    public function loginAction()
     {
         // Use the account in a configctl call to perform the "login" procedure.
         // We'll need to get back from the call:
@@ -160,23 +159,22 @@ class AccountController extends ApiMutableModelControllerBase
         // return status to API
         // Somehow call mapDataToFormUI(), or force a page refresh.
         //
+        //$result = array('status'=> 'ok');
+        //$result = array('status'=> 'notok');
         $result = array();
         if ($this->request->isPost()) {
 
-            // Retrieve the account number from the model. This should be known good, but check that it's not empty anyway.
+            // Retrieve the account number from the model.
             $account_number = $this->getModel()->account_number->getNodeData('clean');
+            // Retrive public key from the config.
+            $public_key = $this->getModel()->public_key;
             // We won't be able to do anything without an account number.
             if (!empty($account_number)) {
                 $plugin = new Plugin();
                 $backend = new Backend();
-                $login_result = trim($backend->configdRun($plugin->getConfigdName() . ' login ' . $account_number));
-                ///
-                ob_start();
-                var_dump($login_result);
-                $ob_var_dump = ob_get_clean();
-                file_put_contents("/tmp/php_debug.txt", strip_tags(str_replace("=>\n", "=>", $ob_var_dump)));
-                ///
-                $login_result = json_decode($login_result, true);
+                $configd_command = implode(' ', array($plugin->getConfigdName(), 'login', $account_number, $public_key));
+                $login_result_json = trim($backend->configdRun($configd_command));
+                $login_result = json_decode($login_result_json, true);
 
                 if (json_last_error() === JSON_ERROR_NONE) {
                     // JSON is valid
@@ -192,10 +190,6 @@ class AccountController extends ApiMutableModelControllerBase
                     */
                     if (array_key_exists('result', $login_result)) {
                         if ($login_result['result'] == 'success') {
-                            /// XXX save to model procedure, see if this can be safely functionalized.
-                            // Need to pass in the model
-                            // The array
-
                             // Create an array for the settings that we want to save.
                             $data = array();
                             $data['device_name'] = $login_result['device_name'];
@@ -205,6 +199,10 @@ class AccountController extends ApiMutableModelControllerBase
                             $data['public_key'] = $login_result['public_key'];
                             $data['account_configured'] = "1";
 
+                            /// XXX save to model procedure, see if this can be safely functionalized.
+                            // Need to pass in the model
+                            // The array
+                            /*
                             $mdl = new Settings();
                             $mdl->setNodes($data);
 
@@ -229,168 +227,95 @@ class AccountController extends ApiMutableModelControllerBase
                             //        $result['status'] = gettext('Login successful, and configured.');
                             //    }
                             //}
+                            */
+                            $result = array_merge($result, $this->setData($data));
                         } else {
-                            $result['status'] = gettext('Failure performing login.');
+                            $msg = gettext('Login result was not successful.');
+                            $result['status'] = $msg . ' $logout_result: ' . json_encode($login_result);
                             $result['result'] = 'failed';
                         }
                     } else {
-                        $result['status'] = gettext('Failure performing login.');
+                        $msg = gettext('Login results array did not include result key.');
+                        $result['status'] = $msg . ' $logout_result: ' . json_encode($login_result);
                         $result['result'] = 'failed';
                     }
                 } else {
-                    $result['status'] = gettext('Error encountered reading JSON from backend.');
+                    $msg = gettext('Error encountered parsing JSON');
+                    $result['status'] = $msg . ' $login_result: ' . json_encode($login_result_json);
                     $result['result'] = 'failed';
                 }
-            // Need to check that the result is good, look for 'result' == 'success'
-            // If failed, then reflect hat in a return.
-            // Might be able to pass the result array through as long as the format is consistent.
-            //        $result = array('result' => 'failed', 'status' => gettext('No valid account number in config.'));
-            /*
-            Expecting to see something like this in json:
-            "device_id" : "0f8c65c1-9df4-4db5-9c4d-7a8e86dad149",
-            "device_name" : "alert pup",
-            "ipv4_address" : "10.66.141.99/32",
-            "ipv6_address" : "fc00:bbbb:bbbb:bb01::3:8d62/128",
-            "private_key" : "",
-            "public_key" : "zLVnO6DYynxeaSc0qECNJSnAqwkOvMU0xE82KqniugI="
-            "action" : 'login' # is this useful?
-            "result" : 'success'
-            "status" : ?????
-
-            $arr = json_decode($jsonobj, true);
-            echo $arr["Peter"];
-            echo $arr["Ben"];
-            echo $arr["Joe"];
-            // ^^^^^^^^^^^^ Interesting approach, probably do that.
-            Convert json -> array: $device_data = json_decode($result);
-            Transfer values out of the array into another array that's the same structure as the model.
-            We need to take this data, and then save it to the config.
-            Something like: setData(device_data)
-            */
-
             } else {
                 $result['status'] = gettext('No valid account number in config.');
                 $result['result'] = 'failed';
             }
         } else {
+            // XXX should this be a throw?
             $result['status'] = gettext('Function must be called via HTTP POST.');
             $result['result'] = 'failed';
         }
         //array ("status" => 'ok', 'account_number' => $account_number);
         return $result;
-        //return array("status" => 'failed');
-        //--------------------------------------------------------------------------//
-        $plugin = new Plugin();
-
-        // we only care about the content, the file name will be statically configured
-        // this will reduce the need to manage the file system like cleaning up if a file name changes, etc.
-        // it also mitigates file name length limitations of the file system.
-        // it also mitigates risk of allowing the user to specify the file name
-        if ($this->request->isPost() && $this->request->hasPost('content') && $this->request->hasPost('target')) {
-            // Populate variables from the keys in the POST.
-            $content = $this->request->getPost('content', 'striptags', '');
-            $target = $this->request->getPost('target');
-
-            // Check the content length so we have something to do.
-            if (strlen($content) > 0 && ! is_null($target)) {
-                // I looked for a better way to do this, but didn't find any.
-                // Due to shell command length limitations it's risky to pass this
-                // directly to configdRun(), and no way to get it to send the content
-                // as stdin. So a second best is to write it to the file system
-                // for read by an application afterwards. CaptivePortal does this method.
-                if (
-                    $target == 'settings.blocked_names_file_manual' ||
-                    $target == 'settings.blocked_ips_file_manual' ||
-                    $target == 'settings.allowed_names_file_manual' ||
-                    $target == 'settings.allowed_ips_file_manual' ||
-                    $target == 'settings.cloaking_file_manual'
-                ) {
-                    // create a temporary file name to use
-                    $temp_filename = '/tmp/' . $plugin->name . '_file_upload.tmp';
-                    // let's put the file in /tmp
-                    file_put_contents($temp_filename, $content);
-                    $target_exp = explode('.', $target);
-
-                    $backend = new Backend();
-                    // Perform the import using configd. Executes a script which
-                    // parses the content of the file for valid characters.
-                    // If parse passes, the uploaded file is copied to the
-                    // destination. Returns JSON of status and action.
-                    $response = $backend->configdpRun(
-                        $plugin->configd_name . ' import-list ' . end($target_exp) . ' ' . $temp_filename
-                    );
-
-                    // If configd reports "Execute error," then $response is NULL.
-                    // This can happen if there is a misconfiguration in the action (aka missing script/command).
-                    if (! is_null($response)) {
-                        return $response;
-                    }
-
-                    return array('error' => 'Error encountered', 'status' => 'Execute error');
-                }
-
-                return array('status' => 'error', 'message' => 'Unsupported target ' . $target);
-            }
-
-            return array('status' => 'error', 'message' => 'Missing target, or content.');
-        }
     }
 
     /**
-     * Calls the configd backend to retrive a pre-defined file, and return its
-     * contents.
      *
-     * API endpoint:
-     *
-     *   `/api/dnscryptproxy/file/get/settings.blocked_names_file_manual`
-     *
-     * Usage:
-     *
-     *   `/api/dnscryptproxy/get/`
-     *
-     * This function only accepts specific `$target` variables to prevent user
-     * manipulation through the API. This should be the field ID of the calling
-     * object. It will then execute the appropriate configd command, and return
-     * the output from that command. The output is evaluated on the return to
-     * detect an error condition.
-     *
-     * @param  string $target The desired pre-defined target for the API.
-     * @return array          Array of the contents of the file.
+     * @return array setAction() result or error message from configd.
      */
-    public function LogoutAction($target)
+    public function logoutAction()
     {
-        $plugin = new Plugin();
-
-        if ($target != '') {
-            if ($target == 'settings.blocked_names_file_manual') {
-                $content_type = 'text';
-                $filename = 'blocked-names-manual.txt';
-            } elseif ($target == 'settings.blocked_ips_file_manual') {
-                $content_type = 'text';
-                $filename = 'blocked-ips-manual.txt';
-            } elseif ($target == 'settings.allowed_names_file_manual') {
-                $content_type = 'text';
-                $filename = 'allowed-names-manual.txt';
-            } elseif ($target == 'settings.allowed_ips_file_manual') {
-                $content_type = 'text';
-                $filename = 'allowed-ips-manual.txt';
-            } elseif ($target == 'settings.cloaking_file_manual') {
-                $content_type = 'text';
-                $filename = 'cloaking-manual.txt';
-            }
-            if ($filename != '') {
+        //$result = array('status'=> 'ok');
+        //$result = array('status'=> 'notok');
+        $result = array();
+        if ($this->request->isPost()) {
+            // Retrieve the account number from the model.
+            $account_number = $this->getModel()->account_number->getNodeData('clean');
+            // Retrive public key from the config.
+            $public_key = $this->getModel()->public_key;
+            if (!empty($account_number) && !empty($public_key)) {
+                $plugin = new Plugin();
                 $backend = new Backend();
-                $target_exp = explode('.', $target);
-                $result = $backend->configdRun($plugin->configd_name . ' export-' . end($target_exp));
-                if ($result != null) {
-                    $this->response->setRawHeader('Content-Type: ' . $content_type);
-                    $this->response->setRawHeader('Content-Disposition: attachment; filename=' . $filename);
-
-                    return $result;
+                $configd_command = implode(' ', array($plugin->getConfigdName(), 'logout', $account_number, $public_key));
+                $logout_result_json = trim($backend->configdRun($configd_command));
+                $logout_result = json_decode($logout_result_json, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    if (array_key_exists('result', $logout_result)) {
+                        if ($logout_result['result'] == 'revoked') {
+                            // Create an array for the settings that we want to save.
+                            $data = array(
+                                'device_name' => '',
+                                'ipv4_address' => '',
+                                'ipv6_address' => '',
+                                'private_key' => '',
+                                'public_key' => '',
+                                'account_configured' => "0"
+                            );
+                            // Set the data accordingly.
+                            $result = array_merge($result, $this->setData($data));
+                        } else {
+                            $msg = gettext('Logout result was not successful.');
+                            $result['status'] = $msg . ' $logout_result: ' . json_encode($logout_result) ;
+                            $result['result'] = 'failed';
+                        }
+                    } else {
+                        $msg = gettext('Logout results array did not include result key.');
+                        $result['status'] = $msg . ' $logout_result: ' . json_encode($logout_result);
+                        $result['result'] = 'failed';
+                    }
+                } else {
+                    $msg = gettext('Error encountered parsing JSON');
+                    $result['status'] = $msg . ' $logout_result: ' . json_encode($logout_result_json);
+                    $result['result'] = 'failed';
                 }
-                // return empty response on error, maybe Throw?
-                return '';
+            } else {
+                $result['status'] = gettext('No valid account number in config.');
+                $result['result'] = 'failed';
             }
+        } else {
+            // XXX should this be a throw?
+            $result['status'] = gettext('Function must be called via HTTP POST.');
+            $result['result'] = 'failed';
         }
+
+    return $result;
     }
 }

@@ -529,6 +529,58 @@ class PluginApiMutableModelControllerBase extends ApiMutableModelControllerBase
         return $set_result;
     }
 
+    /**
+     *
+     * @return array setAction() result or error message from configd.
+     */
+    public function setData($data) {
+        $result = array();
+        if (is_array($data)) {
+            // This would allow arbitrary model saving.
+            //if ($this->modelHandle == null) {
+            //    $this->modelHandle = (new \ReflectionClass(static::$internalModelClass))->newInstance();
+            //}
+            // Establish a model to save our data to.
+            $mdl = $this->getModel();
+            // Set the data in the nodes according to the data in the array.
+            $mdl->setNodes($data);
+
+            /*
+            Don't even really need all this validation stuff.
+            // Perform validation on the model after we've entered new values.
+            $valMsgs = $mdl->performValidation();
+            // Check that any validation messages were returned, and put them into the result array if there are.
+            // XXX this validation seciton may not be necessary if it's performed in save()
+            foreach ($valMsgs as $field => $msg) {
+                // Only create the validations array on the first loop.
+                if (!array_key_exists("validations", $result)) {
+                    $result["validations"] = array();
+                }
+                $result["validations"]["settings.".$msg->getField()] = $msg->getMessage();
+            }
+
+            // If there are no validation messages, then it's safe to save the data.
+            if ($valMsgs->count() == 0) {
+                //$mdl->serializeToConfig();
+                //Config::getInstance()->save();
+                $this->save();
+                $result['result'] = "saved";
+            } else {
+                $result['status'] = gettext('Validation errors were encountered.');
+                $result['result'] = 'failed';
+                return $result;
+            }
+            */
+
+            // throws API exception if validation errors occur.
+            $this->save();
+            $result['result'] = "saved";
+        } else {
+            throw new \Exception('$data must be array');
+        }
+        return $result;
+    }
+
     public function markConfig($action)
     {
         if (in_array($action, array(

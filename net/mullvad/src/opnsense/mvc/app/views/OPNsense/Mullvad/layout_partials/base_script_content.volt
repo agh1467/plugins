@@ -90,35 +90,56 @@
                 var selected_field = $('input[id=' + efield + ']')
                 $('input[id=' + efield + ']').trigger("change");
             } else if (toggle == "hidden") {
-{#              # Do a nice fade out with a hide once done,
-                # and add dummy row for striping. #}
+{#/*              # Do a nice fade out with a hide once done,
+                # and add dummy row for striping. */#}
                 selected_row.fadeOut(400, function() {
                     selected_row.after('<tr class="dummy_row" style="display: none"></tr>');
                 });
             } else if (toggle == "visible") {
-{#              # Do a nice fade in instead of a show() pop #}
+{#/*              # Do a nice fade in instead of a show() pop */#}
                 selected_row.fadeIn(200, function() {
                     selected_row.next("tr[class=dummy_row]").remove();
                 });
             }
         } else if (["tab", "box"].includes(type)) {
             if (toggle == "hidden") {
-{#              # Use a fadeOut instead of hide() for a nice effect. #}
+{#/*              # Use a fadeOut instead of hide() for a nice effect. */#}
                 $("#" + efield).fadeOut();
             } else if (toggle == "visible") {
-{#              # Use a fadeIn instead of show() for a nice effect. #}
+{#/*              # Use a fadeIn instead of show() for a nice effect. */#}
                 $("#" + efield).fadeIn();
             }
         } else if (["button"].includes(type)) {
             if (toggle == "hidden") {
-                $("button[id=" + efield).hide();
+                $("button[id=" + efield + "]").hide();
             } else if (toggle == "visible") {
-                $("button[id=" + efield).show();
+                $("button[id=" + efield + "]").show();
+            }
+        } else {
+{#/* Catch all for any other types, just try all the things and maybe something will work.. */#}
+            var selected = $(type + '[id=' + efield + "]");
+            if (toggle == "hidden") {
+                selected.hide();
+            } else if (toggle == "visible") {
+                selected.show();
+            } else if (toggle == "enabled") {
+                selected.addClass("disabled");
+                selected.prop({
+                    "readonly": true,
+                    "disabled": true
+                });
+            } else if (toggle == "disabled") {
+                selected.removeClass("disabled");
+                selected.prop({
+                    "readonly": false,
+                    "disabled": false
+                });
             }
         }
     }
 
     {#/*
+        XXX Probably get rid of this in lieu of specifying this in XML, and using mapDataToUI() XXX
         # This function will go through and find all of the forms, for each form, it will
         # create a named index for the form by id, and set it to the API endpoint for the plugin
         # along with the designated model assigned to the data-model attribute.

@@ -113,15 +113,16 @@ class Plugin
         // XXX Need to fix this so it's dynamic based on the caller (not $this)
         //$filename = dirname($class_info->getFileName()) . '/forms/' . $formname . '.xml';
         $filename = '/usr/local/opnsense/mvc/app/controllers/OPNsense/Mullvad/forms/' . $formname . '.xml';
-        if (! file_exists($filename)) {
-            throw new \Exception('form xml ' . $filename . ' missing');
+        if (file_exists($filename)) {
+            $formXml = simplexml_load_file($filename);
+            if ($formXml === false) {
+                //$formXml = '<pre>XML file ' . $filename . ' is invalid.</pre>';
+                throw new \Exception('form xml ' . $filename . ' not valid');
+            }
+        } else {
+            // Set an empty XML document to return since we don't have an XML to parse.
+            $formXml = simplexml_load_string('<root></root>');
         }
-        $formXml = simplexml_load_file($filename);
-        if ($formXml === false) {
-            //$formXml = '<pre>XML file ' . $filename . ' is invalid.</pre>';
-            throw new \Exception('form xml ' . $filename . ' not valid');
-        }
-
         return $formXml;
     }
 
