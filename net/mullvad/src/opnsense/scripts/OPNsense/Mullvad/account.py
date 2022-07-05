@@ -520,31 +520,36 @@ def do_status(account_number):
         account_status = Paid until <insert date>| Expired on <insert date>
     """
     result = {}
-    token = mullvad_get_token(account_number)
-    status_output = mullvad_get_status(token)
-    if ('active' in status_output
-            and 'expires' in status_output):
-        if status_output['active'] == False:
-            account_status = "Expired on "
-        elif status_output['active'] == True:
-            account_status = "Paid until "
-        else:
-            account_status = "Unknown"
+    if account_number != '':
+        token = mullvad_get_token(account_number)
+        status_output = mullvad_get_status(token)
+        if ('active' in status_output
+                and 'expires' in status_output):
+            if status_output['active'] == False:
+                account_status = "Expired on "
+            elif status_output['active'] == True:
+                account_status = "Paid until "
+            else:
+                account_status = "Unknown"
 
-        if account_status != "Unknown":
-            # "2022-06-27T21:58:38+00:00"
-            #    %Y-%m-%dT%H:%M:%S+00:00
-            expires_format = '%Y-%m-%dT%H:%M:%S+00:00'
-            paid_until_format = '%b %-d, %Y at %-I:%M %p'
-            expires_datetime = datetime.datetime.strptime(
-                status_output['expires'], expires_format)
-            paid_until = expires_datetime.strftime(
-                paid_until_format)
-        else:
-            paid_until = "unknown"
+            if account_status != "Unknown":
+                # "2022-06-27T21:58:38+00:00"
+                #    %Y-%m-%dT%H:%M:%S+00:00
+                expires_format = '%Y-%m-%dT%H:%M:%S+00:00'
+                paid_until_format = '%b %-d, %Y at %-I:%M %p'
+                expires_datetime = datetime.datetime.strptime(
+                    status_output['expires'], expires_format)
+                paid_until = expires_datetime.strftime(
+                    paid_until_format)
+            else:
+                paid_until = "unknown"
 
-        result['account_status'] = account_status + paid_until
-        return result
+            result['account_status'] = account_status + paid_until
+    else:
+        result['account_status'] = 'No account configured'
+
+    return result
+
 
 
 def do_login(account_number, pubkey=''):

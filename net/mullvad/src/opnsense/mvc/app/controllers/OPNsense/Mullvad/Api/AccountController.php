@@ -34,6 +34,7 @@ use OPNsense\Core\Backend;
 use OPNsense\Core\Config;
 use OPNsense\Mullvad\Plugin;
 use OPNsense\Mullvad\Settings;
+use OPNsense\Mullvad\Status;
 
 /**
  * This Controller extends ApiControllerBase to create API endpoints
@@ -197,8 +198,7 @@ class AccountController extends PluginApiMutableModelControllerBase
                             $data['ipv6_address'] = $login_result['ipv6_address'];
                             $data['private_key'] = $login_result['private_key'];
                             $data['public_key'] = $login_result['public_key'];
-                            $data['account_configured'] = "1";
-
+                            $data['device_registered'] = "1";
                             /// XXX save to model procedure, see if this can be safely functionalized.
                             // Need to pass in the model
                             // The array
@@ -287,7 +287,7 @@ class AccountController extends PluginApiMutableModelControllerBase
                                 'ipv6_address' => '',
                                 'private_key' => '',
                                 'public_key' => '',
-                                'account_configured' => "0"
+                                'device_registered' => "0"
                             );
                             // Set the data accordingly.
                             $result = array_merge($result, $this->setData($data));
@@ -315,7 +315,7 @@ class AccountController extends PluginApiMutableModelControllerBase
             $result['status'] = gettext('Function must be called via HTTP POST.');
             $result['result'] = 'failed';
         }
-
-    return $result;
+        (new Status())->removeSourceFile();
+        return $result;
     }
 }

@@ -931,14 +931,15 @@ s   We need to draw our dialogs, they have their own forms and can't be nested. 
         {# This catches the first pass, if change event is initiated before the
            value of the target field is set by mapDataToFormUI() #}
         if (field_value != "") {
-{%              if field.labels %}
-{%                  for this_label in field.labels.children() %}
-{%                      if this_label['match'] == 'regex' %}
-            if (field_value.match(new RegExp('{{ this_label.__toString() }}'))) {
+{%              if field.values %}
+{%                  for this_value in field.values.children() %}
+{%                      if this_value['match'] == 'regex' %}
+            if (field_value.match(new RegExp('{{ this_value.__toString() }}'))) {
 {%                      else %}
-            if (field_value == "{{ this_label.__toString() }}") {
+            if (field_value == '{{ this_value.__toString() }}') {
 {%                      endif %}
-                $(this).addClass("label-{{ this_label.getName() }}")
+                $(this).addClass('label-{{ this_value.getName() }}')
+                $(this).children('i').removeClass('fa fa-spinner fa-pulse');
             }
 {%                  endfor %}
 {%              endif %}
@@ -954,7 +955,7 @@ s   We need to draw our dialogs, they have their own forms and can't be nested. 
 {%          if field.buttons %}
 {%              for button in field.buttons.children() %}
 {%                  if button['type'] == 'SimpleActionButton' and button['id']%}
-    $('button[id="btn_' + $.escapeSelector("{{ field_id }}") + '_' + $.escapeSelector("{{ button['id'] }}") +  '_command"]').SimpleActionButton({
+    $('button[id="btn_' + $.escapeSelector('{{ field_id }}') + '_' + $.escapeSelector('{{ button['id'] }}') +  '_command"]').SimpleActionButton({
         onPreAction: {{ button.onpreaction|default('undefined') }},
         onAction: {{ button.onaction|default('undefined') }}
     });

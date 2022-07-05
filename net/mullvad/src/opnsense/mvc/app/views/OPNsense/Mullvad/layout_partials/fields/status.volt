@@ -71,4 +71,6 @@
 
 <span id="{{ field_id }}"
       class="label-default label {{ this_field.style }}">
+        <i id="span_{{ field_id }}_progress" class="fa fa-spinner fa-pulse"></i>&nbsp;
+    {{ this_field.values['default'] }}
 </span>

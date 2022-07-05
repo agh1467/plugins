@@ -1,5 +1,5 @@
-<form active_tab="account">
-    <model name="settings" endpoint="settings/get" type="input">          <!-- first call designates a form -->
+<page active_tab="account" loading_dialog_msg="Please wait while settings are loaded...">
+    <model name="settings" endpoint="settings/get" type="input">
         <tab id="locations" description="Locations">
             <field>
                 <id>connection_status</id>
@@ -75,19 +75,17 @@
                         ]]>
                         </onpreaction>
                     </button>
-                    <button id="logout">
+                    <button id="logout" type="SimpleActionButton">
                         <label>Logout</label>
                         <endpoint>/api/mullvad/account/logout</endpoint>
                         <error-title>Logout error occurred</error-title>
                         <service-widget></service-widget> <!-- Name of the service for use with updateServiceControlUI -->
-                        <onpreaction>
-                        </onpreaction>
                     </button>
                 </buttons>
             </field>
             <field>
-                <id>account_configured</id>
-                <label>Account Configured</label>
+                <id>device_registered</id>
+                <label>Device Registered</label>
                 <!-- <readonly>true</readonly> -->
                 <!-- <hidden>true</hidden> -->
                 <type>checkbox</type>
@@ -108,17 +106,17 @@
             <field>
                 <type>separator</type>
             </field>
-            <model id="account_status" name="status" endpoint="status/get" type="output">          <!-- second call (nested) designates a div within the form -->
+            <model id="account_status" name="status" endpoint="status/get" type="output">
                 <field>
                     <id>account_status</id>
                     <label>Account Status</label>
                     <type>status</type>
                     <style>label-opnsense</style>
-                    <labels>
+                    <values default="Loading...">
                         <success match='regex'>^Paid.*</success>
                         <danger match='regex'>^Expired.*</danger>
                         <primary match='regex'>^Unknown.*</primary>
-                    </labels>
+                    </values>
                 </field>
             </model>
             <field>
@@ -234,4 +232,4 @@
         <dropdown action="save" icon="fa fa-floppy-o">Save Only</dropdown>
         <dropdown action="save_apply" icon="fa fa-floppy-o">Save and Apply</dropdown>
     </button>
-</form>
+</page>

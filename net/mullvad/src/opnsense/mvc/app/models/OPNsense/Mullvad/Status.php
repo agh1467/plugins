@@ -57,13 +57,60 @@ class Status
     /**
      * @var string action to send to configd to populate the provided source
      */
-    private $internalConfigdPopulateAct = "mullvad status 0824998250016939";
+    private $internalConfigdPopulateAct = null;
 
     /**
      * @var int execute configd command only when file is older then TTL (seconds)
      */
-    private $internalConfigdPopulateTTL = 600;
+    private $internalConfigdPopulateActTimeout = 120;
 
+    /**
+     * @var int execute configd command only when file is older then TTL (seconds)
+     */
+    private $internalConfigdPopulateTTL = 60;
+
+
+    /**
+     * reflect setter to internalData (ContainerField)
+     * @param string $name property name
+     * @param string $value property value
+     */
+    public function setSourceFile($value)
+    {
+        $this->internalSourceFile = $value;
+    }
+
+
+    /**
+     * reflect setter to internalData (ContainerField)
+     * @param string $name property name
+     * @param string $value property value
+     */
+    public function setConfigdPopulateAct($value)
+    {
+        $this->internalConfigdPopulateAct = $value;
+    }
+
+
+    /**
+     * reflect setter to internalData (ContainerField)
+     * @param string $name property name
+     * @param string $value property value
+     */
+    public function setConfigdPopulateTTL($value)
+    {
+        $this->internalConfigdPopulateTTL = $value;
+    }
+
+    /**
+     * reflect setter to internalData (ContainerField)
+     * @param string $name property name
+     * @param string $value property value
+     */
+    public function setConfigdPopulateActTimeout($value)
+    {
+        $this->internalConfigdPopulateActTimeout = $value;
+    }
 
     /**
      * default setter
@@ -81,7 +128,7 @@ class Status
     public function getNodes()
     {
         $result = array ();
-        if ($this->internalSourceFile != null) {
+        if ($this->internalSourceFile) {
             $sourcefile = $this->internalSourceFile;
             // First let's file the file with configd if we need to.
             if (!empty($this->internalConfigdPopulateAct)) {
@@ -101,7 +148,7 @@ class Status
                     if (time() - $muttime > $this->internalConfigdPopulateTTL) {
                         $act = $this->internalConfigdPopulateAct;
                         $backend = new Backend();
-                        $response = $backend->configdRun($act, false, 20);
+                        $response = $backend->configdRun($act, false, $this->internalConfigdPopulateActTimeout);
                         // only store parsable results
                         if (!empty($response) && json_decode($response) !== null) {
                             // Write the response out to the file.
@@ -127,6 +174,15 @@ class Status
             }
         }
         return $result;
+    }
+
+    /**
+     * Remove the source file, used to force a status update on next page refresh.
+     * @return bool
+     */
+    public function removeSourceFile()
+    {
+        return @unlink($this->internalSourceFile);
     }
 
 }

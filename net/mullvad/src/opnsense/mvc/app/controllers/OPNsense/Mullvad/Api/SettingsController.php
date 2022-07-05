@@ -30,6 +30,8 @@
 
 namespace OPNsense\Mullvad\Api;
 
+use OPNsense\Mullvad\Status;
+
 //use OPNsense\Base\ApiMutableModelControllerBase;
 
 /**
@@ -155,6 +157,29 @@ class SettingsController extends PluginApiMutableModelControllerBase
     public function indexAction()
     {
         return array('status' => 'ok');
+    }
+
+
+    public function setAction()
+    {
+        // Record the current (previous) account number to compare to the new one.
+        $prev_account_number = $this->getModel()->account_number->getNodeData();
+
+        // Call the parent set action, and store the result to return later.
+        $set_result = parent::setAction();
+
+        // Record the new account account number after it's been set.
+        $curr_account_number = $this->getModel()->account_number->getNodeData();
+
+        if (array_key_exists('result', $set_result)) {
+            if ($set_result['result'] == 'saved') {
+                if ($prev_account_number != $curr_account_number) {
+                    (new Status())->removeSourceFile();
+                }
+            }
+        }
+
+        return $set_result;
     }
 
     /**

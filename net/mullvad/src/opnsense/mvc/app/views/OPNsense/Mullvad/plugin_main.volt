@@ -73,17 +73,20 @@ $( document ).ready(function() {
     Populate data_get_map for use in mapDataToFormUI() function later. */#}
     var data_get_map = setDataGetMap();
 
+{# If no dialog message is defined, skip loading the dialog box at all. #}
+{%  if this_xml['loading_dialog_msg'] %}
 {#/*
     Conditionally display this dialog only if we actually have data to load in mapDataToFormUI() */#}
-    if (Object.keys(data_get_map).length) {
+    if ($('[data-model-name][data-model-endpoint]').length) {
         BootstrapDialog.show({
             title: 'Loading settings',
             closable: false,
             message:
-                '{{ lang._("Please wait while settings are loaded...") }}' +
+                '{{ lang._('%s') | format(this_xml['loading_dialog_msg']) }}' +
                 '&nbsp&nbsp<i class="fa fa-cog fa-spin"></i>'
             });
     }
+{%  endif %}
 
 {% block script %}
     refreshFields();

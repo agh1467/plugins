@@ -41,6 +41,11 @@ class MullvadAccountField extends TextField
     protected $internalIsContainer = false;
 
     /**
+     * @var null|string validation mask (regex)
+     */
+    protected $internalMask = '/^\d{4} ?\d{4} ?\d{4} ?\d{4}$/';
+
+    /**
      * @var string default validation message string
      */
     protected $internalValidationMessage = "enter a Mullvad account number in the format: xxxx xxxx xxxx xxxx";
@@ -106,25 +111,4 @@ class MullvadAccountField extends TextField
         // Remove spaces to store just the account number itself in the config.
         return trim(chunk_split((string)$this, 4, ' '));
     }
-
-    /**
-     * Function to return validators for this field.
-     *
-     * There is a custom validation here for Mullvad account numbers which didn't
-     * justify creating a full fledged Validator.
-     *
-     * @return array returns validators
-     */
-    public function getValidators()
-    {
-        // This will validate a Mullvad account number with or without spaces.
-        $regex_mask = "/^\d{4} ?\d{4} ?\d{4} ?\d{4}$/";
-
-        // Get validators from the parent (TextField).
-        $validators = parent::getValidators();
-        if ($this->internalValue != null) {
-            $validators[] = new Regex(array('message' => $this->internalValidationMessage,
-                'pattern' => trim($regex_mask)));
-        }
-        return $validators;
-    }}
+}
